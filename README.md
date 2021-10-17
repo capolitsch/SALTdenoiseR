@@ -1,4 +1,4 @@
-# SALTdenoiseR R package
+# SALTdenoiseR package
 
 ## Installation
 ``` r
@@ -13,16 +13,17 @@ remotes::install_github("capolitsch/SALTdenoiseR")
 2. Politsch et al. (2020b). Trend Filtering – II. Denoising astronomical signals with varying degrees of smoothness. 
 *Monthly Notices of the Royal Astronomical Society*, 492(3), p. 4019-4032. [[Publisher](https://academic.oup.com/mnras/article/492/3/4019/5704414)] [[arXiv](https://arxiv.org/abs/2001.03552)]
 
-# Denoising spectra of Wolf-Rayet stars
 
-## Summary
+## Denoising SALT spectra
 
-My preferred approach involves breaking the spectra 
+### Summary
+
+My preferred approach to denoising these spectra involves breaking the spectra 
 into pieces when there are significant gaps due to masking, and then 
-independently running the trend filtering analysis on each sub-spectrum. 
-This has two benefits: 
+independently running a trend filtering analysis on each segment of a broken
+spectrum. This has two benefits: 
 
-1. It's faster. In some cases, much much faster. Which is helpful because
+1. It's faster. In some cases, *much* faster. Which is helpful because
 my bootstrap implementation can sometimes be slow, depending on the
 setting and your computing specs. I can probably make the bootstrap
 more efficient if speed becomes a problem.

@@ -1,4 +1,4 @@
-# SALTdenoiseR R package
+# SALTdenoiseR package
 
 ## Installation
 ``` r

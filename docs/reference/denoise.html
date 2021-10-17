@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Denoise SALT Observatory spectra via trend filtering — denoise • SALTdenoiseR</title>
+<title>Denoise SALT Observatory spectrum via trend filtering — denoise • SALTdenoiseR</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Denoise SALT Observatory spectra via trend filtering — denoise" />
-<meta property="og:description" content="Denoise SALT Observatory spectra via trend filtering" />
+<meta property="og:title" content="Denoise SALT Observatory spectrum via trend filtering — denoise" />
+<meta property="og:description" content="Denoise SALT Observatory spectrum via trend filtering" />
 
 
 
@@ -85,10 +85,13 @@
   </a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="../reference/index.html">Contents</a>
 </li>
 <li>
-  <a href="../papers.html">Papers</a>
+  <a href="../authors.html">References</a>
+</li>
+<li>
+  <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -111,27 +114,45 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Denoise SALT Observatory spectra via trend filtering</h1>
-    <small class="dont-index">Source: <a href='https://github.com/capolitsch/SALTdenoiseR/blob/main/R/denoise.R'><code>R/denoise.R</code></a></small>
+    <h1>Denoise SALT Observatory spectrum via trend filtering</h1>
+    <small class="dont-index">Source: <a href='https://github.com/capolitsch/SALTdenoiseR/blob/main/R/denoising.R'><code>R/denoising.R</code></a></small>
     <div class="hidden name"><code>denoise.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Denoise SALT Observatory spectra via trend filtering</p>
+    <p>Denoise SALT Observatory spectrum via trend filtering</p>
     </div>
 
-    <pre class="usage"><span class='fu'>denoise</span><span class='op'>(</span>
-  min.mask.width <span class='op'>=</span> <span class='fl'>20</span>,
-  variability.bands <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  B <span class='op'>=</span> <span class='fl'>100</span>,
-  obj_tol <span class='op'>=</span> <span class='fl'>1e-14</span>,
-  max_iter <span class='op'>=</span> <span class='fl'>1000</span>,
-  mc_cores <span class='op'>=</span> <span class='fu'>parallel</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/parallel/detectCores.html'>detectCores</a></span><span class='op'>(</span><span class='op'>)</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>denoise</span><span class='op'>(</span><span class='va'>sci</span>, <span class='va'>var</span>, <span class='va'>bpm</span>, min_mask_width <span class='op'>=</span> <span class='fl'>20</span>, variability_bands <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>sci</th>
+      <td><p>spectroscopic measurements.</p></td>
+    </tr>
+    <tr>
+      <th>var</th>
+      <td><p>measurement variances.</p></td>
+    </tr>
+    <tr>
+      <th>bpm</th>
+      <td><p>pixel masks.</p></td>
+    </tr>
+    <tr>
+      <th>min_mask_width</th>
+      <td><p>(numeric) Parameter that determines the segmentation of
+the spectrum into smaller pieces divided by gaps (many consecutive masked
+spectral pixels). This is the minimum number of consecutive pixels that have
+to be masked to cause a break in the spectrum.</p></td>
+    </tr>
+    <tr>
+      <th>variability_bands</th>
+      <td><p>(Logical) If <code>TRUE</code> then variability bands are
+computed via a bootstrap resampling algorithm based on the uncertainties
+in the spectral pixel measurements.</p></td>
+    </tr>
     <tr>
       <th>B</th>
       <td><p>(integer) The number of bootstrap samples that are drawn in order to
@@ -141,6 +162,15 @@ up for parallel computing for speedups when multiple cores are available.
 <code>B = 100</code> typically suffices for a most scenarios, but it's good to crank it
 up a bit for a plot that's going to be published, so you get nice smooth
 bands.</p></td>
+    </tr>
+    <tr>
+      <th>max_iter</th>
+      <td><p>Maximum iterations allowed for the ADMM trend filtering
+convex optimization (Ramdas and Tibshirani 2016). Increase this if the trend
+filtering estimate does not appear to have fully converged to a reasonable
+estimate of the spectral signal. An estimate that has not
+fully converged will typically increasingly diverge above
+or below the observed fluxes as you move from left to right.</p></td>
     </tr>
     <tr>
       <th>obj_tol</th>
@@ -153,32 +183,6 @@ to a reasonable estimate of the signal. An estimate that
 has not fully converged will typically increasingly
 diverge above or below the observed fluxes as you move
 from left to right</p></td>
-    </tr>
-    <tr>
-      <th>max_iter</th>
-      <td><p>Maximum iterations allowed for the ADMM trend filtering
-convex optimization (Ramdas and Tibshirani 2016). Increase this if the trend
-filtering estimate does not appear to have fully converged to a reasonable
-estimate of the spectral signal. An estimate that has not
-fully converged will typically increasingly diverge above
-or below the observed fluxes as you move from left to right.</p></td>
-    </tr>
-    <tr>
-      <th>min_mask_width</th>
-      <td><p>(numeric) Parameter that determines the segmentation of
-the spectrum into smaller pieces divided by gaps (many consecutive masked
-spectral pixels). This is the minimum number of consecutive pixels that have
-to be masked to cause a break in the spectrum.</p></td>
-    </tr>
-    <tr>
-      <th>variability_bands</th>
-      <td><p>Compute and plot variability bands? <code>FALSE</code> saves
-significant computing time</p></td>
-    </tr>
-    <tr>
-      <th>save_plot_pdf`</th>
-      <td><p>save a plot of the spectrum with trend filtering
-results superposed as a pdf in the path_to_stokes_files directory?</p></td>
     </tr>
     </table>
 
@@ -207,20 +211,7 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>quasar_spectrum</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>spec</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 6 × 3</span>
-#&gt;   log10_wavelength   flux weights
-#&gt;              <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
-#&gt; <span style='color: #BCBCBC;'>1</span>             3.55  0.424  0.041<span style='text-decoration: underline;'>7</span>
-#&gt; <span style='color: #BCBCBC;'>2</span>             3.55 -<span style='color: #BB0000;'>2.11</span>   0.125 
-#&gt; <span style='color: #BCBCBC;'>3</span>             3.55 -<span style='color: #BB0000;'>3.78</span>   0.128 
-#&gt; <span style='color: #BCBCBC;'>4</span>             3.55  3.60   0.121 
-#&gt; <span style='color: #BCBCBC;'>5</span>             3.55 -<span style='color: #BB0000;'>4.89</span>   0.134 
-#&gt; <span style='color: #BCBCBC;'>6</span>             3.55  1.76   0.132 </div><div class='input'>
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>sure_tf</span> <span class='op'>&lt;-</span> <span class='fu'>sure_trendfilter</span><span class='op'>(</span><span class='va'>spec</span><span class='op'>$</span><span class='va'>log10_wavelength</span>, <span class='va'>spec</span><span class='op'>$</span><span class='va'>flux</span>, <span class='va'>spec</span><span class='op'>$</span><span class='va'>weights</span><span class='op'>)</span>
-<span class='op'>}</span>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>SALT_spectrum</span><span class='op'>)</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

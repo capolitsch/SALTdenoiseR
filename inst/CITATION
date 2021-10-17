@@ -1,6 +1,23 @@
-citHeader("To cite the trendfiltering package in publications use:")
+citHeader("To cite the SALTdenoiseR package in publications use:")
 
-note <- sprintf("R package version %s", meta$Version)
+citEntry(entry = "Article",
+         author = "Collin A. Politsch, Jessi Cisewski-Kehe, Rupert A.C. Croft, Larry Wasserman",
+         title = "Trend filtering – I. A modern statistical tool for time-domain astronomy and astronomical spectroscopy",
+         journal = "Monthly Notices of the Royal Astronomical Society",
+         year = "2020",
+         url = "https://academic.oup.com/mnras/article/492/3/4005/5704413",
+         textVersion = "C. A. Politsch et al. (2020a). Trend filtering – I. A modern statistical tool for time-domain astronomy and astronomical
+         spectroscopy",
+         key = "MNRAStrendfiltering1")
+
+citEntry(entry = "Article",
+         author = "Collin A. Politsch, Jessi Cisewski-Kehe, Rupert A.C. Croft, Larry Wasserman",
+         title = "Trend filtering – II. Denoising astronomical signals with varying degrees of smoothness",
+         journal = "Monthly Notices of the Royal Astronomical Society",
+         year = "2020",
+         url = "https://academic.oup.com/mnras/article/492/3/4019/5704414",
+         textVersion = "C. A. Politsch et al. (2020b). Trend filtering – II. Denoising astronomical signals with varying degrees of smoothness",
+         key = "MNRAStrendfiltering2")
 
 citEntry(entry = "Misc",
          author = "Collin A. Politsch",
@@ -8,5 +25,5 @@ citEntry(entry = "Misc",
          year = "2021",
          url = "https://capolitsch.github.io/SALTdenoiseR/",
          textVersion = "C. A. Politsch (2021). SALTdenoiseR: Spectroscopic denoising for the SALT Observatory. R package version 0.0.1.",
-         note = note,
+         note = sprintf("R package version %s", meta$Version),
          key = "SALTdenoiseR")

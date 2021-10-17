@@ -5,12 +5,9 @@ url: https://capolitsch.github.io/SALTdenoiseR
 
 home:
   title: >
-    SALTdenoiseR R package • Spectroscopic denoising for the SALT Observatory
-  links:
-  - text: See my other work at
-    href: "https://collinpolitsch.com/"
+    SALTdenoiseR package • Spectroscopic denoising for the SALT Observatory
   citation:
-  - text: Citing the SALTdenoiseR R package
+  - text: Citing the SALTdenoiseR package
     href: authors.html
 
 authors:
@@ -30,31 +27,23 @@ template:
     code_font:
       google: "JetBrains Mono"
 
-development:
-  mode: release
-
-reference:
-  - title: "Functions"
-  - contents:
-      - '`denoise`'
-
 navbar:
   structure:
     left:
     - home
-    - reference
-    - papers
+    - contents
+    - references
     right: github
   components:
     home:
       icon: fas fa-home fa-lg
       href: index.html
-    reference:
-      text: Reference
+    contents:
+      text: Contents
       href: reference/index.html
-    papers:
-      text: Papers
-      href: papers.html
+    references:
+      text: References
+      href: authors.html
     github:
       icon: fab fa-github fa-lg
       href: "https://github.com/capolitsch/SALTdenoiseR"
