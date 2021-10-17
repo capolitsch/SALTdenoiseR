@@ -1,9 +1,9 @@
-# trendfiltering R package
+# SALTdenoiseR R package
 
 ## Installation
 ``` r
 install.packages("remotes")
-remotes::install_github("capolitsch/trendfiltering")
+remotes::install_github("capolitsch/SALTdenoiseR")
 ```
 ## Key references:
 
@@ -12,6 +12,3 @@ remotes::install_github("capolitsch/trendfiltering")
 
 2. Politsch et al. (2020b). Trend Filtering – II. Denoising astronomical signals with varying degrees of smoothness. 
 *Monthly Notices of the Royal Astronomical Society*, 492(3), p. 4019-4032. [[Publisher](https://academic.oup.com/mnras/article/492/3/4019/5704414)] [[arXiv](https://arxiv.org/abs/2001.03552)]
-
-3. Tibshirani (2014). Adaptive piecewise polynomial estimation via trend filtering. 
-*The Annals of Statistics*, 42(1), p. 285-323. [[Publisher](https://projecteuclid.org/euclid.aos/1395234979)] [[arXiv](https://arxiv.org/abs/1304.2986)]
