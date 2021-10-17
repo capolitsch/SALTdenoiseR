@@ -44,7 +44,7 @@ is assumed to have a Gaussian distribution, so does flux in this setting.
 
 Since `I` is not fixed, the main consequence is that the variability bands
 produced in this script are more narrow than they should be. Use 
-`fullard_spectra_ratio_bootstrap.R` for a better implementation that also
+`ratio_bootstrap.R` for a better implementation that also
 accounts for the uncertainty in `I`. As discussed, the next (and prob final)
 improvement would come from account for the covariance between `Q` and `I`,
 and any autocorrelations within `Q` and `I`.
