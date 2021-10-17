@@ -16,6 +16,7 @@ remotes::install_github("capolitsch/SALTdenoiseR")
 # Denoising spectra of Wolf-Rayet stars
 
 ## Summary
+
 My preferred approach involves breaking the spectra 
 into pieces when there are significant gaps due to masking, and then 
 independently running the trend filtering analysis on each sub-spectrum. 
@@ -36,18 +37,6 @@ consecutively masked.
        
 This segmenting procedure is determined by the `min_mask_width` parameter 
 described below.
-
-This particular script implements a "naive" bootstrap algorithm, where the
-measurements of the `I` Stokes parameter are taken as fixed, and thus the
-uncertainty in `flux = Q / I` is assumed to purely arise from `Q`. Since `Q`
-is assumed to have a Gaussian distribution, so does flux in this setting.
-
-Since `I` is not fixed, the main consequence is that the variability bands
-produced in this script are more narrow than they should be. Use 
-`ratio_bootstrap.R` for a better implementation that also
-accounts for the uncertainty in `I`. As discussed, the next (and prob final)
-improvement would come from account for the covariance between `Q` and `I`,
-and any autocorrelations within `Q` and `I`.
 
 Some parameters & variables that may need to be altered occasionally
 
