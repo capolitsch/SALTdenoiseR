@@ -1,0 +1,77 @@
+# Deploy to docs directory
+destination: docs/
+
+url: https://capolitsch.github.io/trendfiltering
+
+home:
+  title: >
+    trendfiltering R package • The state-of-the-art method for denoising 1D
+    signals
+  links:
+  - text: See my other work at
+    href: "https://collinpolitsch.com/"
+  citation:
+  - text: Citing the trendfiltering R package
+    href: authors.html
+
+authors:
+  Collin A. Politsch:
+    href: "https://collinpolitsch.com/"
+
+template:
+  code_folding: show
+  bootstrap: 4
+  params:
+    bootswatch: "cosmo"
+  bslib:
+    base_font:
+      google: "Sans Serif"
+    heading_font:
+      google: "Sans Serif"
+    code_font:
+      google: "JetBrains Mono"
+
+development:
+  mode: release
+
+reference:
+  - title: "Functions"
+  - contents:
+      - '`cv_trendfilter`'
+      - '`sure_trendfilter`'
+      - '`bootstrap_trendfilter`'
+
+navbar:
+  structure:
+    left:
+    - home
+    - reference
+    - papers
+    right: github
+  components:
+    home:
+      icon: fas fa-home fa-lg
+      href: index.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    papers:
+      text: Papers
+      href: papers.html
+    github:
+      icon: fab fa-github fa-lg
+      href: "https://github.com/capolitsch/trendfiltering"
+
+redirects:
+  - [reference/papers.html, papers.html]
+  - [bootstrap_trendfilter.html, reference/bootstrap_trendfilter.html]
+  - [cv_trendfilter.html, reference/cv_trendfilter.html]
+  - [sure_trendfilter.html, reference/sure_trendfilter.html]
+
+repo:
+  branch: main
+  url:
+    home: "https://github.com/capolitsch/trendfiltering/"
+    source: "https://github.com/capolitsch/trendfiltering/blob/main/"
+    issue: "https://github.com/capolitsch/trendfiltering/issues/"
+    user: "https://github.com/"
