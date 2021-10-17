@@ -1,23 +1,23 @@
 Type: Package
-Package: trendfiltering
-Title: The state-of-the-art method for denoising 1D signals
+Package: SALTdenoiseR
+Title: Spectroscopic denoising for the SALT Observatory
 Version: 0.1.0
 Authors@R: c(person(given = "Collin A.",
              family = "Politsch",
              role = c("aut","cre"),
              email = "collinpolitsch@gmail.com",
              comment = c(ORCID = "0000-0003-3727-9167")))
-Description: The state-of-the-art method for denoising 1D signals
+Description: Spectroscopic denoising for the SALT Observatory
 License: MIT
 URL:
-  https://capolitsch.github.io/trendfiltering
-  https://github.com/capolitsch/trendfiltering
-BugReports: https://github.com/capolitsch/trendfiltering/issues
+  https://capolitsch.github.io/SALTdenoiseR
+  https://github.com/capolitsch/SALTdenoiseR
+BugReports: https://github.com/capolitsch/SALTdenoiseR/issues
 LazyData: true
 Remotes:
-  glmgen/glmgen/R_pkg/glmgen@master
+  capolitsch/trendfiltering@main
 Depends: 
-  glmgen (>= 0.0.3),
+  trendfiltering (>= 0.1.0),
   mathjaxr (>= 1.4-0),
   R (>= 3.5.0)
 Imports: 
@@ -25,7 +25,6 @@ Imports:
   dplyr (>= 1.0.5), 
   tidyr (>= 1.1.3),
   magrittr (>= 2.0.1),
-  matrixStats (>= 0.58.0),
   rmarkdown (>= 2.11)
 VignetteBuilder:
   rmarkdown
