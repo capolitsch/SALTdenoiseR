@@ -5,8 +5,7 @@ url: https://capolitsch.github.io/SALTdenoiseR
 
 home:
   title: >
-    SALTdenoiseR R package • The state-of-the-art method for denoising 1D
-    signals
+    SALTdenoiseR R package • Spectroscopic denoising for the SALT Observatory
   links:
   - text: See my other work at
     href: "https://collinpolitsch.com/"
@@ -37,9 +36,7 @@ development:
 reference:
   - title: "Functions"
   - contents:
-      - '`cv_trendfilter`'
-      - '`sure_trendfilter`'
-      - '`bootstrap_trendfilter`'
+      - '`denoise`'
 
 navbar:
   structure:
