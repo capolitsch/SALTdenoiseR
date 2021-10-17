@@ -34,7 +34,7 @@ the spectrum -- and certainly not providing uncertainties -- in
 windows where a non-trivial number of spectral pixels are
 consecutively masked.
        
-This segmenting procedure is determined by the `min.mask.width` parameter 
+This segmenting procedure is determined by the `min_mask_width` parameter 
 described below.
 
 This particular script implements a "naive" bootstrap algorithm, where the
@@ -51,14 +51,14 @@ and any autocorrelations within `Q` and `I`.
 
 Some parameters & variables that may need to be altered occasionally
 
-* `min.mask.width`:    (numeric) Parameter that determines the segmentation of the
+* `min_mask_width`:    (numeric) Parameter that determines the segmentation of the
                        spectrum into smaller pieces divided by gaps (many 
                        consecutive masked spectral pixels). This is the minimum 
                        number of consecutive pixels that have to be masked to 
                        cause a break in the spectrum.
-* `variability bands`: (boolean) Compute and plot variability bands? `FALSE` saves
+* `variability_bands`: (boolean) Compute and plot variability bands? `FALSE` saves
                        significant computing time
-* `save.plot.pdf`: (boolean) Save a plot of the spectrum with trend filtering 
+* `save_plot_pdf`: (boolean) Save a plot of the spectrum with trend filtering 
                    results superposed as a pdf in the path_to_stokes_files
                    directory?
 * `B`:             (integer) The number of bootstrap samples that are drawn 
