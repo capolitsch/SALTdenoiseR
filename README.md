@@ -48,9 +48,6 @@ Some parameters & variables that may need to be altered occasionally
                        cause a break in the spectrum.
 * `variability_bands`: (boolean) Compute and plot variability bands? `FALSE` saves
                        significant computing time
-* `save_plot_pdf`: (boolean) Save a plot of the spectrum with trend filtering 
-                   results superposed as a pdf in the path_to_stokes_files
-                   directory?
 * `B`:             (integer) The number of bootstrap samples that are drawn 
                    in order to estimate the trend filtering variability bands. 
                    Larger is better, but is more computationally expensive. 
