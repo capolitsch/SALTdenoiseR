@@ -6,9 +6,11 @@ url: https://capolitsch.github.io/SALTdenoiseR
 home:
   title: >
     SALTdenoiseR package • Spectroscopic denoising for the SALT Observatory
-  citation:
-  - text: Citing the SALTdenoiseR package
-    href: authors.html
+  links:
+  - text: Download the trendfiltering R package
+    href: "https://capolitsch.github.io/trendfiltering"
+  - text: See my other work
+    href: "https://collinpolitsch.com/"
 
 authors:
   Collin A. Politsch:
@@ -31,17 +33,17 @@ navbar:
   structure:
     left:
     - home
-    - contents
-    - references
+    - reference
+    - papers
     right: github
   components:
     home:
       icon: fas fa-home fa-lg
       href: index.html
-    contents:
-      text: Contents
+    reference:
+      text: Package contents
       href: reference/index.html
-    references:
+    papers:
       text: References
       href: authors.html
     github:
