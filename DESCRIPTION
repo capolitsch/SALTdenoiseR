@@ -32,4 +32,3 @@ Encoding: UTF-8
 RdMacros: mathjaxr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
-Suggests: covr
