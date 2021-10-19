@@ -36,41 +36,5 @@ the spectrum -- and certainly not providing uncertainties -- in
 windows where a non-trivial number of spectral pixels are
 consecutively masked.
        
-This segmenting procedure is determined by the `min_mask_width` parameter 
-described below.
-
-Some parameters & variables that may need to be altered occasionally
-
-* `min_mask_width`:    (numeric) Parameter that determines the segmentation of the
-                       spectrum into smaller pieces divided by gaps (many 
-                       consecutive masked spectral pixels). This is the minimum 
-                       number of consecutive pixels that have to be masked to 
-                       cause a break in the spectrum.
-* `variability_bands`: (boolean) Compute and plot variability bands? `FALSE` saves
-                       significant computing time
-* `B`:             (integer) The number of bootstrap samples that are drawn 
-                   in order to estimate the trend filtering variability bands. 
-                   Larger is better, but is more computationally expensive. 
-                   My trend filtering bootstrap implementation is set up for 
-                   parallel computing for speedups when multiple cores are
-                   available. `B = 100` typically suffices for a most 
-                   scenarios, but it's good to crank it up a bit for a plot
-                   that's going to be published, so you get nice smooth
-                   bands.
-* `obj_tol`:       (numeric) Maximum iterations allowed for the ADMM trend
-                   filtering convex optimization (Ramdas and Tibshirani 2016). 
-                   Increase this if the trend filtering estimate 
-                   does not appear to have fully converged to a reasonable 
-                   estimate of the spectral signal. An estimate that has not 
-                   fully converged will typically increasingly diverge above 
-                   or below the observed fluxes as you move from left to 
-                   right.
-* `max_iter`:      (integer) The tolerance used in the convex optimization 
-                   stopping criterion; when the relative change in the 
-                   objective function is less than this value, the algorithm 
-                   terminates. Decrease this if the trend 
-                   filtering estimate does not appear to have fully converged 
-                   to a reasonable estimate of the signal. An estimate that 
-                   has not fully converged will typically increasingly 
-                   diverge above or below the observed fluxes as you move 
-                   from left to right
+This segmenting procedure is determined by the `min_mask_width` argument
+of [denoise_spectrum()].
