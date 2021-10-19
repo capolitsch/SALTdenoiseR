@@ -1,13 +1,12 @@
 #' Function(s) for handling pixel masks
 #'
-#' @param df Input data frame
+#' @param df Input data frame / tibble
 #' @param min_mask_width Parameter that controls the segmentation of a spectrum
 #' into ``sub-spectra'', which are then denoised independently. More precisely,
 #' `min_mask_width` is the minimum number of consecutive spectral pixels that
 #' have to be masked to cause a break in the spectrum.
 #'
-#' @return
-#'
+#' @return data frame / tibble
 #' @noRd
 
 #' @importFrom dplyr %>% filter pull
