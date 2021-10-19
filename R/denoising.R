@@ -1,5 +1,5 @@
 #' Denoise a SALT Observatory spectrum via quadratic trend filtering and compute
-#' uncertainties via a Gaussian bootstrap
+#' uncertainties via a bootstrap
 #'
 #' @param sci spectroscopic measurements.
 #' @param var measurement variances.
