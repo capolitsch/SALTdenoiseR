@@ -37,4 +37,4 @@ windows where a non-trivial number of spectral pixels are
 consecutively masked.
        
 This segmenting procedure is determined by the `min_mask_width` argument
-of [denoise_spectrum()].
+of [`denoise_spectrum()`].
