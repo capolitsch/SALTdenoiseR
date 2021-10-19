@@ -2,14 +2,15 @@
 % Please edit documentation in R/denoising.R
 \name{denoise_spectrum}
 \alias{denoise_spectrum}
-\title{Denoise SALT Observatory spectrum via trend filtering}
+\title{Denoise a SALT Observatory spectrum via quadratic trend filtering and compute
+uncertainties via a Gaussian bootstrap}
 \usage{
 denoise_spectrum(
   sci,
   var,
   bpm,
   min_mask_width = 20,
-  variability_bands = FALSE,
+  compute_uncertainties = FALSE,
   ...
 )
 }
@@ -20,50 +21,66 @@ denoise_spectrum(
 
 \item{bpm}{pixel masks.}
 
-\item{min_mask_width}{(numeric) Parameter that determines the segmentation of
-the spectrum into smaller pieces divided by gaps (many consecutive masked
-spectral pixels). This is the minimum number of consecutive pixels that have
-to be masked to cause a break in the spectrum.}
+\item{min_mask_width}{Parameter that controls the segmentation of a spectrum
+into ``sub-spectra'', which are then denoised independently. More precisely,
+\code{min_mask_width} is the minimum number of consecutively-masked spectral
+pixels in order to trigger a break in the spectrum. Defaults to
+`min_mask_width = 20`.}
 
-\item{variability_bands}{(Logical) If \code{TRUE} then variability bands are
-computed via a bootstrap resampling algorithm based on the uncertainties
+\item{compute_uncertainties}{(Boolean) If \code{TRUE} then variability bands are
+computed via a parametric bootstrap algorithm based on the uncertainties
 in the spectral pixel measurements.}
 
-\item{B}{(integer) The number of bootstrap samples that are drawn in order to
+\item{nx_eval}{Integer. If nothing is passed to \code{x_eval}, then it is defined
+as \code{x_eval = seq(min(x), max(x), length = nx_eval)}.}
+
+\item{x_eval}{(Optional) A grid of inputs to evaluate the optimized trend
+filtering estimate on. May be ignored, in which case the grid is determined
+by \code{nx_eval}.}
+
+\item{B}{(Integer) The number of bootstrap samples that are drawn in order to
 estimate the trend filtering variability bands. Larger is better, but is more
 computationally expensive. My trend filtering bootstrap implementation is set
 up for parallel computing for speedups when multiple cores are available.
 \code{B = 100} typically suffices for a most scenarios, but it's good to crank it
 up a bit for a plot that's going to be published, so you get nice smooth
 bands.}
-
-\item{max_iter}{Maximum iterations allowed for the ADMM trend filtering
-convex optimization (Ramdas and Tibshirani 2016). Increase this if the trend
-filtering estimate does not appear to have fully converged to a reasonable
-estimate of the spectral signal. An estimate that has not
-fully converged will typically increasingly diverge above
-or below the observed fluxes as you move from left to right.}
-
-\item{obj_tol}{(integer) The tolerance used in the convex optimization
-stopping criterion; when the relative change in the
-objective function is less than this value, the algorithm
-terminates. Decrease this if the trend
-filtering estimate does not appear to have fully converged
-to a reasonable estimate of the signal. An estimate that
-has not fully converged will typically increasingly
-diverge above or below the observed fluxes as you move
-from left to right}
 }
 \value{
-An object of class \code{\link[=denoise]{SALT_denoised}}. This is a list
-with the following elements:
+An object of class \code{\link[=denoise_spectrum]{'SALT_spec'}}. This is a
+list with the following elements:
 \item{x_eval}{Input grid used to evaluate the optimized trend filtering
 estimate on.}
 \item{tf_estimate}{Optimized trend filtering estimate, evaluated at
 \code{x_eval}.}
+\item{validation_method}{"SURE"}
+\item{lambdas}{Vector of hyperparameter values evaluated in the grid search
+(always returned in descending order).}
+\item{edfs}{Vector of effective degrees of freedom for all trend filtering
+estimators fit during validation.}
+\item{generalization_errors}{Vector of SURE generalization error estimates,
+corresponding to the descending-ordered \code{lambdas} vector.}
+\item{lambda_min}{Hyperparameter value that minimizes the SURE generalization
+error curve.}
+\item{i_min}{Index of \code{lambdas} that minimizes the SURE error curve.}
+\item{edf_min}{Effective degrees of freedom of the optimized trend
+filtering estimator.}
+\item{n_iter}{The number of iterations needed for the ADMM algorithm to
+converge within the given tolerance, for each hyperparameter value. If many
+of these are exactly equal to \code{max_iter}, then their solutions have not
+converged with the tolerance specified by \code{obj_tol}. In which case, it is
+often prudent to increase \code{max_iter}.}
+\item{x}{Vector of observed inputs.}
+\item{y}{Vector of observed outputs.}
+\item{weights}{Weights for the observed outputs, defined as the reciprocal
+variance of the additive noise that contaminates the signal.}
+\item{fitted_values}{Optimized trend filtering estimate, evaluated at the
+observed inputs \code{x}.}
+\item{residuals}{\code{residuals = y - fitted_values}}
 }
 \description{
-Denoise SALT Observatory spectrum via trend filtering
+Denoise a SALT Observatory spectrum via quadratic trend filtering and compute
+uncertainties via a Gaussian bootstrap
 }
 \examples{
 data(SALT_spectrum)

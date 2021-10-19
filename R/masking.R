@@ -1,13 +1,15 @@
-#' Functions for handling spectral pixel masks
+#' Function(s) for handling pixel masks
 #'
 #' @param df Input data frame
-#' @param min_mask_width (numeric) Parameter that determines the segmentation
-#' of the spectrum into smaller pieces divided by gaps (many consecutive masked
-#' spectral pixels). This is the minimum number of consecutive pixels that have
-#' to be masked to cause a break in the spectrum.
+#' @param min_mask_width Parameter that controls the segmentation of a spectrum
+#' into ``sub-spectra'', which are then denoised independently. More precisely,
+#' `min_mask_width` is the minimum number of consecutive spectral pixels that
+#' have to be masked to cause a break in the spectrum.
 #'
-#' @export mask_intervals
+#' @return
 #'
+#' @noRd
+
 #' @importFrom dplyr %>% filter pull
 mask_intervals <- function(df, min_mask_width = 20) {
   masked <- df %>%
@@ -33,10 +35,11 @@ mask_intervals <- function(df, min_mask_width = 20) {
   }
 
   if (itr > 1) {
-    inds <- unlist(lapply(
+    inds <- lapply(
       X = 1:length(masked_intervals),
       FUN = function(X) length(masked_intervals[[X]]) > min_mask_width
-    ))
+    ) %>% unlist()
+
     if (length(masked_intervals[inds]) > 0) {
       masked_intervals <- lapply(
         X = 1:length(masked_intervals[inds]),
