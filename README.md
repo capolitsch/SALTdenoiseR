@@ -1,9 +1,16 @@
 # SALTdenoiseR package
 
+This is a highly specialized statistical package that is developed and maintained to optimally assist astronomers in the [South African Large Telescope (SALT)](https://www.salt.ac.za/) consortium in their scientific analyses of past, present, and future SALT observations.
+
+The SALTdenoiseR package can be installed from GitHub using the command below.
+
 ## Installation
 ``` r
 install.packages("remotes")
 remotes::install_github("capolitsch/SALTdenoiseR")
+
+Please use the [SALTdenoiseR issues page](https://github.com/capolitsch/SALTdenoiseR/issues) to report bugs or ask general questions. This page may also be used to make requests for new features to be added to the package.
+
 ```
 ## Key references:
 
