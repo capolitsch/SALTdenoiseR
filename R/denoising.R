@@ -39,7 +39,7 @@
 #' \item{tf_estimate}{Optimized trend filtering estimate, evaluated at
 #' `x_eval`.}
 #'
-#' @export denoise
+#' @export denoise_spectrum
 #'
 #' @references
 #' \enumerate{
@@ -58,12 +58,12 @@
 #' @importFrom tidyr drop_na tibble
 #' @importFrom dplyr %>% arrange filter select n_distinct
 #' @importFrom magrittr %$%
-denoise <- function(sci,
-                    var,
-                    bpm,
-                    min_mask_width = 20,
-                    variability_bands = FALSE,
-                    ...) {
+denoise_spectrum <- function(sci,
+                             var,
+                             bpm,
+                             min_mask_width = 20,
+                             variability_bands = FALSE,
+                             ...) {
   wavelength <- seq(
     from = sci$axDat$crval[1],
     by = sci$axDat$cdelt[1],

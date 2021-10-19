@@ -34,6 +34,7 @@ navbar:
     left:
     - home
     - reference
+    - citations
     - papers
     right: github
   components:
@@ -43,8 +44,11 @@ navbar:
     reference:
       text: Package contents
       href: reference/index.html
+    citations:
+      text: Citations
+      href: authors.html
     papers:
-      text: References
+      text: Further reading
       href: authors.html
     github:
       icon: fab fa-github fa-lg

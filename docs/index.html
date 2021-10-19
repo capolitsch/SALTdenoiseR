@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SALTdenoiseR package • Spectroscopic denoising for the SALT Observatory
- • SALTdenoiseR</title>
+• SALTdenoiseR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
@@ -28,60 +28,62 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
-    <div class="container template-home">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">SALTdenoiseR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1</span>
-      </span>
-    </div>
+<div class="container template-home">
+<header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
+<div class="container">
+<div class="navbar-header">
+<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
+<span class="sr-only">Toggle navigation</span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+</button>
+<span class="navbar-brand">
+<a class="navbar-link" href="index.html">SALTdenoiseR</a>
+<span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1</span>
+</span>
+</div>
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
+<div id="navbar" class="navbar-collapse collapse">
+<ul class="nav navbar-nav">
 <li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
+<a href="index.html">
+<span class="fas fa-home fa-lg"></span>
+
+</a>
 </li>
 <li>
-  <a href="reference/index.html">Package contents</a>
+<a href="reference/index.html">Package contents</a>
 </li>
 <li>
-  <a href="authors.html">References</a>
+<a href="authors.html">References</a>
 </li>
-      </ul>
+</ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/capolitsch/SALTdenoiseR">
-    <span class="fab fa-github fa-lg"></span>
-     
-  </a>
+<a href="https://github.com/capolitsch/SALTdenoiseR">
+<span class="fab fa-github fa-lg"></span>
+
+</a>
 </li>
-      </ul>
+</ul>
 </div>
 <!--/.nav-collapse -->
-  </div>
+</div>
 <!--/.container -->
 </div>
 <!--/.navbar -->
 
-      
 
-      </header><div class="row">
-  <div class="contents col-md-9">
+
+</header><div class="row">
+<div class="contents col-md-9">
 <div id="saltdenoiser-package-" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#saltdenoiser-package-" class="anchor"></a><span style="font-weight:400">SALT</span>denoise<span style="font-family:Courier; font-size:1.3em;">R</span> package <img src="reference/figures/logo-2.png" align="right" width="140px">
+<a href="#saltdenoiser-package-" class="anchor"></a><span style="font-weight:400">SALT</span>denoise<span style="font-family:Courier; font-size:1.3em;">R</span> package
 </h1></div>
+<p>This is a highly specialized statistical package that is developed and maintained to optimally assist astronomers in the <a href="https://www.salt.ac.za/">South African Large Telescope (SALT)</a> consortium in their scientific analyses of past, present, and future SALT observations.</p>
+<p>The <code>SALTdenoiseR</code> package can be installed from GitHub using the command below.</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -90,40 +92,41 @@
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"capolitsch/SALTdenoiseR"</span><span class="op">)</span></code></pre></div>
 <style>
 .div-wrapper {
-    position: relative;
-    height: 480px;
-    width: 500px;
+position: relative;
+height: 600px;
+width: 550px;
 }
 
 .div-wrapper img {
-    position: absolute;
-    left: 0;
-    bottom: 0;
+position: absolute;
+left: 0;
+bottom: 0;
 }
 </style>
 <center>
 <div class="div-wrapper">
-<img src="salt.jpg" width="500px">
+<a href="https://www.salt.ac.za/"><img src="salt.jpg" width="550px"></a>
 </div>
-<div style="width: 480px;">
-The South African Large Telescope (SALT) at the South African Astronomical Observatory field near the small town of Sutherland.
+<div style="width: 550px;">
+The South African Large Telescope (SALT) is located in the South African Astronomical Observatory field near the small town of Sutherland, South Africa.
 </div>
 </center>
 </div>
 </div>
-  </div>
+</div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <div class="links">
+<div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+<center>
+  <a href="https://www.salt.ac.za/"><img src="reference/figures/logo-3.png" width="150px"></a><br />
+</center>
+<br />
+
+<div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
 <li>Browse source code at <br><a href="https://github.com/capolitsch/SALTdenoiseR/">https://​github.com/​capolitsch/​SALTdenoiseR/​</a>
 </li>
 <li>Report a bug at <br><a href="https://github.com/capolitsch/SALTdenoiseR/issues">https://​github.com/​capolitsch/​SALTdenoiseR/​issues</a>
-</li>
-<li>Download the trendfiltering R package at <br><a href="https://capolitsch.github.io/trendfiltering">https://​capolitsch.github.io/​trendfiltering</a>
-</li>
-<li>See my other work at <br><a href="https://collinpolitsch.com/">https://​collinpolitsch.com/​</a>
 </li>
 </ul>
 </div>
@@ -133,12 +136,6 @@ The South African Large Telescope (SALT) at the South African Astronomical Obser
 <li><a href="https://opensource.org/licenses/mit-license.php">MIT</a></li>
 </ul>
 </div>
-<div class="citation">
-<h2>Citation</h2>
-<ul class="list-unstyled">
-<li><a href="authors.html">Citing SALTdenoiseR</a></li>
-</ul>
-</div>
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
@@ -146,24 +143,27 @@ The South African Large Telescope (SALT) at the South African Astronomical Obser
 <a href="https://collinpolitsch.com/">Collin A. Politsch</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-3727-9167" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
+<br />
 
-  </div>
+<a width = "100%" height = "500px" class="twitter-timeline" href="https://twitter.com/SALT_Astro?ref_src=twsrc%5Etfw">Tweets by SALT_Astro</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
 </div>
 
 
-      <footer><div class="copyright">
-  <p>Developed by <a href="https://collinpolitsch.com/">Collin A. Politsch</a>.</p>
+
+<footer><div class="copyright">
+<p>Developed by <a href="https://collinpolitsch.com/">Collin A. Politsch</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
-      </footer>
+</footer>
 </div>
 
-  
 
 
-  </body>
+
+</body>
 </html>
