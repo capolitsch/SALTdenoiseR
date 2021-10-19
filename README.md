@@ -8,10 +8,11 @@ The SALTdenoiseR package can be installed from GitHub using the command below.
 ``` r
 install.packages("remotes")
 remotes::install_github("capolitsch/SALTdenoiseR")
+```
 
 Please use the [SALTdenoiseR issues page](https://github.com/capolitsch/SALTdenoiseR/issues) to report bugs or ask general questions. This page may also be used to make requests for new features to be added to the package.
 
-```
+
 ## Key references:
 
 1. Politsch et al. (2020a). Trend Filtering – I. A modern statistical tool for time-domain astronomy and Astronomical Spectroscopy. 
