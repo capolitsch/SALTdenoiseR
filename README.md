@@ -1,4 +1,4 @@
-# SALTdenoise<tt>R</tt> package
+# SALTdenoiseR package
 
 ## Installation
 ``` r
