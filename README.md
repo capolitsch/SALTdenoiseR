@@ -1,4 +1,4 @@
-# SALTdenoiseR package
+# SALTdenoiseR package <img src="man/figures/logo.png" align="right" width="140px"/>
 
 This is a highly specialized statistical package that is developed and maintained to optimally assist astronomers in the [South African Large Telescope (SALT)](https://www.salt.ac.za/) consortium in their scientific analyses of past, present, and future SALT observations.
 
