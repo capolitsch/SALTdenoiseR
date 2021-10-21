@@ -1,14 +1,19 @@
 #' Denoise a SALT Observatory spectrum via quadratic trend filtering and compute
 #' uncertainties via a bootstrap
 #'
-#' @param sci spectroscopic measurements.
-#' @param var measurement variances.
-#' @param bpm pixel masks.
-#' @param min_mask_width Parameter that controls the segmentation of a spectrum
+#' \loadmathjax
+#'
+#' @param stokes Spectropolarimetric measurements, passed as an
+#' \mjseqn{n\times 3} matrix, with the columns corresponding to the I, Q, U
+#' Stokes parameters, respectively.
+#' @param var Measurement variances for the `stokes` measurements, also passed
+#' as an \mjseqn{n\times 3} matrix.
+#' @param pixel_masks bad pixel masks.
+#' @param spectrum_break Parameter that controls the segmentation of a spectrum
 #' into ``sub-spectra'', which are then denoised independently. More precisely,
-#' `min_mask_width` is the minimum number of consecutively-masked spectral
+#' `spectrum_break` is the minimum number of consecutively-masked spectral
 #' pixels in order to trigger a break in the spectrum. Defaults to
-#' `min_mask_width = 20`.
+#' `spectrum_break = 20`.
 #' @param nx_eval Integer. If nothing is passed to `x_eval`, then it is defined
 #' as `x_eval = seq(min(x), max(x), length = nx_eval)`.
 #' @param x_eval (Optional) A grid of inputs to evaluate the optimized trend
@@ -55,7 +60,7 @@
 #' observed inputs `x`.}
 #' \item{residuals}{`residuals = y - fitted_values`}
 #'
-#' @export denoise_spectrum
+#' @export denoise_polarized_spectrum
 #'
 #' @references
 #' \enumerate{
@@ -70,71 +75,51 @@
 #'
 #' @examples
 #' data(SALT_spectrum)
+#'
+#' wavelength <- seq(
+#'   from = sci$axDat$crval[1],
+#'   by = sci$axDat$cdelt[1],
+#'   length = sci$axDat$len[1]
+#' )
+#'
+#' stokes <- as_tibble(sci$imDat) %>%
+#'   rename_with(function(.cols) c("I", "Q", "U"))
+#' weights <- as_tibble(var$imDat) %>%
+#'   select(1:3) %>%
+#'   rename_with(function(.cols) c("I_weights", "Q_weights", "U_weights"))
+#' masks <- as_tibble(bpm$imDat) %>%
+#'   rename_with(function(.cols) c("I_mask", "Q_mask", "U_mask"))
 #' @importFrom glmgen trendfilter trendfilter.control.list
-#' @importFrom tidyr drop_na tibble
-#' @importFrom dplyr %>% arrange filter select n_distinct
+#' @importFrom tidyr drop_na tibble as_tibble
+#' @importFrom dplyr %>% arrange filter select n_distinct bind_cols
 #' @importFrom magrittr %$%
-denoise_spectrum <- function(sci,
-                             var,
-                             bpm,
-                             min_mask_width = 20,
-                             compute_uncertainties = FALSE,
-                             ...) {
-  wavelength <- seq(
-    from = sci$axDat$crval[1],
-    by = sci$axDat$cdelt[1],
-    length = sci$axDat$len[1]
-  )
+denoise_polarized_spectrum <- function(wavelength, stokes, weights, masks,
+                                       spectrum_break = 20,
+                                       compute_uncertainties = FALSE,
+                                       ...) {
+  wavelength <- as_tibble_col(wavelength, column_name = "wavelength")
+  stokes <- as_tibble(stokes) %>%
+    rename_with(function(.cols) c("I", "Q", "U"))
+  weights <- as_tibble(weights) %>%
+    rename_with(function(.cols) c("I_weights", "Q_weights", "U_weights"))
+  masks <- as_tibble(masks) %>%
+    rename_with(function(.cols) c("I_mask", "Q_mask", "U_mask"))
 
-  df <- tibble(
-    wavelength = wavelength,
-    Q = sci$imDat[, , 2],
-    Q_var = var$imDat[, , 2],
-    Q_mask = bpm$imDat[, , 2],
-    U = sci$imDat[, , 3],
-    U_var = var$imDat[, , 3],
-    U_mask = bpm$imDat[, , 3],
-    I = sci$imDat[, , 1],
-    I_var = var$imDat[, , 1],
-    I_mask = bpm$imDat[, , 1]
-  )
+  df_full <- bind_cols(
+    wavelength,
+    stokes,
+    weights,
+    masks
+  ) %>%
+    arrange(wavelength)
 
-  df$mask <- df$Q_mask
-  df <- mask_intervals(df, min_mask_width)
+  df_list <- mask_intervals(df_full, c("I", "Q"), spectrum_break)
+  I_tf <- d %$% sure_trendfilter(wavelength, I, I_weights, x_eval = wavelength)
+
   n_segments <- df %>%
     pull(segment) %>%
     n_distinct()
 
-  out <- vector(mode = "list", length = n_segments)
-  for (itr in 1:n_segments) {
-    df_segment <- df %>% filter(segment == itr)
-    tf_out <- trendfilter_interval(
-      x = df_segment$wavelength,
-      y = df_segment$Q,
-      weights = 1 / df_segment$Q_var,
-      obj_tol = obj_tol,
-      max_iter = max_iter
-    )
-    out[[itr]] <- tf_out
-  }
-}
-
-#' @importFrom trendfiltering sure_trendfilter bootstrap_trendfilter
-#' @importFrom dplyr %>%
-#' @importFrom magrittr %$%
-trendfilter_interval <- function(x, y, weights,
-                                 B = 100, alpha = 0.05, bootstrap_bands = T,
-                                 max_iter = 5000, obj_tol = 1e-12, ...) {
-  SURE_tf <- sure_trendfilter(x, y, weights,
-    optimization_params = list(
-      max_iter = max_iter,
-      obj_tol = obj_tol
-    )
-  )
-  if (!bootstrap_bands) {
-    return(SURE_tf)
-  } else {
-    boot_out <- bootstrap_trendfilter(obj = SURE_tf, B = B, alpha = alpha, ...)
-    return(boot_out)
-  }
+  Q_norm
+  U_norm
 }
