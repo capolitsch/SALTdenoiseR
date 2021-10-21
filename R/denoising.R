@@ -8,11 +8,15 @@
 #' those of `stokes`.
 #' @param masks Pixel masks, in a matrix with dimensions matching those
 #' of `stokes`. Nonzero elements flag bad pixels.
-#' @param spectrum_break Parameter controlling the segmentation of a spectrum
-#' into ``sub-spectra'', which are then denoised independently. More precisely,
-#' `spectrum_break` is the minimum number of consecutively-masked spectral
-#' pixels required to trigger a break in the spectrum. Defaults to
-#' `spectrum_break = 10`.
+#' @param break_at A free parameter that controls the segmentation of a
+#' spectrum. More precisely, `break_at` is the minimum number of
+#' consecutively-masked spectral pixels that will trigger a break in the
+#' spectrum. Defaults to `break_at = 10`.
+#' @param min_pix_segment After the segmentation procedure is complete, it is
+#' advisable to examine the resulting segments to ensure that each is
+#' sufficiently long for its own denoising analysis. In particular, we discard
+#' any segments that have less than `min_pix_segment` unmasked spectral pixels.
+#' Defaults to `min_pix_segment = 10`.
 #' @param compute_uncertainties (Boolean) If `TRUE` then variability bands are
 #' computed for each of the denoised normalized Stokes spectra, via a parametric
 #' bootstrap algorithm.
@@ -47,9 +51,9 @@
 #'
 #' stokes <- as_tibble(sci$imDat) %>%
 #'   rename_with(function(.cols) c("I", "Q", "U"))
-#' weights <- as_tibble(var$imDat) %>%
+#' variances <- as_tibble(var$imDat) %>%
 #'   select(1:3) %>%
-#'   rename_with(function(.cols) c("I_weights", "Q_weights", "U_weights"))
+#'   rename_with(function(.cols) c("I_vars", "Q_vars", "U_vars"))
 #' masks <- as_tibble(bpm$imDat) %>%
 #'   rename_with(function(.cols) c("I_mask", "Q_mask", "U_mask"))
 #' @importFrom glmgen trendfilter trendfilter.control.list
@@ -57,32 +61,43 @@
 #' @importFrom dplyr %>% arrange filter select n_distinct bind_cols
 #' @importFrom magrittr %$%
 denoise_polarized_spectrum <- function(wavelength, stokes, variances, masks,
-                                       spectrum_break = 10,
+                                       break_at = 10, min_pix_segment = 10,
                                        compute_uncertainties = FALSE,
+                                       mc_cores = parallel::detectCores(),
                                        ...) {
   wavelength <- as_tibble_col(wavelength, column_name = "wavelength")
   stokes <- as_tibble(stokes) %>%
     rename_with(function(.cols) c("I", "Q", "U"))
-  weights <- as_tibble(weights) %>%
-    rename_with(function(.cols) c("I_weights", "Q_weights", "U_weights"))
+  variances <- as_tibble(variances) %>%
+    rename_with(function(.cols) c("I_vars", "Q_vars", "U_vars"))
   masks <- as_tibble(masks) %>%
     rename_with(function(.cols) c("I_mask", "Q_mask", "U_mask"))
 
   df_full <- bind_cols(
     wavelength,
     stokes,
-    weights,
+    variances,
     masks
   ) %>%
     arrange(wavelength)
 
-  df_list <- mask_intervals(df_full, c("I", "Q"), spectrum_break)
-  I_tf <- d %$% sure_trendfilter(wavelength, I, I_weights, x_eval = wavelength)
+  df_list <- break_spectrum(df_full, break_at)
 
-  n_segments <- df %>%
-    pull(segment) %>%
-    n_distinct()
+  I_sure_tf <- mclapply(
+    X = 1:length(df_list),
+    function(X) df_list[[X]] %$% sure_trendfilter(x = wavelength, y = I, weights = 1 / I_vars, x_eval = wavelength),
+    mc.cores = mc_cores
+  )
 
-  Q_norm
-  U_norm
+  Q_sure_tf <- mclapply(
+    X = 1:length(df_list),
+    function(X) df_list[[X]] %$% sure_trendfilter(x = wavelength, y = Q, weights = 1 / Q_vars, x_eval = wavelength),
+    mc.cores = mc_cores
+  )
+
+  U_sure_tf <- mclapply(
+    X = 1:length(df_list),
+    function(X) df_list[[X]] %$% sure_trendfilter(x = wavelength, y = U, weights = 1 / U_vars, x_eval = wavelength),
+    mc.cores = mc_cores
+  )
 }

@@ -10,8 +10,10 @@ denoise_polarized_spectrum(
   stokes,
   variances,
   masks,
-  spectrum_break = 10,
+  break_at = 10,
+  min_pix_segment = 10,
   compute_uncertainties = FALSE,
+  mc_cores = parallel::detectCores(),
   ...
 )
 }
@@ -26,11 +28,16 @@ those of \code{stokes}.}
 \item{masks}{Pixel masks, in a matrix with dimensions matching those
 of \code{stokes}. Nonzero elements flag bad pixels.}
 
-\item{spectrum_break}{Parameter controlling the segmentation of a spectrum
-into ``sub-spectra'', which are then denoised independently. More precisely,
-\code{spectrum_break} is the minimum number of consecutively-masked spectral
-pixels required to trigger a break in the spectrum. Defaults to
-`spectrum_break = 10`.}
+\item{break_at}{A free parameter that controls the segmentation of a
+spectrum. More precisely, \code{break_at} is the minimum number of
+consecutively-masked spectral pixels that will trigger a break in the
+spectrum. Defaults to \code{break_at = 10}.}
+
+\item{min_pix_segment}{After the segmentation procedure is complete, it is
+advisable to examine the resulting segments to ensure that each is
+sufficiently long for its own denoising analysis. In particular, we discard
+any segments that have less than \code{min_pix_segment} unmasked spectral pixels.
+Defaults to \code{min_pix_segment = 10}.}
 
 \item{compute_uncertainties}{(Boolean) If \code{TRUE} then variability bands are
 computed for each of the denoised normalized Stokes spectra, via a parametric
@@ -60,9 +67,9 @@ wavelength <- seq(
 
 stokes <- as_tibble(sci$imDat) \%>\%
   rename_with(function(.cols) c("I", "Q", "U"))
-weights <- as_tibble(var$imDat) \%>\%
+variances <- as_tibble(var$imDat) \%>\%
   select(1:3) \%>\%
-  rename_with(function(.cols) c("I_weights", "Q_weights", "U_weights"))
+  rename_with(function(.cols) c("I_vars", "Q_vars", "U_vars"))
 masks <- as_tibble(bpm$imDat) \%>\%
   rename_with(function(.cols) c("I_mask", "Q_mask", "U_mask"))
 }
