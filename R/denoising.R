@@ -1,14 +1,13 @@
 #' Denoise a SALT Observatory spectrum via quadratic trend filtering and compute
 #' uncertainties via a bootstrap
 #'
-#' \loadmathjax
-#'
-#' @param stokes Spectropolarimetric measurements, passed as an
-#' \mjseqn{n\times 3} matrix, with the columns corresponding to the I, Q, U
+#' @param stokes Spectropolarimetric measurements in a Stokes parametrization,
+#' passed as a 3-column matrix, with the columns corresponding to the I, Q, U
 #' Stokes parameters, respectively.
-#' @param var Measurement variances for the `stokes` measurements, also passed
-#' as an \mjseqn{n\times 3} matrix.
-#' @param pixel_masks bad pixel masks.
+#' @param var Measurement variances, in a matrix with dimensions matching those
+#' of `stokes`.
+#' @param pixel_masks Pixel masks, in a matrix with dimensions matching those
+#' of `stokes`.
 #' @param spectrum_break Parameter that controls the segmentation of a spectrum
 #' into ``sub-spectra'', which are then denoised independently. More precisely,
 #' `spectrum_break` is the minimum number of consecutively-masked spectral

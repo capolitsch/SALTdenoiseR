@@ -16,8 +16,8 @@ denoise_polarized_spectrum(
 )
 }
 \arguments{
-\item{stokes}{Spectropolarimetric measurements, passed as an
-\mjseqn{n\times 3} matrix, with the columns corresponding to the I, Q, U
+\item{stokes}{Spectropolarimetric measurements in a Stokes parametrization,
+passed as a 3-column matrix, with the columns corresponding to the I, Q, U
 Stokes parameters, respectively.}
 
 \item{spectrum_break}{Parameter that controls the segmentation of a spectrum
@@ -30,10 +30,11 @@ pixels in order to trigger a break in the spectrum. Defaults to
 computed via a parametric bootstrap algorithm based on the uncertainties
 in the spectral pixel measurements.}
 
-\item{var}{Measurement variances for the \code{stokes} measurements, also passed
-as an \mjseqn{n\times 3} matrix.}
+\item{var}{Measurement variances, in a matrix with dimensions matching those
+of \code{stokes}.}
 
-\item{pixel_masks}{bad pixel masks.}
+\item{pixel_masks}{Pixel masks, in a matrix with dimensions matching those
+of \code{stokes}.}
 
 \item{nx_eval}{Integer. If nothing is passed to \code{x_eval}, then it is defined
 as \code{x_eval = seq(min(x), max(x), length = nx_eval)}.}
@@ -83,7 +84,8 @@ observed inputs \code{x}.}
 \item{residuals}{\code{residuals = y - fitted_values}}
 }
 \description{
-\loadmathjax
+Denoise a SALT Observatory spectrum via quadratic trend filtering and compute
+uncertainties via a bootstrap
 }
 \examples{
 data(SALT_spectrum)
