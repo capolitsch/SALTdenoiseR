@@ -8,9 +8,9 @@ uncertainties via a bootstrap}
 denoise_polarized_spectrum(
   wavelength,
   stokes,
-  weights,
+  variances,
   masks,
-  spectrum_break = 20,
+  spectrum_break = 10,
   compute_uncertainties = FALSE,
   ...
 )
@@ -20,68 +20,30 @@ denoise_polarized_spectrum(
 passed as a 3-column matrix, with the columns corresponding to the I, Q, U
 Stokes parameters, respectively.}
 
-\item{spectrum_break}{Parameter that controls the segmentation of a spectrum
+\item{variances}{Measurement variances, in a matrix with dimensions matching
+those of \code{stokes}.}
+
+\item{masks}{Pixel masks, in a matrix with dimensions matching those
+of \code{stokes}. Nonzero elements flag bad pixels.}
+
+\item{spectrum_break}{Parameter controlling the segmentation of a spectrum
 into ``sub-spectra'', which are then denoised independently. More precisely,
 \code{spectrum_break} is the minimum number of consecutively-masked spectral
-pixels in order to trigger a break in the spectrum. Defaults to
-`spectrum_break = 20`.}
+pixels required to trigger a break in the spectrum. Defaults to
+`spectrum_break = 10`.}
 
 \item{compute_uncertainties}{(Boolean) If \code{TRUE} then variability bands are
-computed via a parametric bootstrap algorithm based on the uncertainties
-in the spectral pixel measurements.}
+computed for each of the denoised normalized Stokes spectra, via a parametric
+bootstrap algorithm.}
 
-\item{var}{Measurement variances, in a matrix with dimensions matching those
-of \code{stokes}.}
-
-\item{pixel_masks}{Pixel masks, in a matrix with dimensions matching those
-of \code{stokes}.}
-
-\item{nx_eval}{Integer. If nothing is passed to \code{x_eval}, then it is defined
-as \code{x_eval = seq(min(x), max(x), length = nx_eval)}.}
-
-\item{x_eval}{(Optional) A grid of inputs to evaluate the optimized trend
-filtering estimate on. May be ignored, in which case the grid is determined
-by \code{nx_eval}.}
-
-\item{B}{(Integer) The number of bootstrap samples that are drawn in order to
-estimate the trend filtering variability bands. Larger is better, but is more
-computationally expensive. My trend filtering bootstrap implementation is set
-up for parallel computing for speedups when multiple cores are available.
-\code{B = 100} typically suffices for a most scenarios, but it's good to crank it
-up a bit for a plot that's going to be published, so you get nice smooth
-bands.}
+\item{...}{Additional named arguments to be passed to
+\code{\link[trendfiltering:sure_trendfilter]{trendfiltering::sure_trendfilter()}} or
+\code{\link[trendfiltering:bootstrap_trendfilter]{trendfiltering::bootstrap_trendfilter()}}.}
 }
 \value{
-An object of class \code{\link[=denoise_spectrum]{'SALT_spec'}}. This is a
-list with the following elements:
-\item{x_eval}{Input grid used to evaluate the optimized trend filtering
-estimate on.}
-\item{tf_estimate}{Optimized trend filtering estimate, evaluated at
-\code{x_eval}.}
-\item{validation_method}{"SURE"}
-\item{lambdas}{Vector of hyperparameter values evaluated in the grid search
-(always returned in descending order).}
-\item{edfs}{Vector of effective degrees of freedom for all trend filtering
-estimators fit during validation.}
-\item{generalization_errors}{Vector of SURE generalization error estimates,
-corresponding to the descending-ordered \code{lambdas} vector.}
-\item{lambda_min}{Hyperparameter value that minimizes the SURE generalization
-error curve.}
-\item{i_min}{Index of \code{lambdas} that minimizes the SURE error curve.}
-\item{edf_min}{Effective degrees of freedom of the optimized trend
-filtering estimator.}
-\item{n_iter}{The number of iterations needed for the ADMM algorithm to
-converge within the given tolerance, for each hyperparameter value. If many
-of these are exactly equal to \code{max_iter}, then their solutions have not
-converged with the tolerance specified by \code{obj_tol}. In which case, it is
-often prudent to increase \code{max_iter}.}
-\item{x}{Vector of observed inputs.}
-\item{y}{Vector of observed outputs.}
-\item{weights}{Weights for the observed outputs, defined as the reciprocal
-variance of the additive noise that contaminates the signal.}
-\item{fitted_values}{Optimized trend filtering estimate, evaluated at the
-observed inputs \code{x}.}
-\item{residuals}{\code{residuals = y - fitted_values}}
+An object of class
+\code{\link[=denoise_polarized_spectrum]{'polarized_spectrum_denoised'}}.
+This is a list with the following elements:
 }
 \description{
 Denoise a SALT Observatory spectrum via quadratic trend filtering and compute
