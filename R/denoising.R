@@ -56,6 +56,7 @@
 #'   rename_with(function(.cols) c("I_vars", "Q_vars", "U_vars"))
 #' masks <- as_tibble(bpm$imDat) %>%
 #'   rename_with(function(.cols) c("I_mask", "Q_mask", "U_mask"))
+#' @importFrom trendfiltering sure_trendfilter bootstrap_trendfilter
 #' @importFrom glmgen trendfilter trendfilter.control.list
 #' @importFrom tidyr drop_na tibble as_tibble
 #' @importFrom dplyr %>% arrange filter select n_distinct bind_cols
@@ -65,6 +66,16 @@ denoise_polarized_spectrum <- function(wavelength, stokes, variances, masks,
                                        compute_uncertainties = FALSE,
                                        mc_cores = parallel::detectCores(),
                                        ...) {
+  tf_args <- list(...)
+
+  sure_args <- tf_args[
+    which(names(tf_args) %in% names(formals(sure_trendfilter)))
+  ]
+
+  bootstrap_args <- tf_args[
+    which(names(tf_args) %in% names(formals(bootstrap_trendfilter)))
+  ]
+
   wavelength <- as_tibble_col(wavelength, column_name = "wavelength")
   stokes <- as_tibble(stokes) %>%
     rename_with(function(.cols) c("I", "Q", "U"))
@@ -81,23 +92,28 @@ denoise_polarized_spectrum <- function(wavelength, stokes, variances, masks,
   ) %>%
     arrange(wavelength)
 
-  df_list <- break_spectrum(df_full, break_at)
+  df_list <- break_spectrum(df_full, break_at, min_pix_segment)
 
-  I_sure_tf <- mclapply(
-    X = 1:length(df_list),
-    function(X) df_list[[X]] %$% sure_trendfilter(x = wavelength, y = I, weights = 1 / I_vars, x_eval = wavelength),
+  sure_tf <- mclapply(
+    1:(3 * length(df_list)),
+    parallel_sure_tf,
+    df_list = df_list,
+    sure_args = sure_args,
     mc.cores = mc_cores
   )
+}
 
-  Q_sure_tf <- mclapply(
-    X = 1:length(df_list),
-    function(X) df_list[[X]] %$% sure_trendfilter(x = wavelength, y = Q, weights = 1 / Q_vars, x_eval = wavelength),
-    mc.cores = mc_cores
-  )
 
-  U_sure_tf <- mclapply(
-    X = 1:length(df_list),
-    function(X) df_list[[X]] %$% sure_trendfilter(x = wavelength, y = U, weights = 1 / U_vars, x_eval = wavelength),
-    mc.cores = mc_cores
-  )
+parallel_sure_tf <- function(X, df_list, sure_args) {
+  if (X %in% 1:length(df_list)) {
+    df_list[[X]] %$% sure_trendfilter(wavelength, I, 1 / I_vars, x_eval = wavelength)
+  }
+
+  if (X %in% (length(df_list) + 1):(2 * length(df_list))) {
+    df_list[[X - 3]] %$% sure_trendfilter(wavelength, Q, 1 / Q_vars, x_eval = wavelength)
+  }
+
+  if (X %in% (2 * length(df_list) + 1):(3 * length(df_list))) {
+    df_list[[X - 6]] %$% sure_trendfilter(wavelength, U, 1 / U_vars, x_eval = wavelength)
+  }
 }

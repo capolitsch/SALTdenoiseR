@@ -51,7 +51,7 @@ break_spectrum <- function(df_full, break_at = 10, min_pix_segment = 10) {
   breaks <- c(
     0,
     seq(2, length(segments), 2)[
-      which(segments[seq(2, length(segments), 2)] >= spectrum_break)
+      which(segments[seq(2, length(segments), 2)] >= break_at)
     ],
     length(changepoints)
   )
