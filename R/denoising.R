@@ -61,6 +61,7 @@
 #' @importFrom tidyr drop_na tibble as_tibble
 #' @importFrom dplyr %>% arrange filter select n_distinct bind_cols
 #' @importFrom magrittr %$%
+#' @importFrom parallel mclapply detectCores
 denoise_polarized_spectrum <- function(wavelength, stokes, variances, masks,
                                        break_at = 10, min_pix_segment = 10,
                                        compute_uncertainties = FALSE,
@@ -106,14 +107,40 @@ denoise_polarized_spectrum <- function(wavelength, stokes, variances, masks,
 
 parallel_sure_tf <- function(X, df_list, sure_args) {
   if (X %in% 1:length(df_list)) {
-    df_list[[X]] %$% sure_trendfilter(wavelength, I, 1 / I_vars, x_eval = wavelength)
+    args <- c(
+      list(
+        x = df_list[[X]]$wavelength,
+        y = df_list[[X]]$I,
+        weights = 1 / df_list[[X]]$I_vars,
+        x_eval = df_list[[X]]$wavelength
+      ),
+      sure_args
+    )
   }
 
   if (X %in% (length(df_list) + 1):(2 * length(df_list))) {
-    df_list[[X - 3]] %$% sure_trendfilter(wavelength, Q, 1 / Q_vars, x_eval = wavelength)
+    args <- c(
+      list(
+        x = df_list[[X - 3]]$wavelength,
+        y = df_list[[X - 3]]$Q,
+        weights = 1 / df_list[[X - 3]]$Q_vars,
+        x_eval = df_list[[X - 3]]$wavelength
+      ),
+      sure_args
+    )
   }
 
   if (X %in% (2 * length(df_list) + 1):(3 * length(df_list))) {
-    df_list[[X - 6]] %$% sure_trendfilter(wavelength, U, 1 / U_vars, x_eval = wavelength)
+    args <- c(
+      list(
+        x = df_list[[X - 6]]$wavelength,
+        y = df_list[[X - 6]]$U,
+        weights = 1 / df_list[[X - 6]]$U_vars,
+        x_eval = df_list[[X - 6]]$wavelength
+      ),
+      sure_args
+    )
   }
+
+  do.call(sure_trendfilter, args)
 }
