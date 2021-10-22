@@ -58,7 +58,6 @@
 #' masks <- as_tibble(bpm$imDat)
 #'
 #' spec_denoised <- denoise_polarized_spectrum(wavelength, stokes, variances, masks)
-
 #' @importFrom trendfiltering sure_trendfilter bootstrap_trendfilter
 #' @importFrom glmgen trendfilter trendfilter.control.list
 #' @importFrom tidyr drop_na tibble as_tibble
@@ -75,6 +74,10 @@ denoise_polarized_spectrum <- function(wavelength,
                                        mc_cores = parallel::detectCores(),
                                        ...) {
   tf_args <- list(...)
+
+  if (!(bootstrap_algorithm %in% names(tf_args))) {
+    tf_args$bootstrap_algorithm <- "parametric"
+  }
 
   sure_args <- tf_args[
     which(names(tf_args) %in% names(formals(sure_trendfilter)))
@@ -120,6 +123,7 @@ denoise_polarized_spectrum <- function(wavelength,
 }
 
 
+#' @noRd
 parallel_sure_tf <- function(X, df_list, sure_args) {
   if (X %in% 1:length(df_list)) {
     args <- c(
@@ -160,6 +164,8 @@ parallel_sure_tf <- function(X, df_list, sure_args) {
   do.call(sure_trendfilter, args)
 }
 
+
+#' @noRd
 parallel_bootstrap_tf <- function(X, sure_tf, bootstrap_args) {
   args <- c(list(obj = sure_tf[[X]]), bootstrap_args)
   do.call(bootstrap_trendfilter, args)

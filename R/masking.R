@@ -63,7 +63,6 @@
 #'   arrange(wavelength)
 #'
 #' df_list <- break_spectrum(df_full)
-
 #' @importFrom dplyr %>% filter pull
 #' @importFrom matrixStats rowMaxs
 #' @importFrom dplyr %>% arrange filter select
