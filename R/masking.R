@@ -16,6 +16,7 @@
 #' |       4203|  0|  0|  0|      0|      0|      0|      1|      1|      1|
 #' |       4204|  0|  0|  0|      0|      0|      0|      0|      0|      0|
 #'
+#'
 #' @param break_at A free parameter that controls the segmentation of a
 #' spectrum. More precisely, `break_at` is the minimum number of
 #' consecutively-masked spectral pixels that will trigger a break in the

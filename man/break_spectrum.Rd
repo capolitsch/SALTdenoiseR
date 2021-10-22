@@ -75,8 +75,8 @@ df_full <- bind_cols(
   stokes,
   variances,
   masks
-  ) \%>\%
-    arrange(wavelength)
+) \%>\%
+  arrange(wavelength)
 
 df_list <- break_spectrum(df_full)
 }
