@@ -1,4 +1,4 @@
-# <span style="font-weight:400">SALT</span>denoise<span style="font-family:Courier; font-size:1.3em;">R</span> package <a href="https://www.salt.ac.za/"><img src="reference/figures/logo-2.png" align="right" width="140px"/></a>
+# <span style="font-weight:400">SALT</span>denoise<span style="font-family:Courier; font-size:1.3em;">R</span> package <a href="https://www.salt.ac.za/"><img src="reference/figures/logo.png" align="right" width="140px"/></a>
 
 This is a highly specialized statistical package that is developed and 
 maintained to optimally assist astronomers in the 

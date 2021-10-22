@@ -8,20 +8,26 @@ pixels are present}
 break_spectrum(df_full, break_at = 10, min_pix_segment = 10)
 }
 \arguments{
-\item{df_full}{A tibble with minimal column set:
-\code{c("wavelength","I","Q","U","I_mask","Q_mask","U_mask")}, and probably also
-measurement variances for each of the Stokes parameters.}
+\item{df_full}{A tibble with the schema matching the example below. The
+Stokes parameter measurements and variances are small doubles that have
+been rounded to 0 in this case. Mask columns are 0 for no mask and 1 for
+masked pixels.\tabular{rrrrrrrrrr}{
+   wavelength \tab I \tab Q \tab U \tab I_vars \tab Q_vars \tab U_vars \tab I_mask \tab Q_mask \tab U_mask \cr
+   4202 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   4203 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   4204 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \cr
+}}
 
 \item{break_at}{A free parameter that controls the segmentation of a
 spectrum. More precisely, \code{break_at} is the minimum number of
 consecutively-masked spectral pixels that will trigger a break in the
 spectrum. Defaults to \code{break_at = 10}.}
 
-\item{min_pix_segment}{After the segmentation procedure is complete, it is
-advisable to examine the resulting segments to ensure that each is
-sufficiently long for its own denoising analysis. In particular, we discard
-any segments that have less than \code{min_pix_segment} unmasked spectral pixels.
-Defaults to \code{min_pix_segment = 10}.}
+\item{min_pix_segment}{After the segmentation procedure is complete, the
+resulting segments are examined to ensure that each is sufficiently long for
+an independent denoising analysis. In particular, any segment that has less
+than \code{min_pix_segment} unmasked spectral pixels is discarded. Defaults to
+\code{min_pix_segment = 10}.}
 }
 \value{
 A list of tibbles corresponding to the segmented spectrum, as defined
@@ -32,5 +38,45 @@ mask columns.
 }
 \description{
 Break a spectrum into segments when chunks of many consecutively-masked
-pixels are present
+pixels are present. The set of pixel masks is defined as the superset of
+the spectral pixels that are masked for the I, Q, U Stokes parameters.
+}
+\examples{
+# Note that, although `break_spectrum()` is an exported function, the
+# segmentation procedure is already done internally within
+# `denoise_polarized_spectrum()`, so `break_spectrum()` need not be called
+# directly in most cases.
+
+library(dplyr)
+library(tibble)
+
+data(polarized_spectrum_Wolf_Rayet)
+
+wavelength <- seq(
+  from = sci$axDat$crval[1],
+  by = sci$axDat$cdelt[1],
+  length = sci$axDat$len[1]
+)
+
+wavelength <- as_tibble_col(wavelength, column_name = "wavelength")
+
+stokes <- as_tibble(sci$imDat) \%>\%
+  rename_with(function(.cols) c("I", "Q", "U"))
+
+variances <- as_tibble(var$imDat) \%>\%
+  select(1:3) \%>\%
+  rename_with(function(.cols) c("I_vars", "Q_vars", "U_vars"))
+
+masks <- as_tibble(bpm$imDat) \%>\%
+  rename_with(function(.cols) c("I_mask", "Q_mask", "U_mask"))
+
+df_full <- bind_cols(
+  wavelength,
+  stokes,
+  variances,
+  masks
+  ) \%>\%
+    arrange(wavelength)
+
+df_list <- break_spectrum(df_full)
 }

@@ -1,23 +1,27 @@
-#' Denoise a SALT Observatory spectrum via quadratic trend filtering and compute
+#' Denoise a polarized spectrum via quadratic trend filtering and compute
 #' uncertainties via a bootstrap
 #'
-#' @param stokes Spectropolarimetric measurements in a Stokes parametrization,
-#' passed as a 3-column matrix, with the columns corresponding to the I, Q, U
-#' Stokes parameters, respectively.
-#' @param variances Measurement variances, in a matrix with dimensions matching
-#' those of `stokes`.
-#' @param masks Pixel masks, in a matrix with dimensions matching those
-#' of `stokes`. Nonzero elements flag bad pixels.
+#' Denoise a polarized spectrum via quadratic trend filtering and compute
+#' uncertainties via a bootstrap.
+#'
+#' @param wavelength Vector of wavelength measurements.
+#' @param stokes Polarized spectrum measurements, passed as a 3-column tibble,
+#' data frame, or matrix, with the columns corresponding to the Stokes
+#' parameters I, Q, and U, respectively.
+#' @param variances Measurement variances, in a tibble, data frame, or matrix
+#' with dimensions matching those of `stokes`.
+#' @param masks Pixel masks, in a tibble, data frame, or matrix
+#' with dimensions matching those of `stokes`. Nonzero elements flag bad pixels.
 #' @param break_at A free parameter that controls the segmentation of a
 #' spectrum. More precisely, `break_at` is the minimum number of
 #' consecutively-masked spectral pixels that will trigger a break in the
 #' spectrum. Defaults to `break_at = 10`.
-#' @param min_pix_segment After the segmentation procedure is complete, it is
-#' advisable to examine the resulting segments to ensure that each is
-#' sufficiently long for its own denoising analysis. In particular, we discard
-#' any segments that have less than `min_pix_segment` unmasked spectral pixels.
-#' Defaults to `min_pix_segment = 10`.
-#' @param compute_uncertainties (Boolean) If `TRUE` then variability bands are
+#' @param min_pix_segment After the segmentation procedure is complete, the
+#' resulting segments are examined to ensure that each is sufficiently long for
+#' an independent denoising analysis. In particular, any segment that has less
+#' than `min_pix_segment` unmasked spectral pixels is discarded. Defaults to
+#' `min_pix_segment = 10`.
+#' @param compute_uncertainties (Boolean) If `TRUE`, then variability bands are
 #' computed for each of the denoised normalized Stokes spectra, via a parametric
 #' bootstrap algorithm.
 #' @param ... Additional named arguments to be passed to
@@ -41,7 +45,7 @@
 #' smoothness}. \emph{MNRAS}, 492(3), p. 4019-4032.}}
 #'
 #' @examples
-#' data(SALT_spectrum)
+#' data(polarized_spectrum_Wolf_Rayet)
 #'
 #' wavelength <- seq(
 #'   from = sci$axDat$crval[1],
@@ -51,11 +55,15 @@
 #'
 #' stokes <- as_tibble(sci$imDat) %>%
 #'   rename_with(function(.cols) c("I", "Q", "U"))
+#'
 #' variances <- as_tibble(var$imDat) %>%
 #'   select(1:3) %>%
 #'   rename_with(function(.cols) c("I_vars", "Q_vars", "U_vars"))
+#'
 #' masks <- as_tibble(bpm$imDat) %>%
 #'   rename_with(function(.cols) c("I_mask", "Q_mask", "U_mask"))
+#'
+#' spec_denoised <- denoise_polarized_spectrum(wavelength, stokes, variances, masks)
 #' @importFrom trendfiltering sure_trendfilter bootstrap_trendfilter
 #' @importFrom glmgen trendfilter trendfilter.control.list
 #' @importFrom tidyr drop_na tibble as_tibble

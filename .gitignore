@@ -1,6 +1,6 @@
 # History files
-.Rhistory
-.Rapp.history
+.Rhistory*
+.Rapp.history*
 
 # Package-specific R profile
 .Rprofile
