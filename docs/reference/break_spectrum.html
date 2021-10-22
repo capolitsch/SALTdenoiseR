@@ -198,30 +198,31 @@ mask columns.</p>
   from <span class='op'>=</span> <span class='va'>sci</span><span class='op'>$</span><span class='va'>axDat</span><span class='op'>$</span><span class='va'>crval</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>,
   by <span class='op'>=</span> <span class='va'>sci</span><span class='op'>$</span><span class='va'>axDat</span><span class='op'>$</span><span class='va'>cdelt</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>,
   length <span class='op'>=</span> <span class='va'>sci</span><span class='op'>$</span><span class='va'>axDat</span><span class='op'>$</span><span class='va'>len</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>
-<span class='op'>)</span>
+<span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble_col</a></span><span class='op'>(</span>column_name <span class='op'>=</span> <span class='st'>"wavelength"</span><span class='op'>)</span>
 
-<span class='va'>wavelength</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble_col</a></span><span class='op'>(</span><span class='va'>wavelength</span>, column_name <span class='op'>=</span> <span class='st'>"wavelength"</span><span class='op'>)</span>
-
-<span class='va'>stokes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>sci</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename_with</a></span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>.cols</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"I"</span>, <span class='st'>"Q"</span>, <span class='st'>"U"</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='va'>variances</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>var</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename_with</a></span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>.cols</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"I_vars"</span>, <span class='st'>"Q_vars"</span>, <span class='st'>"U_vars"</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='va'>masks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>bpm</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename_with</a></span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>.cols</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"I_mask"</span>, <span class='st'>"Q_mask"</span>, <span class='st'>"U_mask"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>stokes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>sci</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
+<span class='va'>variances</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>var</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
+<span class='va'>masks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>bpm</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
 
 <span class='va'>df_full</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_cols</a></span><span class='op'>(</span>
   <span class='va'>wavelength</span>,
   <span class='va'>stokes</span>,
   <span class='va'>variances</span>,
   <span class='va'>masks</span>
-  <span class='op'>)</span> <span class='op'>%&gt;%</span>
-    <span class='fu'><a href='https://dplyr.tidyverse.org/reference/arrange.html'>arrange</a></span><span class='op'>(</span><span class='va'>wavelength</span><span class='op'>)</span>
-
+<span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/arrange.html'>arrange</a></span><span class='op'>(</span><span class='va'>wavelength</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>New names:</span>
+#&gt; <span class='message'>* V1 -&gt; V1...2</span>
+#&gt; <span class='message'>* V2 -&gt; V2...3</span>
+#&gt; <span class='message'>* V3 -&gt; V3...4</span>
+#&gt; <span class='message'>* V1 -&gt; V1...5</span>
+#&gt; <span class='message'>* V2 -&gt; V2...6</span>
+#&gt; <span class='message'>* ...</span></div><div class='input'>
 <span class='va'>df_list</span> <span class='op'>&lt;-</span> <span class='fu'>break_spectrum</span><span class='op'>(</span><span class='va'>df_full</span><span class='op'>)</span>
-</div></pre>
+</div><div class='output co'>#&gt; <span class='error'>Error: Problem with `mutate()` column `mask`.</span>
+#&gt; <span class='error'><span style='color: #0000BB;'>ℹ</span> `mask = df_full %&gt;% select(ends_with("mask")) %&gt;% as.matrix() %&gt;% rowMaxs()`.</span>
+#&gt; <span class='error'><span style='color: #BB0000;'>x</span> Argument 'x' cannot be logical.</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
