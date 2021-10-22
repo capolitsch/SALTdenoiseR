@@ -109,6 +109,14 @@ denoise_polarized_spectrum <- function(wavelength,
     sure_args = sure_args,
     mc.cores = mc_cores
   )
+
+  boot_tf <- mclapply(
+    1:length(sure_tf),
+    parallel_bootstrap_tf,
+    sure_tf = sure_tf,
+    bootstrap_args = bootstrap_args,
+    mc.cores = mc_cores
+  )
 }
 
 
@@ -150,4 +158,9 @@ parallel_sure_tf <- function(X, df_list, sure_args) {
   }
 
   do.call(sure_trendfilter, args)
+}
+
+parallel_bootstrap_tf <- function(X, sure_tf, bootstrap_args) {
+  args <- c(list(obj = sure_tf[[X]]), bootstrap_args)
+  do.call(bootstrap_trendfilter, args)
 }
