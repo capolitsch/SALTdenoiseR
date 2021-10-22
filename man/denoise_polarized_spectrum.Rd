@@ -67,15 +67,9 @@ wavelength <- seq(
   length = sci$axDat$len[1]
 )
 
-stokes <- as_tibble(sci$imDat) \%>\%
-  rename_with(function(.cols) c("I", "Q", "U"))
-
-variances <- as_tibble(var$imDat) \%>\%
-  select(1:3) \%>\%
-  rename_with(function(.cols) c("I_vars", "Q_vars", "U_vars"))
-
-masks <- as_tibble(bpm$imDat) \%>\%
-  rename_with(function(.cols) c("I_mask", "Q_mask", "U_mask"))
+stokes <- as_tibble(sci$imDat)
+variances <- as_tibble(var$imDat) \%>\% select(1:3)
+masks <- as_tibble(bpm$imDat)
 
 spec_denoised <- denoise_polarized_spectrum(wavelength, stokes, variances, masks)
 }

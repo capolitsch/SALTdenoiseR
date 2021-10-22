@@ -53,25 +53,24 @@
 #'   length = sci$axDat$len[1]
 #' )
 #'
-#' stokes <- as_tibble(sci$imDat) %>%
-#'   rename_with(function(.cols) c("I", "Q", "U"))
-#'
-#' variances <- as_tibble(var$imDat) %>%
-#'   select(1:3) %>%
-#'   rename_with(function(.cols) c("I_vars", "Q_vars", "U_vars"))
-#'
-#' masks <- as_tibble(bpm$imDat) %>%
-#'   rename_with(function(.cols) c("I_mask", "Q_mask", "U_mask"))
+#' stokes <- as_tibble(sci$imDat)
+#' variances <- as_tibble(var$imDat) %>% select(1:3)
+#' masks <- as_tibble(bpm$imDat)
 #'
 #' spec_denoised <- denoise_polarized_spectrum(wavelength, stokes, variances, masks)
+
 #' @importFrom trendfiltering sure_trendfilter bootstrap_trendfilter
 #' @importFrom glmgen trendfilter trendfilter.control.list
 #' @importFrom tidyr drop_na tibble as_tibble
 #' @importFrom dplyr %>% arrange filter select n_distinct bind_cols
 #' @importFrom magrittr %$%
 #' @importFrom parallel mclapply detectCores
-denoise_polarized_spectrum <- function(wavelength, stokes, variances, masks,
-                                       break_at = 10, min_pix_segment = 10,
+denoise_polarized_spectrum <- function(wavelength,
+                                       stokes,
+                                       variances,
+                                       masks,
+                                       break_at = 10,
+                                       min_pix_segment = 10,
                                        compute_uncertainties = FALSE,
                                        mc_cores = parallel::detectCores(),
                                        ...) {

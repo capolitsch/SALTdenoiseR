@@ -56,19 +56,12 @@ wavelength <- seq(
   from = sci$axDat$crval[1],
   by = sci$axDat$cdelt[1],
   length = sci$axDat$len[1]
-)
+) \%>\%
+  as_tibble_col(column_name = "wavelength")
 
-wavelength <- as_tibble_col(wavelength, column_name = "wavelength")
-
-stokes <- as_tibble(sci$imDat) \%>\%
-  rename_with(function(.cols) c("I", "Q", "U"))
-
-variances <- as_tibble(var$imDat) \%>\%
-  select(1:3) \%>\%
-  rename_with(function(.cols) c("I_vars", "Q_vars", "U_vars"))
-
-masks <- as_tibble(bpm$imDat) \%>\%
-  rename_with(function(.cols) c("I_mask", "Q_mask", "U_mask"))
+stokes <- as_tibble(sci$imDat)
+variances <- as_tibble(var$imDat) \%>\% select(1:3)
+masks <- as_tibble(bpm$imDat)
 
 df_full <- bind_cols(
   wavelength,
