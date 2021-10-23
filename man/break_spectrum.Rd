@@ -37,17 +37,16 @@ while \code{break_spectrum()} is an exported function, it does not need to be
 called directly in most cases.
 }
 \examples{
-suppressPackageStartupMessages(library(dplyr))
-library(tibble)
-
 data(polarized_spectrum_WR_star)
+
+suppressMessages(library(dplyr))
 
 wavelength <- seq(
   from = sci$axDat$crval[1],
   by = sci$axDat$cdelt[1],
   length = sci$axDat$len[1]
 ) \%>\%
-  as_tibble_col(column_name = "wavelength")
+  tibble::as_tibble_col(column_name = "wavelength")
 
 stokes <- as_tibble(sci$imDat) \%>\%
   rename_with(function(.cols) c("I", "Q", "U"))

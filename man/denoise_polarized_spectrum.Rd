@@ -45,11 +45,16 @@ computed for each of the denoised normalized Stokes spectra, via a parametric
 bootstrap algorithm.}
 
 \item{...}{Additional named arguments to be passed to
-\code{\link[trendfiltering:sure_trendfilter]{trendfiltering::sure_trendfilter()}} or
-\code{\link[trendfiltering:bootstrap_trendfilter]{trendfiltering::bootstrap_trendfilter()}}. The
-\code{\link[trendfiltering:bootstrap_trendfilter]{trendfiltering::bootstrap_trendfilter()}} setting
-\code{bootstrap_algorithm = "parametric"} is fixed automatically and cannot be
-overridden.}
+\link[trendfiltering:sure_trendfilter]{sure_trendfilter()} or
+\link[trendfiltering:bootstrap_trendfilter]{bootstrap_trendfilter()}. The
+argument \code{bootstrap_algorithm = "parametric"} is fixed due to the
+design of SALT spectra, and we don't allow this argument to be manually
+overridden. See the
+\link[trendfiltering:bootstrap_trendfilter]{bootstrap_trendfilter()}
+documentation and
+\href{https://academic.oup.com/mnras/article/492/3/4005/5704413}{Politsch et al. (2020a)}
+for details on why this particular bootstrap algorithm is appropriate for
+SALT spectra.}
 }
 \value{
 An object of class
@@ -60,9 +65,9 @@ This is a list with the following elements:
 Denoise a polarized spectrum and estimate the uncertainties
 }
 \examples{
-suppressPackageStartupMessages(library(dplyr))
-
 data(polarized_spectrum_WR_star)
+
+suppressMessages(library(dplyr))
 
 wavelength <- seq(
   from = sci$axDat$crval[1],

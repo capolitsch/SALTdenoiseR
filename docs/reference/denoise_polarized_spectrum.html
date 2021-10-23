@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Denoise a polarized spectrum and estimate the uncertainty — denoise_polarized_spectrum" />
-<meta property="og:description" content="Denoise a polarized spectrum and estimate the uncertainty" />
+<meta property="og:title" content="Denoise a polarized spectrum and estimate the uncertainties — denoise_polarized_spectrum" />
+<meta property="og:description" content="Denoise a polarized spectrum and estimate the uncertainties" />
 <meta property="og:image" content="https://capolitsch.github.io/SALTdenoiseR/logo.png" />
 
 
@@ -89,7 +89,7 @@
         <li>
   <a href="../index.html">
     <span class="fas fa-home fa-lg"></span>
-
+     
   </a>
 </li>
 <li>
@@ -103,16 +103,16 @@
         <li>
   <a href="https://github.com/capolitsch/SALTdenoiseR">
     <span class="fab fa-github fa-lg"></span>
-
+     
   </a>
 </li>
       </ul>
-
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-
+      
 
       </header>
 
@@ -125,7 +125,7 @@
     </div>
 
     <div class="ref-description">
-    <p>Denoise a polarized spectrum and estimate the uncertainties.</p>
+    <p>Denoise a polarized spectrum and estimate the uncertainties</p>
     </div>
 
     <pre class="usage"><span class='fu'>denoise_polarized_spectrum</span><span class='op'>(</span>
@@ -187,10 +187,16 @@ bootstrap algorithm.</p></td>
     <tr>
       <th>...</th>
       <td><p>Additional named arguments to be passed to
-<code><a href='https://capolitsch.github.io/trendfiltering/reference/sure_trendfilter.html'>trendfiltering::sure_trendfilter()</a></code> or
-<code><a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>trendfiltering::bootstrap_trendfilter()</a></code>.
-<code>bootstrap_algorithm = "parametric"</code> is set automatically and cannot be
-overridden.</p></td>
+<a href='https://capolitsch.github.io/trendfiltering/reference/sure_trendfilter.html'>sure_trendfilter()</a> or
+<a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>bootstrap_trendfilter()</a>. The
+argument <code>bootstrap_algorithm = "parametric"</code> is fixed due to the
+design of SALT spectra, and we don't allow this argument to be manually
+overridden. See the
+<a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>bootstrap_trendfilter()</a>
+documentation and
+<a href='https://academic.oup.com/mnras/article/492/3/4005/5704413'>Politsch et al. (2020a)</a>
+for details on why this particular bootstrap algorithm is appropriate for
+SALT spectra.</p></td>
     </tr>
     </table>
 
@@ -201,7 +207,7 @@ overridden.</p></td>
 This is a list with the following elements:</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-
+    
 <ol>
 <li><p>Politsch et al. (2020a).
 <a href='https://academic.oup.com/mnras/article/492/3/4005/5704413'>
@@ -215,9 +221,9 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/message.html'>suppressPackageStartupMessages</a></span><span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>polarized_spectrum_WR_star</span><span class='op'>)</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>polarized_spectrum_WR_star</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/message.html'>suppressMessages</a></span><span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='va'>wavelength</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span>
   from <span class='op'>=</span> <span class='va'>sci</span><span class='op'>$</span><span class='va'>axDat</span><span class='op'>$</span><span class='va'>crval</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>,
@@ -230,7 +236,7 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
 <span class='va'>masks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>bpm</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
 
 <span class='va'>spec_denoised</span> <span class='op'>&lt;-</span> <span class='fu'>denoise_polarized_spectrum</span><span class='op'>(</span><span class='va'>wavelength</span>, <span class='va'>stokes</span>, <span class='va'>variances</span>, <span class='va'>masks</span><span class='op'>)</span>
-</div></pre>
+</div><div class='output co'>#&gt; <span class='error'>Error in as_tibble_col(wavelength, column_name = "wavelength"): could not find function "as_tibble_col"</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -252,7 +258,7 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
       </footer>
    </div>
 
-
+  
 
 
   </body>

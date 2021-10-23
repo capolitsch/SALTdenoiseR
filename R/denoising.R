@@ -21,11 +21,16 @@
 #' computed for each of the denoised normalized Stokes spectra, via a parametric
 #' bootstrap algorithm.
 #' @param ... Additional named arguments to be passed to
-#' [trendfiltering::sure_trendfilter()] or
-#' [trendfiltering::bootstrap_trendfilter()]. The
-#' [trendfiltering::bootstrap_trendfilter()] setting
-#' `bootstrap_algorithm = "parametric"` is fixed automatically and cannot be
-#' overridden.
+#' [sure_trendfilter()][trendfiltering::sure_trendfilter()] or
+#' [bootstrap_trendfilter()][trendfiltering::bootstrap_trendfilter()]. The
+#' argument `bootstrap_algorithm = "parametric"` is fixed due to the
+#' design of SALT spectra, and we don't allow this argument to be manually
+#' overridden. See the
+#' [bootstrap_trendfilter()][trendfiltering::bootstrap_trendfilter()]
+#' documentation and
+#' [Politsch et al. (2020a)](https://academic.oup.com/mnras/article/492/3/4005/5704413)
+#' for details on why this particular bootstrap algorithm is appropriate for
+#' SALT spectra.
 #' @return An object of class
 #' [`'polarized_spectrum_denoised'`][denoise_polarized_spectrum()].
 #' This is a list with the following elements:
@@ -44,9 +49,9 @@
 #' smoothness}. \emph{MNRAS}, 492(3), p. 4019-4032.}}
 #'
 #' @examples
-#' suppressPackageStartupMessages(library(dplyr))
-#'
 #' data(polarized_spectrum_WR_star)
+#'
+#' suppressMessages(library(dplyr))
 #'
 #' wavelength <- seq(
 #'   from = sci$axDat$crval[1],
@@ -62,6 +67,7 @@
 #' @importFrom trendfiltering sure_trendfilter bootstrap_trendfilter
 #' @importFrom glmgen trendfilter trendfilter.control.list
 #' @importFrom tidyr drop_na tibble as_tibble
+#' @importFrom tibble as_tibble_col
 #' @importFrom dplyr %>% arrange filter select n_distinct bind_cols
 #' @importFrom magrittr %$%
 #' @importFrom parallel mclapply detectCores
