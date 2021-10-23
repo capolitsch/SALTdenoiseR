@@ -57,12 +57,11 @@ for details on why this particular bootstrap algorithm is appropriate for
 SALT spectra.}
 }
 \value{
-An object of class
-\code{\link[=denoise_polarized_spectrum]{'polarized_spectrum_denoised'}}.
-This is a list with the following elements:
+An object of class \code{'polarized_spectrum_denoised'}. This is a list
+with the following elements:
 }
 \description{
-Denoise a polarized spectrum and estimate the uncertainties
+Denoise a polarized spectrum and estimate the uncertainties.
 }
 \examples{
 data(polarized_spectrum_WR_star)

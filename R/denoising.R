@@ -1,5 +1,7 @@
 #' Denoise a polarized spectrum and estimate the uncertainties
 #'
+#' Denoise a polarized spectrum and estimate the uncertainties.
+#'
 #' @param wavelength Vector of wavelength measurements.
 #' @param stokes Polarized spectrum measurements, passed as a 3-column tibble,
 #' data frame, or matrix, with the columns corresponding to the Stokes
@@ -28,12 +30,12 @@
 #' overridden. See the
 #' [bootstrap_trendfilter()][trendfiltering::bootstrap_trendfilter()]
 #' documentation and
-#' [Politsch et al. (2020a)](https://academic.oup.com/mnras/article/492/3/4005/5704413)
+#' [Politsch et al. (2020a)](
+#' https://academic.oup.com/mnras/article/492/3/4005/5704413)
 #' for details on why this particular bootstrap algorithm is appropriate for
 #' SALT spectra.
-#' @return An object of class
-#' [`'polarized_spectrum_denoised'`][denoise_polarized_spectrum()].
-#' This is a list with the following elements:
+#' @return An object of class `'polarized_spectrum_denoised'`. This is a list
+#' with the following elements:
 #'
 #' @export denoise_polarized_spectrum
 #'
