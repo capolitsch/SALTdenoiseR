@@ -1,5 +1,4 @@
-#' Denoise a polarized spectrum via quadratic trend filtering and compute
-#' uncertainties via a bootstrap
+#' Denoise a polarized spectrum and estimate the uncertainties
 #'
 #' @param wavelength Vector of wavelength measurements.
 #' @param stokes Polarized spectrum measurements, passed as a 3-column tibble,
@@ -23,8 +22,9 @@
 #' bootstrap algorithm.
 #' @param ... Additional named arguments to be passed to
 #' [trendfiltering::sure_trendfilter()] or
-#' [trendfiltering::bootstrap_trendfilter()].
-#' `bootstrap_algorithm = "parametric"` is set automatically and cannot be
+#' [trendfiltering::bootstrap_trendfilter()]. The
+#' [trendfiltering::bootstrap_trendfilter()] setting
+#' `bootstrap_algorithm = "parametric"` is fixed automatically and cannot be
 #' overridden.
 #' @return An object of class
 #' [`'polarized_spectrum_denoised'`][denoise_polarized_spectrum()].
@@ -44,7 +44,7 @@
 #' smoothness}. \emph{MNRAS}, 492(3), p. 4019-4032.}}
 #'
 #' @examples
-#' library(dplyr, quietly = TRUE)
+#' suppressPackageStartupMessages(library(dplyr))
 #'
 #' data(polarized_spectrum_WR_star)
 #'

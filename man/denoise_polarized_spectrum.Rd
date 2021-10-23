@@ -2,8 +2,7 @@
 % Please edit documentation in R/denoising.R
 \name{denoise_polarized_spectrum}
 \alias{denoise_polarized_spectrum}
-\title{Denoise a polarized spectrum via quadratic trend filtering and compute
-uncertainties via a bootstrap}
+\title{Denoise a polarized spectrum and estimate the uncertainties}
 \usage{
 denoise_polarized_spectrum(
   wavelength,
@@ -47,8 +46,9 @@ bootstrap algorithm.}
 
 \item{...}{Additional named arguments to be passed to
 \code{\link[trendfiltering:sure_trendfilter]{trendfiltering::sure_trendfilter()}} or
-\code{\link[trendfiltering:bootstrap_trendfilter]{trendfiltering::bootstrap_trendfilter()}}.
-\code{bootstrap_algorithm = "parametric"} is set automatically and cannot be
+\code{\link[trendfiltering:bootstrap_trendfilter]{trendfiltering::bootstrap_trendfilter()}}. The
+\code{\link[trendfiltering:bootstrap_trendfilter]{trendfiltering::bootstrap_trendfilter()}} setting
+\code{bootstrap_algorithm = "parametric"} is fixed automatically and cannot be
 overridden.}
 }
 \value{
@@ -57,11 +57,10 @@ An object of class
 This is a list with the following elements:
 }
 \description{
-Denoise a polarized spectrum via quadratic trend filtering and compute
-uncertainties via a bootstrap
+Denoise a polarized spectrum and estimate the uncertainties
 }
 \examples{
-library(dplyr, quietly = TRUE)
+suppressPackageStartupMessages(library(dplyr))
 
 data(polarized_spectrum_WR_star)
 
