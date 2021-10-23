@@ -50,7 +50,7 @@ uncertainties via a bootstrap — denoise_polarized_spectrum • SALTdenoiseR</t
 <meta property="og:title" content="Denoise a polarized spectrum via quadratic trend filtering and compute
 uncertainties via a bootstrap — denoise_polarized_spectrum" />
 <meta property="og:description" content="Denoise a polarized spectrum via quadratic trend filtering and compute
-uncertainties via a bootstrap." />
+uncertainties via a bootstrap" />
 <meta property="og:image" content="https://capolitsch.github.io/SALTdenoiseR/logo.png" />
 
 
@@ -130,7 +130,7 @@ uncertainties via a bootstrap</h1>
 
     <div class="ref-description">
     <p>Denoise a polarized spectrum via quadratic trend filtering and compute
-uncertainties via a bootstrap.</p>
+uncertainties via a bootstrap</p>
     </div>
 
     <pre class="usage"><span class='fu'>denoise_polarized_spectrum</span><span class='op'>(</span>
@@ -193,7 +193,9 @@ bootstrap algorithm.</p></td>
       <th>...</th>
       <td><p>Additional named arguments to be passed to
 <code><a href='https://capolitsch.github.io/trendfiltering/reference/sure_trendfilter.html'>trendfiltering::sure_trendfilter()</a></code> or
-<code><a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>trendfiltering::bootstrap_trendfilter()</a></code>.</p></td>
+<code><a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>trendfiltering::bootstrap_trendfilter()</a></code>.
+<code>bootstrap_algorithm = "parametric"</code> is set automatically and cannot be
+overridden.</p></td>
     </tr>
     </table>
 
@@ -218,7 +220,9 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>polarized_spectrum_WR_star</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span>, quietly <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>polarized_spectrum_WR_star</span><span class='op'>)</span>
 
 <span class='va'>wavelength</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span>
   from <span class='op'>=</span> <span class='va'>sci</span><span class='op'>$</span><span class='va'>axDat</span><span class='op'>$</span><span class='va'>crval</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>,
@@ -231,7 +235,7 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
 <span class='va'>masks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>bpm</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
 
 <span class='va'>spec_denoised</span> <span class='op'>&lt;-</span> <span class='fu'>denoise_polarized_spectrum</span><span class='op'>(</span><span class='va'>wavelength</span>, <span class='va'>stokes</span>, <span class='va'>variances</span>, <span class='va'>masks</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in bootstrap_algorithm %in% names(tf_args): object 'bootstrap_algorithm' not found</span></div></pre>
+</div><div class='output co'>#&gt; <span class='error'>Error in break_spectrum(df_full, break_at, min_pix_segment): all(c("wavelength", "I_mask", "Q_mask", "U_mask") %in% df_full) is not TRUE</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

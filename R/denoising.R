@@ -1,9 +1,6 @@
 #' Denoise a polarized spectrum via quadratic trend filtering and compute
 #' uncertainties via a bootstrap
 #'
-#' Denoise a polarized spectrum via quadratic trend filtering and compute
-#' uncertainties via a bootstrap.
-#'
 #' @param wavelength Vector of wavelength measurements.
 #' @param stokes Polarized spectrum measurements, passed as a 3-column tibble,
 #' data frame, or matrix, with the columns corresponding to the Stokes
@@ -27,6 +24,8 @@
 #' @param ... Additional named arguments to be passed to
 #' [trendfiltering::sure_trendfilter()] or
 #' [trendfiltering::bootstrap_trendfilter()].
+#' `bootstrap_algorithm = "parametric"` is set automatically and cannot be
+#' overridden.
 #' @return An object of class
 #' [`'polarized_spectrum_denoised'`][denoise_polarized_spectrum()].
 #' This is a list with the following elements:
@@ -45,6 +44,8 @@
 #' smoothness}. \emph{MNRAS}, 492(3), p. 4019-4032.}}
 #'
 #' @examples
+#' library(dplyr, quietly = TRUE)
+#'
 #' data(polarized_spectrum_WR_star)
 #'
 #' wavelength <- seq(
@@ -73,11 +74,20 @@ denoise_polarized_spectrum <- function(wavelength,
                                        compute_uncertainties = FALSE,
                                        mc_cores = parallel::detectCores(),
                                        ...) {
-  tf_args <- list(...)
-
-  if (!(bootstrap_algorithm %in% names(tf_args))) {
-    tf_args$bootstrap_algorithm <- "parametric"
+  stopifnot(ncol(stokes) == 3)
+  if (missing(variances)) {
+    stop("Currently, variances must be passed for this denoising analysis.")
   }
+  stopifnot(ncol(variances) == 3 & nrow(variances) == nrow(stokes))
+
+  if (missing(masks)) {
+    masks <- matrix(rep(0, 3 * nrow(stokes)), ncol = 3)
+  } else {
+    stopifnot(ncol(masks) == 3 & nrow(masks) == nrow(stokes))
+  }
+
+  tf_args <- list(...)
+  tf_args$bootstrap_algorithm <- "parametric"
 
   sure_args <- tf_args[
     which(names(tf_args) %in% names(formals(sure_trendfilter)))

@@ -47,7 +47,9 @@ bootstrap algorithm.}
 
 \item{...}{Additional named arguments to be passed to
 \code{\link[trendfiltering:sure_trendfilter]{trendfiltering::sure_trendfilter()}} or
-\code{\link[trendfiltering:bootstrap_trendfilter]{trendfiltering::bootstrap_trendfilter()}}.}
+\code{\link[trendfiltering:bootstrap_trendfilter]{trendfiltering::bootstrap_trendfilter()}}.
+\code{bootstrap_algorithm = "parametric"} is set automatically and cannot be
+overridden.}
 }
 \value{
 An object of class
@@ -56,9 +58,11 @@ This is a list with the following elements:
 }
 \description{
 Denoise a polarized spectrum via quadratic trend filtering and compute
-uncertainties via a bootstrap.
+uncertainties via a bootstrap
 }
 \examples{
+library(dplyr, quietly = TRUE)
+
 data(polarized_spectrum_WR_star)
 
 wavelength <- seq(

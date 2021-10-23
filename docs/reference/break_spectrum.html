@@ -157,10 +157,8 @@ been rounded to 0 in this case. Mask columns are 0 (or FALSE) for no mask and
     </tr>
     <tr>
       <th>break_at</th>
-      <td><p>A free parameter that determines when a gap is sufficiently
-large to trigger a break in the spectrum. More precisely, <code>break_at</code> is the
-minimum number of consecutively-masked spectral pixels that will trigger a
-break in the spectrum. Defaults to <code>break_at = 10</code>.</p></td>
+      <td><p>The minimum number of consecutively-masked spectral pixels
+that will trigger a break in the spectrum. Defaults to <code>break_at = 10</code>.</p></td>
     </tr>
     <tr>
       <th>min_pix_segment</th>
@@ -185,13 +183,13 @@ mask columns.</p>
 <span class='co'># `denoise_polarized_spectrum()` does call it internally, so in most cases</span>
 <span class='co'># `break_spectrum()` will not need to be called directly.</span>
 
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span>, quietly <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'></span>
 #&gt; <span class='message'>Attaching package: ‘dplyr’</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:stats’:</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    filter, lag</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
 #&gt; <span class='message'></span>
-#&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tibble.tidyverse.org/'>tibble</a></span><span class='op'>)</span>
+#&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tibble.tidyverse.org/'>tibble</a></span>, quietly <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>polarized_spectrum_WR_star</span><span class='op'>)</span>
 
@@ -220,7 +218,7 @@ mask columns.</p>
 <span class='op'>)</span>
 
 <span class='va'>df_list</span> <span class='op'>&lt;-</span> <span class='fu'>break_spectrum</span><span class='op'>(</span><span class='va'>df_full</span><span class='op'>)</span>
-</div></pre>
+</div><div class='output co'>#&gt; <span class='error'>Error in break_spectrum(df_full): all(c("wavelength", "I_mask", "Q_mask", "U_mask") %in% df_full) is not TRUE</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

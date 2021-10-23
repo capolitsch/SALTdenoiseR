@@ -18,10 +18,8 @@ been rounded to 0 in this case. Mask columns are 0 (or FALSE) for no mask and
    4204 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \cr
 }}
 
-\item{break_at}{A free parameter that determines when a gap is sufficiently
-large to trigger a break in the spectrum. More precisely, \code{break_at} is the
-minimum number of consecutively-masked spectral pixels that will trigger a
-break in the spectrum. Defaults to \code{break_at = 10}.}
+\item{break_at}{The minimum number of consecutively-masked spectral pixels
+that will trigger a break in the spectrum. Defaults to \code{break_at = 10}.}
 
 \item{min_pix_segment}{After the segmentation procedure is complete, the
 resulting segments are examined to ensure that each is sufficiently long for
@@ -47,8 +45,8 @@ parameters.
 # `denoise_polarized_spectrum()` does call it internally, so in most cases
 # `break_spectrum()` will not need to be called directly.
 
-library(dplyr)
-library(tibble)
+library(dplyr, quietly = TRUE)
+library(tibble, quietly = TRUE)
 
 data(polarized_spectrum_WR_star)
 

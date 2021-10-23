@@ -17,11 +17,8 @@
 #' |       4203|  0 |  0 |  0 |      0|      0|      0|      1|      1|      1|
 #' |       4204|  0 |  0 |  0 |      0|      0|      0|      0|      0|      0|
 #'
-#'
-#' @param break_at A free parameter that determines when a gap is sufficiently
-#' large to trigger a break in the spectrum. More precisely, `break_at` is the
-#' minimum number of consecutively-masked spectral pixels that will trigger a
-#' break in the spectrum. Defaults to `break_at = 10`.
+#' @param break_at The minimum number of consecutively-masked spectral pixels
+#' that will trigger a break in the spectrum. Defaults to `break_at = 10`.
 #' @param min_pix_segment After the segmentation procedure is complete, the
 #' resulting segments are examined to ensure that each is sufficiently long for
 #' a denoising analysis to be meaningful. In particular, any segment that has
@@ -38,8 +35,8 @@
 #' # `denoise_polarized_spectrum()` does call it internally, so in most cases
 #' # `break_spectrum()` will not need to be called directly.
 #'
-#' library(dplyr)
-#' library(tibble)
+#' library(dplyr, quietly = TRUE)
+#' library(tibble, quietly = TRUE)
 #'
 #' data(polarized_spectrum_WR_star)
 #'
@@ -75,6 +72,10 @@
 #' @importFrom purrr discard
 #' @importFrom data.table rleid
 break_spectrum <- function(df_full, break_at = 10, min_pix_segment = 10) {
+  stopifnot(
+    all(c("wavelength", "I_mask", "Q_mask", "U_mask") %in% df_full)
+  )
+
   df <- df_full %>%
     select(starts_with(c("wavelength", "I", "Q", "U"))) %>%
     mutate(mask = df_full %>% select(ends_with("mask")) %>%
