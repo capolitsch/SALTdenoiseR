@@ -45,7 +45,7 @@
 #' smoothness}. \emph{MNRAS}, 492(3), p. 4019-4032.}}
 #'
 #' @examples
-#' data(polarized_spectrum_Wolf_Rayet)
+#' data(polarized_spectrum_WR_star)
 #'
 #' wavelength <- seq(
 #'   from = sci$axDat$crval[1],
@@ -100,8 +100,7 @@ denoise_polarized_spectrum <- function(wavelength,
     stokes,
     variances,
     masks
-  ) %>%
-    arrange(wavelength)
+  )
 
   df_list <- break_spectrum(df_full, break_at, min_pix_segment)
 

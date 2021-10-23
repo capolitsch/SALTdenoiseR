@@ -59,7 +59,7 @@ Denoise a polarized spectrum via quadratic trend filtering and compute
 uncertainties via a bootstrap.
 }
 \examples{
-data(polarized_spectrum_Wolf_Rayet)
+data(polarized_spectrum_WR_star)
 
 wavelength <- seq(
   from = sci$axDat$crval[1],

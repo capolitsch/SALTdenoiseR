@@ -2,55 +2,57 @@
 % Please edit documentation in R/masking.R
 \name{break_spectrum}
 \alias{break_spectrum}
-\title{Break a spectrum into segments when chunks of many consecutively-masked
-pixels are present}
+\title{Break a spectrum into segments when one or more large gaps (i.e. sequences
+of many consecutively-masked pixels) exist}
 \usage{
 break_spectrum(df_full, break_at = 10, min_pix_segment = 10)
 }
 \arguments{
-\item{df_full}{A tibble with the schema matching the example below. The
+\item{df_full}{A tibble with schema matching the example below. The
 Stokes parameter measurements and variances are small doubles that have
 been rounded to 0 in this case. Mask columns are 0 for no mask and 1 for
-masked pixels.\tabular{rrrrrrrrrr}{
-   wavelength \tab I \tab Q \tab U \tab I_vars \tab Q_vars \tab U_vars \tab I_mask \tab Q_mask \tab U_mask \cr
-   4202 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-   4203 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 1 \tab 1 \tab 1 \cr
-   4204 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \cr
-}}
+masked pixels.
 
-\item{break_at}{A free parameter that controls the segmentation of a
-spectrum. More precisely, \code{break_at} is the minimum number of
-consecutively-masked spectral pixels that will trigger a break in the
-spectrum. Defaults to \code{break_at = 10}.}
+| wavelength|  I |  Q |  U | I_vars| Q_vars| U_vars| I_mask| Q_mask| U_mask|
+| (numeric) | (numeric) | (numeric)|  (numeric) | (numeric) | (numeric) | (numeric) | (int/logical) | (int/logical)| (int/logical)|
+|:---------:|:--:|:--:|:--:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
+|       4202|  0 |  0 |  0 |      0|      0|      0|      1|      1|      1|
+|       4203|  0 |  0 |  0 |      0|      0|      0|      1|      1|      1|
+|       4204|  0 |  0 |  0 |      0|      0|      0|      0|      0|      0|}
+
+\item{break_at}{A free parameter that determines when a gap is sufficiently
+large to trigger a break in the spectrum. More precisely, \code{break_at} is the
+minimum number of consecutively-masked spectral pixels that will trigger a
+break in the spectrum. Defaults to \code{break_at = 10}.}
 
 \item{min_pix_segment}{After the segmentation procedure is complete, the
 resulting segments are examined to ensure that each is sufficiently long for
-an independent denoising analysis. In particular, any segment that has less
-than \code{min_pix_segment} unmasked spectral pixels is discarded. Defaults to
-\code{min_pix_segment = 10}.}
+a denoising analysis to be meaningful. In particular, any segment that has
+less than \code{min_pix_segment} unmasked spectral pixels is discarded. Defaults
+to \code{min_pix_segment = 10}.}
 }
 \value{
 A list of tibbles corresponding to the segmented spectrum, as defined
 by the above procedure and input argument choices. Each tibble in the list
-has the same format as the input tibble \code{df_full}, less the mask columns.
+has the same format as the input tibble \code{df_full}, minus the mask columns.
 The output tibbles only retain unmasked pixels, hence the removal of the
 mask columns.
 }
 \description{
-Break a spectrum into segments when chunks of many consecutively-masked
-pixels are present. The set of pixel masks is defined as the superset of
-the spectral pixels that are masked for the I, Q, U Stokes parameters.
+Break a spectrum into segments when one or more large gaps (i.e. sequences
+of many consecutively-masked pixels) exist. The set of pixel masks is defined
+as the superset of the spectral pixels that are masked for the I, Q, U Stokes
+parameters.
 }
 \examples{
-# Note that, although `break_spectrum()` is an exported function, the
-# segmentation procedure is already done internally within
-# `denoise_polarized_spectrum()`, so `break_spectrum()` need not be called
-# directly in most cases.
+# Note that, although `break_spectrum()` is an exported function,
+# `denoise_polarized_spectrum()` does call it internally, so in most cases
+# `break_spectrum()` will not need to be called directly.
 
 library(dplyr)
 library(tibble)
 
-data(polarized_spectrum_Wolf_Rayet)
+data(polarized_spectrum_WR_star)
 
 wavelength <- seq(
   from = sci$axDat$crval[1],
@@ -59,17 +61,22 @@ wavelength <- seq(
 ) \%>\%
   as_tibble_col(column_name = "wavelength")
 
-stokes <- as_tibble(sci$imDat)
-variances <- as_tibble(var$imDat) \%>\% select(1:3)
-masks <- as_tibble(bpm$imDat)
+stokes <- as_tibble(sci$imDat) \%>\%
+  rename_with(function(.cols) c("I", "Q", "U"))
+
+variances <- as_tibble(var$imDat) \%>\%
+  select(1:3) \%>\%
+  rename_with(function(.cols) c("I_vars", "Q_vars", "U_vars"))
+
+masks <- as_tibble(bpm$imDat) \%>\%
+  rename_with(function(.cols) c("I_mask", "Q_mask", "U_mask"))
 
 df_full <- bind_cols(
   wavelength,
   stokes,
   variances,
   masks
-) \%>\%
-  arrange(wavelength)
+)
 
 df_list <- break_spectrum(df_full)
 }

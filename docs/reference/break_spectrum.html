@@ -6,8 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Break a spectrum into segments when chunks of many consecutively-masked
-pixels are present — break_spectrum • SALTdenoiseR</title>
+<title>Break a spectrum into segments when one or more large gaps (i.e. sequences
+of many consecutively-masked pixels) exist — break_spectrum • SALTdenoiseR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -47,11 +47,12 @@ pixels are present — break_spectrum • SALTdenoiseR</title>
 
 
 
-<meta property="og:title" content="Break a spectrum into segments when chunks of many consecutively-masked
-pixels are present — break_spectrum" />
-<meta property="og:description" content="Break a spectrum into segments when chunks of many consecutively-masked
-pixels are present. The set of pixel masks is defined as the superset of
-the spectral pixels that are masked for the I, Q, U Stokes parameters." />
+<meta property="og:title" content="Break a spectrum into segments when one or more large gaps (i.e. sequences
+of many consecutively-masked pixels) exist — break_spectrum" />
+<meta property="og:description" content="Break a spectrum into segments when one or more large gaps (i.e. sequences
+of many consecutively-masked pixels) exist. The set of pixel masks is defined
+as the superset of the spectral pixels that are masked for the I, Q, U Stokes
+parameters." />
 <meta property="og:image" content="https://capolitsch.github.io/SALTdenoiseR/logo.png" />
 
 
@@ -123,16 +124,17 @@ the spectral pixels that are masked for the I, Q, U Stokes parameters." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Break a spectrum into segments when chunks of many consecutively-masked
-pixels are present</h1>
+    <h1>Break a spectrum into segments when one or more large gaps (i.e. sequences
+of many consecutively-masked pixels) exist</h1>
     <small class="dont-index">Source: <a href='https://github.com/capolitsch/SALTdenoiseR/blob/main/R/masking.R'><code>R/masking.R</code></a></small>
     <div class="hidden name"><code>break_spectrum.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Break a spectrum into segments when chunks of many consecutively-masked
-pixels are present. The set of pixel masks is defined as the superset of
-the spectral pixels that are masked for the I, Q, U Stokes parameters.</p>
+    <p>Break a spectrum into segments when one or more large gaps (i.e. sequences
+of many consecutively-masked pixels) exist. The set of pixel masks is defined
+as the superset of the spectral pixels that are masked for the I, Q, U Stokes
+parameters.</p>
     </div>
 
     <pre class="usage"><span class='fu'>break_spectrum</span><span class='op'>(</span><span class='va'>df_full</span>, break_at <span class='op'>=</span> <span class='fl'>10</span>, min_pix_segment <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span></pre>
@@ -142,31 +144,31 @@ the spectral pixels that are masked for the I, Q, U Stokes parameters.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>df_full</th>
-      <td><p>A tibble with the schema matching the example below. The
+      <td><p>A tibble with schema matching the example below. The
 Stokes parameter measurements and variances are small doubles that have
 been rounded to 0 in this case. Mask columns are 0 for no mask and 1 for
-masked pixels.</p><table class='table'>
-<tr><td>wavelength</td><td>I</td><td>Q</td><td>U</td><td>I_vars</td><td>Q_vars</td><td>U_vars</td><td>I_mask</td><td>Q_mask</td><td>U_mask</td></tr>
-<tr><td>4202</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
-<tr><td>4203</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
-<tr><td>4204</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-</table>
-</td>
+masked pixels.</p>
+<p>| wavelength|  I |  Q |  U | I_vars| Q_vars| U_vars| I_mask| Q_mask| U_mask|
+| (numeric) | (numeric) | (numeric)|  (numeric) | (numeric) | (numeric) | (numeric) | (int/logical) | (int/logical)| (int/logical)|
+|:---------:|:--:|:--:|:--:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
+|       4202|  0 |  0 |  0 |      0|      0|      0|      1|      1|      1|
+|       4203|  0 |  0 |  0 |      0|      0|      0|      1|      1|      1|
+|       4204|  0 |  0 |  0 |      0|      0|      0|      0|      0|      0|</p></td>
     </tr>
     <tr>
       <th>break_at</th>
-      <td><p>A free parameter that controls the segmentation of a
-spectrum. More precisely, <code>break_at</code> is the minimum number of
-consecutively-masked spectral pixels that will trigger a break in the
-spectrum. Defaults to <code>break_at = 10</code>.</p></td>
+      <td><p>A free parameter that determines when a gap is sufficiently
+large to trigger a break in the spectrum. More precisely, <code>break_at</code> is the
+minimum number of consecutively-masked spectral pixels that will trigger a
+break in the spectrum. Defaults to <code>break_at = 10</code>.</p></td>
     </tr>
     <tr>
       <th>min_pix_segment</th>
       <td><p>After the segmentation procedure is complete, the
 resulting segments are examined to ensure that each is sufficiently long for
-an independent denoising analysis. In particular, any segment that has less
-than <code>min_pix_segment</code> unmasked spectral pixels is discarded. Defaults to
-<code>min_pix_segment = 10</code>.</p></td>
+a denoising analysis to be meaningful. In particular, any segment that has
+less than <code>min_pix_segment</code> unmasked spectral pixels is discarded. Defaults
+to <code>min_pix_segment = 10</code>.</p></td>
     </tr>
     </table>
 
@@ -174,15 +176,14 @@ than <code>min_pix_segment</code> unmasked spectral pixels is discarded. Default
 
     <p>A list of tibbles corresponding to the segmented spectrum, as defined
 by the above procedure and input argument choices. Each tibble in the list
-has the same format as the input tibble <code>df_full</code>, less the mask columns.
+has the same format as the input tibble <code>df_full</code>, minus the mask columns.
 The output tibbles only retain unmasked pixels, hence the removal of the
 mask columns.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Note that, although `break_spectrum()` is an exported function, the</span>
-<span class='co'># segmentation procedure is already done internally within</span>
-<span class='co'># `denoise_polarized_spectrum()`, so `break_spectrum()` need not be called</span>
-<span class='co'># directly in most cases.</span>
+    <pre class="examples"><div class='input'><span class='co'># Note that, although `break_spectrum()` is an exported function,</span>
+<span class='co'># `denoise_polarized_spectrum()` does call it internally, so in most cases</span>
+<span class='co'># `break_spectrum()` will not need to be called directly.</span>
 
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'></span>
@@ -192,7 +193,7 @@ mask columns.</p>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tibble.tidyverse.org/'>tibble</a></span><span class='op'>)</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>polarized_spectrum_Wolf_Rayet</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>polarized_spectrum_WR_star</span><span class='op'>)</span>
 
 <span class='va'>wavelength</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span>
   from <span class='op'>=</span> <span class='va'>sci</span><span class='op'>$</span><span class='va'>axDat</span><span class='op'>$</span><span class='va'>crval</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>,
@@ -201,28 +202,25 @@ mask columns.</p>
 <span class='op'>)</span> <span class='op'>%&gt;%</span>
   <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble_col</a></span><span class='op'>(</span>column_name <span class='op'>=</span> <span class='st'>"wavelength"</span><span class='op'>)</span>
 
-<span class='va'>stokes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>sci</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
-<span class='va'>variances</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>var</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
-<span class='va'>masks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>bpm</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
+<span class='va'>stokes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>sci</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename_with</a></span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>.cols</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"I"</span>, <span class='st'>"Q"</span>, <span class='st'>"U"</span><span class='op'>)</span><span class='op'>)</span>
+
+<span class='va'>variances</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>var</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename_with</a></span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>.cols</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"I_vars"</span>, <span class='st'>"Q_vars"</span>, <span class='st'>"U_vars"</span><span class='op'>)</span><span class='op'>)</span>
+
+<span class='va'>masks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>bpm</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename_with</a></span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>.cols</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"I_mask"</span>, <span class='st'>"Q_mask"</span>, <span class='st'>"U_mask"</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='va'>df_full</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_cols</a></span><span class='op'>(</span>
   <span class='va'>wavelength</span>,
   <span class='va'>stokes</span>,
   <span class='va'>variances</span>,
   <span class='va'>masks</span>
-<span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/arrange.html'>arrange</a></span><span class='op'>(</span><span class='va'>wavelength</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>New names:</span>
-#&gt; <span class='message'>* V1 -&gt; V1...2</span>
-#&gt; <span class='message'>* V2 -&gt; V2...3</span>
-#&gt; <span class='message'>* V3 -&gt; V3...4</span>
-#&gt; <span class='message'>* V1 -&gt; V1...5</span>
-#&gt; <span class='message'>* V2 -&gt; V2...6</span>
-#&gt; <span class='message'>* ...</span></div><div class='input'>
+<span class='op'>)</span>
+
 <span class='va'>df_list</span> <span class='op'>&lt;-</span> <span class='fu'>break_spectrum</span><span class='op'>(</span><span class='va'>df_full</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error: Problem with `mutate()` column `mask`.</span>
-#&gt; <span class='error'><span style='color: #0000BB;'>ℹ</span> `mask = df_full %&gt;% select(ends_with("mask")) %&gt;% as.matrix() %&gt;% rowMaxs()`.</span>
-#&gt; <span class='error'><span style='color: #BB0000;'>x</span> Argument 'x' cannot be logical.</span></div></pre>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
