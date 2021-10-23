@@ -137,31 +137,6 @@ denoise_polarized_spectrum <- function(wavelength,
     bootstrap_args = bootstrap_args,
     mc.cores = mc_cores
   )
-
-  structure(list(
-    x_eval = x_eval,
-    tf_estimate = tf_estimate * y_scale,
-    validation_method = "SURE",
-    lambdas = lambdas,
-    generalization_errors = generalization_errors * y_scale^2,
-    lambda_min = lambda_min,
-    edfs = edfs,
-    edf_min = out$df,
-    i_min = i_min,
-    n_iter = n_iter,
-    training_errors = training_errors * y_scale^2,
-    optimisms = optimisms * y_scale^2,
-    x = data$x,
-    y = data$y,
-    weights = data$weights,
-    fitted_values = data_scaled$fitted_values * y_scale,
-    residuals = data_scaled$residuals * y_scale,
-    k = k,
-    admm_params = admm_params,
-    thinning = thinning
-  ),
-  class = c("polarized_spectrum_denoised", "list")
-  )
 }
 
 
