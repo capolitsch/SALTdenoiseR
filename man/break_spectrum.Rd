@@ -22,11 +22,10 @@ that has less than \code{min_pix_segment} unmasked spectral pixels is discarded.
 Defaults to \code{min_pix_segment = 10}.}
 }
 \value{
-A list of tibbles corresponding to the segmented spectrum, as defined
-by the above procedure and argument choices. Each tibble in the list
-has the same format as the input tibble \code{df_full}, minus the mask columns.
-The output tibbles only retain the pixels that are unmasked for every I, Q, U
-Stokes parameter, hence the removal of the mask columns.
+A list of tibbles that define the segmented spectrum. Each
+tibble in the list has the same format as the input tibble \code{df_full}, minus
+the mask columns. The output tibbles only retain the pixels that are unmasked
+for every I, Q, U Stokes parameter, hence the removal of the mask columns.
 }
 \description{
 Break a spectrum into segments when one or more wide masks (i.e. sequences

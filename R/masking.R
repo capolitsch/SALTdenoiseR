@@ -19,11 +19,10 @@
 #' a non-trivial/well-defined denoising analysis. In particular, any segment
 #' that has less than `min_pix_segment` unmasked spectral pixels is discarded.
 #' Defaults to `min_pix_segment = 10`.
-#' @return A list of tibbles corresponding to the segmented spectrum, as defined
-#' by the above procedure and argument choices. Each tibble in the list
-#' has the same format as the input tibble `df_full`, minus the mask columns.
-#' The output tibbles only retain the pixels that are unmasked for every I, Q, U
-#' Stokes parameter, hence the removal of the mask columns.
+#' @return A list of tibbles that define the segmented spectrum. Each
+#' tibble in the list has the same format as the input tibble `df_full`, minus
+#' the mask columns. The output tibbles only retain the pixels that are unmasked
+#' for every I, Q, U Stokes parameter, hence the removal of the mask columns.
 #' @export break_spectrum
 #' @examples
 #' suppressPackageStartupMessages(library(dplyr))
