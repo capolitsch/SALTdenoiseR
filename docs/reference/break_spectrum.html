@@ -146,14 +146,14 @@ parameters.</p>
       <th>df_full</th>
       <td><p>A tibble with schema matching the example below. The
 Stokes parameter measurements and variances are small doubles that have
-been rounded to 0 in this case. Mask columns are 0 for no mask and 1 for
-masked pixels.</p>
-<p>| wavelength|  I |  Q |  U | I_vars| Q_vars| U_vars| I_mask| Q_mask| U_mask|
-| (numeric) | (numeric) | (numeric)|  (numeric) | (numeric) | (numeric) | (numeric) | (int/logical) | (int/logical)| (int/logical)|
-|:---------:|:--:|:--:|:--:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
-|       4202|  0 |  0 |  0 |      0|      0|      0|      1|      1|      1|
-|       4203|  0 |  0 |  0 |      0|      0|      0|      1|      1|      1|
-|       4204|  0 |  0 |  0 |      0|      0|      0|      0|      0|      0|</p></td>
+been rounded to 0 in this case. Mask columns are 0 (or FALSE) for no mask and
+1 (or TRUE) for masked pixels.</p><table class='table'>
+<tr><td>wavelength</td><td>I</td><td>Q</td><td>U</td><td>I_vars</td><td>Q_vars</td><td>U_vars</td><td>I_mask</td><td>Q_mask</td><td>U_mask</td></tr>
+<tr><td>4202</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>4203</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+<tr><td>4204</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+</table>
+</td>
     </tr>
     <tr>
       <th>break_at</th>

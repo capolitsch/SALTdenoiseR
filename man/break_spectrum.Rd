@@ -10,15 +10,13 @@ break_spectrum(df_full, break_at = 10, min_pix_segment = 10)
 \arguments{
 \item{df_full}{A tibble with schema matching the example below. The
 Stokes parameter measurements and variances are small doubles that have
-been rounded to 0 in this case. Mask columns are 0 for no mask and 1 for
-masked pixels.
-
-| wavelength|  I |  Q |  U | I_vars| Q_vars| U_vars| I_mask| Q_mask| U_mask|
-| (numeric) | (numeric) | (numeric)|  (numeric) | (numeric) | (numeric) | (numeric) | (int/logical) | (int/logical)| (int/logical)|
-|:---------:|:--:|:--:|:--:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
-|       4202|  0 |  0 |  0 |      0|      0|      0|      1|      1|      1|
-|       4203|  0 |  0 |  0 |      0|      0|      0|      1|      1|      1|
-|       4204|  0 |  0 |  0 |      0|      0|      0|      0|      0|      0|}
+been rounded to 0 in this case. Mask columns are 0 (or FALSE) for no mask and
+1 (or TRUE) for masked pixels.\tabular{cccccccccc}{
+   wavelength \tab I \tab Q \tab U \tab I_vars \tab Q_vars \tab U_vars \tab I_mask \tab Q_mask \tab U_mask \cr
+   4202 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   4203 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 1 \tab 1 \tab 1 \cr
+   4204 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \tab 0 \cr
+}}
 
 \item{break_at}{A free parameter that determines when a gap is sufficiently
 large to trigger a break in the spectrum. More precisely, \code{break_at} is the

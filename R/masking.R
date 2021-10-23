@@ -8,11 +8,10 @@
 #'
 #' @param df_full A tibble with schema matching the example below. The
 #' Stokes parameter measurements and variances are small doubles that have
-#' been rounded to 0 in this case. Mask columns are 0 for no mask and 1 for
-#' masked pixels.
+#' been rounded to 0 in this case. Mask columns are 0 (or FALSE) for no mask and
+#' 1 (or TRUE) for masked pixels.
 #'
 #' | wavelength|  I |  Q |  U | I_vars| Q_vars| U_vars| I_mask| Q_mask| U_mask|
-#' | (numeric) | (numeric) | (numeric)|  (numeric) | (numeric) | (numeric) | (numeric) | (int/logical) | (int/logical)| (int/logical)|
 #' |:---------:|:--:|:--:|:--:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
 #' |       4202|  0 |  0 |  0 |      0|      0|      0|      1|      1|      1|
 #' |       4203|  0 |  0 |  0 |      0|      0|      0|      1|      1|      1|
