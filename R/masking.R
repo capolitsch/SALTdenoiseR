@@ -1,9 +1,9 @@
-#' Break a spectrum into segments when one or more wide masks exist
+#' Break a polarized spectrum into segments when one or more wide masks exist
 #'
-#' Break a spectrum into segments when one or more wide masks (i.e. sequences
-#' of many consecutively-masked pixels) exist. The set of masked pixels used to
-#' define the segmentation is taken to be the superset of the pixels that are
-#' masked for the I, Q, or U Stokes parameters. Note that
+#' Break a polarized spectrum into segments when one or more wide masks (i.e.
+#' sequences of many consecutively-masked pixels) exist. The set of masked
+#' pixels used to define the segmentation is taken to be the set of pixels that
+#' are masked for *any* of the I, Q, or U Stokes parameters. Note that
 #' [`denoise_polarized_spectrum()`] calls `break_spectrum()` internally. So
 #' while `break_spectrum()` is an exported function, it does not need to be
 #' called directly in most cases.

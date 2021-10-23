@@ -2,7 +2,7 @@
 % Please edit documentation in R/masking.R
 \name{break_spectrum}
 \alias{break_spectrum}
-\title{Break a spectrum into segments when one or more wide masks exist}
+\title{Break a polarized spectrum into segments when one or more wide masks exist}
 \usage{
 break_spectrum(df_full, break_at = 10, min_pix_segment = 10)
 }
@@ -28,10 +28,10 @@ the mask columns. The output tibbles only retain the pixels that are unmasked
 for every I, Q, U Stokes parameter, hence the removal of the mask columns.
 }
 \description{
-Break a spectrum into segments when one or more wide masks (i.e. sequences
-of many consecutively-masked pixels) exist. The set of masked pixels used to
-define the segmentation is taken to be the superset of the pixels that are
-masked for the I, Q, or U Stokes parameters. Note that
+Break a polarized spectrum into segments when one or more wide masks (i.e.
+sequences of many consecutively-masked pixels) exist. The set of masked
+pixels used to define the segmentation is taken to be the set of pixels that
+are masked for \emph{any} of the I, Q, or U Stokes parameters. Note that
 \code{\link[=denoise_polarized_spectrum]{denoise_polarized_spectrum()}} calls \code{break_spectrum()} internally. So
 while \code{break_spectrum()} is an exported function, it does not need to be
 called directly in most cases.
