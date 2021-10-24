@@ -293,3 +293,47 @@ parallel_bootstrap_tf <- function(X, sure_tf, bootstrap_args) {
   args <- c(list(obj = sure_tf[[X]]), bootstrap_args)
   do.call(bootstrap_trendfilter, args)
 }
+
+############################################
+
+#' Compute bootstrap variability bands for one of the denoised spectra
+#' @param obj An object of class `"polarized_spectrum"` produced by
+#' [denoise_polarized_spectrum()].
+#' @param param The denoised spectrum to compute variability bands for. One of
+#' `c("I","Q","U","Q_norm","U_norm")`.
+#' @param level The level of the pointwise variability bands. Defaults to
+#' `level = 0.95`.
+#'
+#' @export variability_bands.polarized_spectrum
+
+#' @importFrom dplyr case_when tibble
+variability_bands.polarized_spectrum <- function(obj, param, level = 0.95) {
+  stopifnot(any(class(obj) == "polarized_spectrum"))
+  stopifnot(param %in% c("I", "Q", "U", "Q_norm", "U_norm"))
+  stopifnot(level > 0 & level < 1)
+
+  ensemble <- case_when(
+    param == "I" ~ stokes_I_ensemble,
+    param == "Q" ~ stokes_Q_ensemble,
+    param == "U" ~ stokes_U_ensemble,
+    param == "Q_norm" ~ Q_norm_ensemble,
+    param == "U_norm" ~ U_norm_ensemble,
+  )
+
+  bootstrap_lower_band <- apply(
+    ensemble, 1,
+    quantile,
+    probs = (1 - level) / 2
+  )
+  bootstrap_upper_band <- apply(
+    ensemble, 1,
+    quantile,
+    probs = 1 - (1 - level) / 2
+  )
+
+  tibble(
+    wavelength = obj$denoised_spectra[[c("wavelength", param)]],
+    bootstrap_lower_band = bootstrap_lower_band,
+    bootstrap_upper_band = bootstrap_upper_band
+  )
+}
