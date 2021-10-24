@@ -47,7 +47,8 @@
 
 
 <meta property="og:title" content="Denoise a polarized spectrum — denoise_polarized_spectrum" />
-<meta property="og:description" content="Denoise a polarized spectrum." />
+<meta property="og:description" content="
+ Denoise a polarized spectrum." />
 <meta property="og:image" content="https://capolitsch.github.io/SALTdenoiseR/logo.png" />
 
 
@@ -125,7 +126,8 @@
     </div>
 
     <div class="ref-description">
-    <p>Denoise a polarized spectrum.</p>
+    <p><script id="MathJax-script" async src="../../mathjaxr/doc/mathjax/es5/tex-chtml-full.js"></script>
+ Denoise a polarized spectrum.</p>
     </div>
 
     <pre class="usage"><span class='fu'>denoise_polarized_spectrum</span><span class='op'>(</span>
@@ -136,8 +138,8 @@
   break_at <span class='op'>=</span> <span class='fl'>10</span>,
   min_pix_segment <span class='op'>=</span> <span class='fl'>10</span>,
   compute_uncertainties <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  mc_cores <span class='op'>=</span> <span class='fu'>parallel</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/parallel/detectCores.html'>detectCores</a></span><span class='op'>(</span><span class='op'>)</span>,
-  <span class='va'>...</span>
+  <span class='va'>sure_args</span>,
+  <span class='va'>bootstrap_args</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -185,9 +187,13 @@ computed for each of the denoised normalized Stokes spectra, via a parametric
 bootstrap algorithm.</p></td>
     </tr>
     <tr>
-      <th>...</th>
+      <th>sure_args</th>
       <td><p>Additional named arguments to be passed to
-<a href='https://capolitsch.github.io/trendfiltering/reference/sure_trendfilter.html'>sure_trendfilter()</a> or
+<a href='https://capolitsch.github.io/trendfiltering/reference/sure_trendfilter.html'>sure_trendfilter()</a>.</p></td>
+    </tr>
+    <tr>
+      <th>bootstrap_args</th>
+      <td><p>Additional named arguments to be passed to
 <a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>bootstrap_trendfilter()</a>. The
 argument <code>bootstrap_algorithm = "parametric"</code> is fixed due to the
 design of SALT spectra, and we don't allow this argument to be manually
@@ -202,19 +208,20 @@ SALT spectra.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An object of class <code>'polarized_spectrum_denoised'</code>. This is a list
+    <p>An object of class <code>'polarized_spectrum'</code>. This is a list
 with the following elements:</p>
-<dt>wavelength.eval</dt><dd><p></p></dd>
-<dt>stokes_I_denoised</dt><dd><p></p></dd>
-<dt>stokes_I_ensemble</dt><dd><p></p></dd>
-<dt>stokes_Q_denoised</dt><dd><p></p></dd>
-<dt>stokes_Q_ensemble</dt><dd><p></p></dd>
-<dt>stokes_U_denoised</dt><dd><p></p></dd>
-<dt>stokes_U_ensemble</dt><dd><p></p></dd>
-<dt>Q_norm_denoised</dt><dd><p></p></dd>
-<dt>Q_norm_ensemble</dt><dd><p></p></dd>
-<dt>U_norm_denoised</dt><dd><p></p></dd>
-<dt>U_norm_ensemble</dt><dd><p></p></dd>
+<dt>n_segments</dt><dd><p>The number of segments the spectrum was broken into.</p></dd>
+<dt>denoised_spectra</dt><dd><p>A tibble containing denoised spectra for
+each of the 3 Stokes parameters, as well as Q/I and U/I. The full column set
+is <code><a href='https://rdrr.io/r/base/c.html'>c("wavelength","stokes_I","stokes_Q","stokes_U","Q_norm","U_norm")</a></code>.</p></dd>
+<dt>stokes_I_ensemble</dt><dd><p>If <code>compute_uncertainties = TRUE</code>, the
+full bootstrap ensemble for the Stokes I parameter,
+as an \(n \times B\) matrix, less any columns from post-hoc pruning.
+If <code>compute_uncertainties = FALSE</code>, this will return <code>NULL</code>.</p></dd>
+<dt>stokes_Q_ensemble</dt><dd><p>Same as above, but for the Q Stokes parameter.</p></dd>
+<dt>stokes_U_ensemble</dt><dd><p>Same as above, but for the U Stokes parameter.</p></dd>
+<dt>Q_norm_ensemble</dt><dd><p>Same as above, but for Q/I.</p></dd>
+<dt>U_norm_ensemble</dt><dd><p>Same as above, but for U/I.</p></dd>
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -247,7 +254,7 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
 <span class='va'>masks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>bpm</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
 
 <span class='va'>spec_denoised</span> <span class='op'>&lt;-</span> <span class='fu'>denoise_polarized_spectrum</span><span class='op'>(</span><span class='va'>wavelength</span>, <span class='va'>stokes</span>, <span class='va'>variances</span>, <span class='va'>masks</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in FUN(X[[i]], ...): object 'spec_denoised' not found</span></div></pre>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: all scheduled cores encountered errors in user code</span></div><div class='output co'>#&gt; <span class='error'>Error in tf_obj[[X]][["x_eval"]]: subscript out of bounds</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

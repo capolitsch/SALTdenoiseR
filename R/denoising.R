@@ -1,6 +1,6 @@
 #' Denoise a polarized spectrum
 #'
-#' Denoise a polarized spectrum.
+#' \loadmathjax Denoise a polarized spectrum.
 #'
 #' @param wavelength Vector of wavelength measurements.
 #' @param stokes Polarized spectrum measurements, passed as a 3-column tibble,
@@ -22,8 +22,9 @@
 #' @param compute_uncertainties (Boolean) If `TRUE`, then variability bands are
 #' computed for each of the denoised normalized Stokes spectra, via a parametric
 #' bootstrap algorithm.
-#' @param ... Additional named arguments to be passed to
-#' [sure_trendfilter()][trendfiltering::sure_trendfilter()] or
+#' @param sure_args Additional named arguments to be passed to
+#' [sure_trendfilter()][trendfiltering::sure_trendfilter()].
+#' @param bootstrap_args Additional named arguments to be passed to
 #' [bootstrap_trendfilter()][trendfiltering::bootstrap_trendfilter()]. The
 #' argument `bootstrap_algorithm = "parametric"` is fixed due to the
 #' design of SALT spectra, and we don't allow this argument to be manually
@@ -34,19 +35,20 @@
 #' https://academic.oup.com/mnras/article/492/3/4005/5704413)
 #' for details on why this particular bootstrap algorithm is appropriate for
 #' SALT spectra.
-#' @return An object of class `'polarized_spectrum_denoised'`. This is a list
+#' @return An object of class `'polarized_spectrum'`. This is a list
 #' with the following elements:
-#' \item{wavelength.eval}{}
-#' \item{stokes_I_denoised}{}
-#' \item{stokes_I_ensemble}{}
-#' \item{stokes_Q_denoised}{}
-#' \item{stokes_Q_ensemble}{}
-#' \item{stokes_U_denoised}{}
-#' \item{stokes_U_ensemble}{}
-#' \item{Q_norm_denoised}{}
-#' \item{Q_norm_ensemble}{}
-#' \item{U_norm_denoised}{}
-#' \item{U_norm_ensemble}{}
+#' \item{n_segments}{The number of segments the spectrum was broken into.}
+#' \item{denoised_spectra}{A tibble containing denoised spectra for
+#' each of the 3 Stokes parameters, as well as Q/I and U/I. The full column set
+#' is `c("wavelength","stokes_I","stokes_Q","stokes_U","Q_norm","U_norm")`.}
+#' \item{stokes_I_ensemble}{If `compute_uncertainties = TRUE`, the
+#' full bootstrap ensemble for the Stokes I parameter,
+#' as an \mjseqn{n \times B} matrix, less any columns from post-hoc pruning.
+#' If `compute_uncertainties = FALSE`, this will return `NULL`.}
+#' \item{stokes_Q_ensemble}{Same as above, but for the Q Stokes parameter.}
+#' \item{stokes_U_ensemble}{Same as above, but for the U Stokes parameter.}
+#' \item{Q_norm_ensemble}{Same as above, but for Q/I.}
+#' \item{U_norm_ensemble}{Same as above, but for U/I.}
 #'
 #' @export denoise_polarized_spectrum
 #'
@@ -91,13 +93,23 @@ denoise_polarized_spectrum <- function(wavelength,
                                        break_at = 10,
                                        min_pix_segment = 10,
                                        compute_uncertainties = FALSE,
-                                       mc_cores = parallel::detectCores(),
-                                       ...) {
+                                       sure_args,
+                                       bootstrap_args) {
   stopifnot(ncol(stokes) == 3)
   if (missing(variances)) {
     stop("Currently, variances must be passed for this denoising analysis.")
   }
   stopifnot(ncol(variances) == 3 & nrow(variances) == nrow(stokes))
+  if (missing(bootstrap_args)) {
+    bootstrap_args <- list()
+  } else {
+    stopifnot(all(names(bootstrap_args) %in% names(formals(bootstrap_trendfilter))))
+  }
+  if (missing(sure_args)) {
+    sure_args <- list()
+  } else {
+    stopifnot(all(names(sure_args) %in% names(formals(sure_trendfilter))))
+  }
 
   if (missing(masks)) {
     masks <- matrix(rep(0, 3 * nrow(stokes)), ncol = 3)
@@ -105,16 +117,9 @@ denoise_polarized_spectrum <- function(wavelength,
     stopifnot(ncol(masks) == 3 & nrow(masks) == nrow(stokes))
   }
 
-  tf_args <- list(...)
-  tf_args$bootstrap_algorithm <- "parametric"
-
-  sure_args <- tf_args[
-    which(names(tf_args) %in% names(formals(sure_trendfilter)))
-  ]
-
-  bootstrap_args <- tf_args[
-    which(names(tf_args) %in% names(formals(bootstrap_trendfilter)))
-  ]
+  bootstrap_args$bootstrap_algorithm <- "parametric"
+  if (compute_uncertainties) bootstrap_args$return_ensemble <- TRUE
+  mc_cores <- parallel::detectCores()
 
   wavelength <- as_tibble_col(wavelength, column_name = "wavelength")
   stokes <- as_tibble(stokes) %>%
@@ -134,10 +139,10 @@ denoise_polarized_spectrum <- function(wavelength,
   df_list <- break_spectrum(df_full, break_at, min_pix_segment)
 
   tf_obj <- mclapply(
-    1:(3 * length(df_list)),
+    X = 1:(3 * length(df_list)),
     parallel_sure_tf,
     df_list = df_list,
-    sure_args = sure_args,
+    sure_args = c(sure_args, x_eval = df_list[[X]]$wavelength),
     mc.cores = mc_cores
   )
 
@@ -147,63 +152,95 @@ denoise_polarized_spectrum <- function(wavelength,
       parallel_bootstrap_tf,
       sure_tf = tf_obj,
       bootstrap_args = bootstrap_args,
-      mc.cores = mc_cores
+      mc.cores = bootstrap_args$mc_cores
     )
   }
+
+  wavelength_eval <- lapply(
+    X = 1:length(df_list),
+    FUN = function(X) tf_obj[[X]][["x_eval"]]
+  )
 
   stokes_I_denoised <- lapply(
     X = 1:length(df_list),
     FUN = function(X) tf_obj[[X]][["tf_estimate"]]
-  ) %>%
-    unlist()
+  )
 
   stokes_Q_denoised <- lapply(
     X = (length(df_list) + 1):(2 * length(df_list)),
     FUN = function(X) tf_obj[[X]][["tf_estimate"]]
-  ) %>%
-    unlist()
+  )
 
   stokes_U_denoised <- lapply(
     X = (2 * length(df_list) + 1):(3 * length(df_list)),
     FUN = function(X) tf_obj[[X]][["tf_estimate"]]
-  ) %>%
-    unlist()
+  )
+
+  Q_norm_denoised <- lapply(
+    X = 1:length(df_list),
+    FUN = function(X) stokes_Q_denoised[[X]] / stokes_I_denoised[[X]]
+  )
+
+  U_norm_denoised <- lapply(
+    X = 1:length(df_list),
+    FUN = function(X) stokes_U_denoised[[X]] / stokes_I_denoised[[X]]
+  )
+
+  denoised_spectra <- tibble(
+    wavelength = wavelength_eval,
+    stokes_I = stokes_I_denoised,
+    stokes_Q = stokes_Q_denoised,
+    stokes_U = stokes_U_denoised,
+    Q_norm = Q_norm_denoised,
+    U_norm = U_norm_denoised
+  )
 
   if (compute_uncertainties) {
     stokes_I_ensemble <- lapply(
       X = 1:length(df_list),
       FUN = function(X) tf_obj[[X]][["tf_bootstrap_ensemble"]]
-    ) %>%
-      bind_rows()
+    )
 
     stokes_Q_ensemble <- lapply(
       X = (length(df_list) + 1):(2 * length(df_list)),
       FUN = function(X) tf_obj[[X]][["tf_bootstrap_ensemble"]]
-    ) %>%
-      bind_rows()
+    )
 
     stokes_U_ensemble <- lapply(
       X = (2 * length(df_list) + 1):(3 * length(df_list)),
       FUN = function(X) tf_obj[[X]][["tf_bootstrap_ensemble"]]
-    ) %>%
-      bind_rows()
+    )
+
+    Q_norm_ensemble <- lapply(
+      X = 1:length(df_list),
+      FUN = function(X) stokes_Q_ensemble[[X]] / stokes_I_ensemble[[X]]
+    )
+
+    U_norm_ensemble <- lapply(
+      X = 1:length(df_list),
+      FUN = function(X) stokes_U_ensemble[[X]] / stokes_I_ensemble[[X]]
+    )
+  } else {
+    stokes_I_ensemble <- NULL
+    stokes_Q_ensemble <- NULL
+    stokes_U_ensemble <- NULL
+    Q_norm_ensemble <- NULL
+    U_norm_ensemble <- NULL
   }
 
   structure(list(
-    wavelength_eval = tf_obj$x_eval,
-    stokes_I_denoised = stokes_I_denoised,
-    stokes_Q_denoised = stokes_Q_denoised,
-    stokes_U_denoised = stokes_U_denoised,
-    Q_norm_denoised = stokes_Q_denoised / stokes_I_denoised,
-    U_norm_denoised = stokes_U_denoised / stokes_U_denoised,
+    n_segments = length(df_list),
+    denoised_spectra = denoised_spectra,
     stokes_I_ensemble = stokes_I_ensemble,
     stokes_Q_ensemble = stokes_Q_ensemble,
     stokes_U_ensemble = stokes_U_ensemble,
-    Q_norm_ensemble = stokes_Q_ensemble / stokes_I_ensemble,
-    U_norm_ensemble = stokes_U_ensemble / stokes_I_ensemble,
+    Q_norm_ensemble = Q_norm_ensemble,
+    U_norm_ensemble = U_norm_ensemble,
+    sure_args = sure_args,
+    bootstrap_args = bootstrap_args,
     tf_obj
   ),
-  class = c("polarized_spectrum_denoised", "list")
+  class = c("polarized_spectrum", "list")
   )
 }
 

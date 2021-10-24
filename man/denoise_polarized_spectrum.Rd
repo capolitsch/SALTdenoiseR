@@ -12,8 +12,8 @@ denoise_polarized_spectrum(
   break_at = 10,
   min_pix_segment = 10,
   compute_uncertainties = FALSE,
-  mc_cores = parallel::detectCores(),
-  ...
+  sure_args,
+  bootstrap_args
 )
 }
 \arguments{
@@ -44,8 +44,10 @@ than \code{min_pix_segment} unmasked spectral pixels is discarded. Defaults to
 computed for each of the denoised normalized Stokes spectra, via a parametric
 bootstrap algorithm.}
 
-\item{...}{Additional named arguments to be passed to
-\link[trendfiltering:sure_trendfilter]{sure_trendfilter()} or
+\item{sure_args}{Additional named arguments to be passed to
+\link[trendfiltering:sure_trendfilter]{sure_trendfilter()}.}
+
+\item{bootstrap_args}{Additional named arguments to be passed to
 \link[trendfiltering:bootstrap_trendfilter]{bootstrap_trendfilter()}. The
 argument \code{bootstrap_algorithm = "parametric"} is fixed due to the
 design of SALT spectra, and we don't allow this argument to be manually
@@ -57,22 +59,23 @@ for details on why this particular bootstrap algorithm is appropriate for
 SALT spectra.}
 }
 \value{
-An object of class \code{'polarized_spectrum_denoised'}. This is a list
+An object of class \code{'polarized_spectrum'}. This is a list
 with the following elements:
-\item{wavelength.eval}{}
-\item{stokes_I_denoised}{}
-\item{stokes_I_ensemble}{}
-\item{stokes_Q_denoised}{}
-\item{stokes_Q_ensemble}{}
-\item{stokes_U_denoised}{}
-\item{stokes_U_ensemble}{}
-\item{Q_norm_denoised}{}
-\item{Q_norm_ensemble}{}
-\item{U_norm_denoised}{}
-\item{U_norm_ensemble}{}
+\item{n_segments}{The number of segments the spectrum was broken into.}
+\item{denoised_spectra}{A tibble containing denoised spectra for
+each of the 3 Stokes parameters, as well as Q/I and U/I. The full column set
+is \code{c("wavelength","stokes_I","stokes_Q","stokes_U","Q_norm","U_norm")}.}
+\item{stokes_I_ensemble}{If \code{compute_uncertainties = TRUE}, the
+full bootstrap ensemble for the Stokes I parameter,
+as an \mjseqn{n \times B} matrix, less any columns from post-hoc pruning.
+If \code{compute_uncertainties = FALSE}, this will return \code{NULL}.}
+\item{stokes_Q_ensemble}{Same as above, but for the Q Stokes parameter.}
+\item{stokes_U_ensemble}{Same as above, but for the U Stokes parameter.}
+\item{Q_norm_ensemble}{Same as above, but for Q/I.}
+\item{U_norm_ensemble}{Same as above, but for U/I.}
 }
 \description{
-Denoise a polarized spectrum.
+\loadmathjax Denoise a polarized spectrum.
 }
 \examples{
 data(polarized_spectrum_WR_star)

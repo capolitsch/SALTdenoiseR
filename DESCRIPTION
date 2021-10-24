@@ -19,6 +19,7 @@ Remotes:
   capolitsch/trendfiltering@main
 Depends: 
   trendfiltering (>= 0.1.0),
+  mathjaxr (>= 1.4-0),
   R (>= 3.5.0)
 Imports: 
   dplyr (>= 1.0.5), 
