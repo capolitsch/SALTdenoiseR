@@ -44,10 +44,10 @@ than \code{min_pix_segment} unmasked spectral pixels is discarded. Defaults to
 computed for each of the denoised normalized Stokes spectra, via a parametric
 bootstrap algorithm.}
 
-\item{sure_args}{Additional named arguments to be passed to
+\item{sure_args}{A named list of arguments to be passed to
 \link[trendfiltering:sure_trendfilter]{sure_trendfilter()}.}
 
-\item{bootstrap_args}{Additional named arguments to be passed to
+\item{bootstrap_args}{A named list of arguments to be passed to
 \link[trendfiltering:bootstrap_trendfilter]{bootstrap_trendfilter()}. The
 argument \code{bootstrap_algorithm = "parametric"} is fixed due to the
 design of SALT spectra, and we don't allow this argument to be manually
@@ -67,7 +67,8 @@ each of the 3 Stokes parameters, as well as Q/I and U/I. The full column set
 is \code{c("wavelength","stokes_I","stokes_Q","stokes_U","Q_norm","U_norm")}.}
 \item{stokes_I_ensemble}{If \code{compute_uncertainties = TRUE}, the
 full bootstrap ensemble for the Stokes I parameter,
-as an \mjseqn{n \times B} matrix, less any columns from post-hoc pruning.
+as an \mjseqn{n \times B} matrix, less any columns from post-hoc pruning
+(see \link[trendfiltering:bootstrap_trendfilter]{bootstrap_trendfilter()}).
 If \code{compute_uncertainties = FALSE}, this will return \code{NULL}.}
 \item{stokes_Q_ensemble}{Same as above, but for the Q Stokes parameter.}
 \item{stokes_U_ensemble}{Same as above, but for the U Stokes parameter.}

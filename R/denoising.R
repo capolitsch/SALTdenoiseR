@@ -22,9 +22,9 @@
 #' @param compute_uncertainties (Boolean) If `TRUE`, then variability bands are
 #' computed for each of the denoised normalized Stokes spectra, via a parametric
 #' bootstrap algorithm.
-#' @param sure_args Additional named arguments to be passed to
+#' @param sure_args A named list of arguments to be passed to
 #' [sure_trendfilter()][trendfiltering::sure_trendfilter()].
-#' @param bootstrap_args Additional named arguments to be passed to
+#' @param bootstrap_args A named list of arguments to be passed to
 #' [bootstrap_trendfilter()][trendfiltering::bootstrap_trendfilter()]. The
 #' argument `bootstrap_algorithm = "parametric"` is fixed due to the
 #' design of SALT spectra, and we don't allow this argument to be manually
@@ -43,7 +43,8 @@
 #' is `c("wavelength","stokes_I","stokes_Q","stokes_U","Q_norm","U_norm")`.}
 #' \item{stokes_I_ensemble}{If `compute_uncertainties = TRUE`, the
 #' full bootstrap ensemble for the Stokes I parameter,
-#' as an \mjseqn{n \times B} matrix, less any columns from post-hoc pruning.
+#' as an \mjseqn{n \times B} matrix, less any columns from post-hoc pruning
+#' (see [bootstrap_trendfilter()][trendfiltering::bootstrap_trendfilter()]).
 #' If `compute_uncertainties = FALSE`, this will return `NULL`.}
 #' \item{stokes_Q_ensemble}{Same as above, but for the Q Stokes parameter.}
 #' \item{stokes_U_ensemble}{Same as above, but for the U Stokes parameter.}
@@ -142,7 +143,7 @@ denoise_polarized_spectrum <- function(wavelength,
     X = 1:(3 * length(df_list)),
     parallel_sure_tf,
     df_list = df_list,
-    sure_args = c(sure_args, x_eval = df_list[[X]]$wavelength),
+    sure_args = sure_args,
     mc.cores = mc_cores
   )
 

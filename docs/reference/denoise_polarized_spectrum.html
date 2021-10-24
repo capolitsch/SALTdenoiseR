@@ -188,12 +188,12 @@ bootstrap algorithm.</p></td>
     </tr>
     <tr>
       <th>sure_args</th>
-      <td><p>Additional named arguments to be passed to
+      <td><p>A named list of arguments to be passed to
 <a href='https://capolitsch.github.io/trendfiltering/reference/sure_trendfilter.html'>sure_trendfilter()</a>.</p></td>
     </tr>
     <tr>
       <th>bootstrap_args</th>
-      <td><p>Additional named arguments to be passed to
+      <td><p>A named list of arguments to be passed to
 <a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>bootstrap_trendfilter()</a>. The
 argument <code>bootstrap_algorithm = "parametric"</code> is fixed due to the
 design of SALT spectra, and we don't allow this argument to be manually
@@ -216,7 +216,8 @@ each of the 3 Stokes parameters, as well as Q/I and U/I. The full column set
 is <code><a href='https://rdrr.io/r/base/c.html'>c("wavelength","stokes_I","stokes_Q","stokes_U","Q_norm","U_norm")</a></code>.</p></dd>
 <dt>stokes_I_ensemble</dt><dd><p>If <code>compute_uncertainties = TRUE</code>, the
 full bootstrap ensemble for the Stokes I parameter,
-as an \(n \times B\) matrix, less any columns from post-hoc pruning.
+as an \(n \times B\) matrix, less any columns from post-hoc pruning
+(see <a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>bootstrap_trendfilter()</a>).
 If <code>compute_uncertainties = FALSE</code>, this will return <code>NULL</code>.</p></dd>
 <dt>stokes_Q_ensemble</dt><dd><p>Same as above, but for the Q Stokes parameter.</p></dd>
 <dt>stokes_U_ensemble</dt><dd><p>Same as above, but for the U Stokes parameter.</p></dd>
@@ -254,7 +255,7 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
 <span class='va'>masks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>bpm</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
 
 <span class='va'>spec_denoised</span> <span class='op'>&lt;-</span> <span class='fu'>denoise_polarized_spectrum</span><span class='op'>(</span><span class='va'>wavelength</span>, <span class='va'>stokes</span>, <span class='va'>variances</span>, <span class='va'>masks</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: all scheduled cores encountered errors in user code</span></div><div class='output co'>#&gt; <span class='error'>Error in tf_obj[[X]][["x_eval"]]: subscript out of bounds</span></div></pre>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
