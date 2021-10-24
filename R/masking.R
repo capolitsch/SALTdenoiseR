@@ -1,15 +1,18 @@
-#' Break a polarized spectrum into segments when one or more wide masks exist
+#' Break a spectrum into segments when one or more wide masks exist
 #'
-#' Break a polarized spectrum into segments when one or more wide masks (i.e.
-#' sequences of many consecutively-masked pixels) exist. The set of masked
-#' pixels used to define the segmentation is taken to be the set of pixels that
-#' are masked for *any* of the I, Q, or U Stokes parameters. Note that
-#' [`denoise_polarized_spectrum()`] calls `break_spectrum()` internally. So
-#' while `break_spectrum()` is an exported function, it does not need to be
-#' called directly in most cases.
+#' Break a spectrum into segments when one or more wide masks (i.e.
+#' sequences of many consecutively-masked pixels) exist. The spectrum can be
+#' polarized or unpolarized (see examples). When the spectrum is polarized, the
+#' set of masked spectral pixels used to define the spectrum's segmentation is
+#' taken to be the set of pixels that are masked for *any* of the I, Q, or U
+#' Stokes parameters. Note that
+#' [`denoise_spectrum()`] calls `break_spectrum()` internally. So
+#' while `break_spectrum()` is an exported function, it typically does not need
+#' to be called directly.
 #'
-#' @param df_full A tibble with minimal column set
-#' `c("wavelength", "I_mask", "Q_mask", "U_mask")`. The values of the mask
+#' @param df_full A tibble that includes a column titled
+#' `"wavelength"` and one or more columns with names ending in `"mask"`, e.g.
+#' `c("I_mask", "Q_mask", "U_mask")`. The values of the mask
 #' columns are 0 (or FALSE) for unmasked pixels and 1 (or TRUE) for masked
 #' pixels.
 #' @param break_at The minimum number of consecutively-masked spectral pixels
@@ -21,10 +24,10 @@
 #' Defaults to `min_pix_segment = 10`.
 #' @return A list of tibbles that define the segmented spectrum. Each
 #' tibble in the list has the same format as the input tibble `df_full`, minus
-#' the mask columns. The output tibbles only retain the pixels that are unmasked
-#' for every I, Q, U Stokes parameter, hence the removal of the mask columns.
+#' the mask columns.
 #' @export break_spectrum
 #' @examples
+#' # Example 1: Polarized Wolf-Rayet stellar spectrum
 #' data(polarized_spectrum_WR_star)
 #'
 #' suppressMessages(library(dplyr))
@@ -61,16 +64,13 @@
 #' @importFrom purrr discard
 #' @importFrom data.table rleid
 break_spectrum <- function(df_full, break_at = 10, min_pix_segment = 10) {
-  stopifnot(
-    all(c("wavelength", "I_mask", "Q_mask", "U_mask") %in% names(df_full))
-  )
+  stopifnot("wavelength" %in% names(df_full))
+  stopifnot(length(names(df_full %>% select(ends_with("mask")))) >= 1)
 
   df <- df_full %>%
-    select(starts_with(c("wavelength", "I", "Q", "U"))) %>%
     mutate(mask = df_full %>% select(ends_with("mask")) %>%
       as.matrix() %>%
       rowMaxs()) %>%
-    select(-ends_with("_mask")) %>%
     arrange(wavelength)
 
   # Drop leading and trailing masks, if present
@@ -100,7 +100,7 @@ break_spectrum <- function(df_full, break_at = 10, min_pix_segment = 10) {
     FUN = function(X) {
       df_segment <- df[(changepoints[(breaks[X] + 1)] + 1):changepoints[breaks[X + 1]], ] %>%
         filter(mask == 0) %>%
-        select(-mask)
+        select(-ends_with("mask"))
       if (nrow(df_segment) >= min_pix_segment) {
         return(df_segment)
       } else {

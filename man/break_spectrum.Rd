@@ -2,13 +2,14 @@
 % Please edit documentation in R/masking.R
 \name{break_spectrum}
 \alias{break_spectrum}
-\title{Break a polarized spectrum into segments when one or more wide masks exist}
+\title{Break a spectrum into segments when one or more wide masks exist}
 \usage{
 break_spectrum(df_full, break_at = 10, min_pix_segment = 10)
 }
 \arguments{
-\item{df_full}{A tibble with minimal column set
-\code{c("wavelength", "I_mask", "Q_mask", "U_mask")}. The values of the mask
+\item{df_full}{A tibble that includes a column titled
+\code{"wavelength"} and one or more columns with names ending in \code{"mask"}, e.g.
+\code{c("I_mask", "Q_mask", "U_mask")}. The values of the mask
 columns are 0 (or FALSE) for unmasked pixels and 1 (or TRUE) for masked
 pixels.}
 
@@ -24,19 +25,21 @@ Defaults to \code{min_pix_segment = 10}.}
 \value{
 A list of tibbles that define the segmented spectrum. Each
 tibble in the list has the same format as the input tibble \code{df_full}, minus
-the mask columns. The output tibbles only retain the pixels that are unmasked
-for every I, Q, U Stokes parameter, hence the removal of the mask columns.
+the mask columns.
 }
 \description{
-Break a polarized spectrum into segments when one or more wide masks (i.e.
-sequences of many consecutively-masked pixels) exist. The set of masked
-pixels used to define the segmentation is taken to be the set of pixels that
-are masked for \emph{any} of the I, Q, or U Stokes parameters. Note that
-\code{\link[=denoise_polarized_spectrum]{denoise_polarized_spectrum()}} calls \code{break_spectrum()} internally. So
-while \code{break_spectrum()} is an exported function, it does not need to be
-called directly in most cases.
+Break a spectrum into segments when one or more wide masks (i.e.
+sequences of many consecutively-masked pixels) exist. The spectrum can be
+polarized or unpolarized (see examples). When the spectrum is polarized, the
+set of masked spectral pixels used to define the spectrum's segmentation is
+taken to be the set of pixels that are masked for \emph{any} of the I, Q, or U
+Stokes parameters. Note that
+\code{\link[=denoise_spectrum]{denoise_spectrum()}} calls \code{break_spectrum()} internally. So
+while \code{break_spectrum()} is an exported function, it typically does not need
+to be called directly.
 }
 \examples{
+# Example 1: Polarized Wolf-Rayet stellar spectrum
 data(polarized_spectrum_WR_star)
 
 suppressMessages(library(dplyr))
