@@ -143,9 +143,9 @@ denoise_polarized_spectrum <- function(wavelength,
 
   if (compute_uncertainties) {
     tf_obj <- mclapply(
-      1:length(tf_obj),
+      1:(3 * length(df_list)),
       parallel_bootstrap_tf,
-      sure_tf = sure_tf,
+      sure_tf = tf_obj,
       bootstrap_args = bootstrap_args,
       mc.cores = mc_cores
     )
@@ -200,7 +200,7 @@ denoise_polarized_spectrum <- function(wavelength,
     stokes_Q_ensemble = stokes_Q_ensemble,
     stokes_U_ensemble = stokes_U_ensemble,
     Q_norm_ensemble = stokes_Q_ensemble / stokes_I_ensemble,
-    U_norm_ensemble = stokes_Q_ensemble / stokes_U_ensemble,
+    U_norm_ensemble = stokes_U_ensemble / stokes_I_ensemble,
     tf_obj
   ),
   class = c("polarized_spectrum_denoised", "list")
