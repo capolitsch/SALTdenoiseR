@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Denoise a polarized spectrum and estimate the uncertainties — denoise_polarized_spectrum • SALTdenoiseR</title>
+<title>Denoise a polarized spectrum — denoise_polarized_spectrum • SALTdenoiseR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Denoise a polarized spectrum and estimate the uncertainties — denoise_polarized_spectrum" />
-<meta property="og:description" content="Denoise a polarized spectrum and estimate the uncertainties." />
+<meta property="og:title" content="Denoise a polarized spectrum — denoise_polarized_spectrum" />
+<meta property="og:description" content="Denoise a polarized spectrum." />
 <meta property="og:image" content="https://capolitsch.github.io/SALTdenoiseR/logo.png" />
 
 
@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SALTdenoiseR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -119,13 +119,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Denoise a polarized spectrum and estimate the uncertainties</h1>
+    <h1>Denoise a polarized spectrum</h1>
     <small class="dont-index">Source: <a href='https://github.com/capolitsch/SALTdenoiseR/blob/main/R/denoising.R'><code>R/denoising.R</code></a></small>
     <div class="hidden name"><code>denoise_polarized_spectrum.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Denoise a polarized spectrum and estimate the uncertainties.</p>
+    <p>Denoise a polarized spectrum.</p>
     </div>
 
     <pre class="usage"><span class='fu'>denoise_polarized_spectrum</span><span class='op'>(</span>
@@ -204,6 +204,18 @@ SALT spectra.</p></td>
 
     <p>An object of class <code>'polarized_spectrum_denoised'</code>. This is a list
 with the following elements:</p>
+<dt>wavelength.eval</dt><dd><p></p></dd>
+<dt>stokes_I_denoised</dt><dd><p></p></dd>
+<dt>stokes_I_ensemble</dt><dd><p></p></dd>
+<dt>stokes_Q_denoised</dt><dd><p></p></dd>
+<dt>stokes_Q_ensemble</dt><dd><p></p></dd>
+<dt>stokes_U_denoised</dt><dd><p></p></dd>
+<dt>stokes_U_ensemble</dt><dd><p></p></dd>
+<dt>Q_norm_denoised</dt><dd><p></p></dd>
+<dt>Q_norm_ensemble</dt><dd><p></p></dd>
+<dt>U_norm_denoised</dt><dd><p></p></dd>
+<dt>U_norm_ensemble</dt><dd><p></p></dd>
+
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     
@@ -235,7 +247,7 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
 <span class='va'>masks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>bpm</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
 
 <span class='va'>spec_denoised</span> <span class='op'>&lt;-</span> <span class='fu'>denoise_polarized_spectrum</span><span class='op'>(</span><span class='va'>wavelength</span>, <span class='va'>stokes</span>, <span class='va'>variances</span>, <span class='va'>masks</span><span class='op'>)</span>
-</div></pre>
+</div><div class='output co'>#&gt; <span class='error'>Error in FUN(X[[i]], ...): object 'spec_denoised' not found</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

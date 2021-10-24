@@ -2,7 +2,7 @@
 % Please edit documentation in R/denoising.R
 \name{denoise_polarized_spectrum}
 \alias{denoise_polarized_spectrum}
-\title{Denoise a polarized spectrum and estimate the uncertainties}
+\title{Denoise a polarized spectrum}
 \usage{
 denoise_polarized_spectrum(
   wavelength,
@@ -59,9 +59,20 @@ SALT spectra.}
 \value{
 An object of class \code{'polarized_spectrum_denoised'}. This is a list
 with the following elements:
+\item{wavelength.eval}{}
+\item{stokes_I_denoised}{}
+\item{stokes_I_ensemble}{}
+\item{stokes_Q_denoised}{}
+\item{stokes_Q_ensemble}{}
+\item{stokes_U_denoised}{}
+\item{stokes_U_ensemble}{}
+\item{Q_norm_denoised}{}
+\item{Q_norm_ensemble}{}
+\item{U_norm_denoised}{}
+\item{U_norm_ensemble}{}
 }
 \description{
-Denoise a polarized spectrum and estimate the uncertainties.
+Denoise a polarized spectrum.
 }
 \examples{
 data(polarized_spectrum_WR_star)

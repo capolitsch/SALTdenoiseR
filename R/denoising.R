@@ -1,6 +1,6 @@
-#' Denoise a polarized spectrum and estimate the uncertainties
+#' Denoise a polarized spectrum
 #'
-#' Denoise a polarized spectrum and estimate the uncertainties.
+#' Denoise a polarized spectrum.
 #'
 #' @param wavelength Vector of wavelength measurements.
 #' @param stokes Polarized spectrum measurements, passed as a 3-column tibble,
@@ -36,6 +36,17 @@
 #' SALT spectra.
 #' @return An object of class `'polarized_spectrum_denoised'`. This is a list
 #' with the following elements:
+#' \item{wavelength.eval}{}
+#' \item{stokes_I_denoised}{}
+#' \item{stokes_I_ensemble}{}
+#' \item{stokes_Q_denoised}{}
+#' \item{stokes_Q_ensemble}{}
+#' \item{stokes_U_denoised}{}
+#' \item{stokes_U_ensemble}{}
+#' \item{Q_norm_denoised}{}
+#' \item{Q_norm_ensemble}{}
+#' \item{U_norm_denoised}{}
+#' \item{U_norm_ensemble}{}
 #'
 #' @export denoise_polarized_spectrum
 #'
@@ -122,7 +133,7 @@ denoise_polarized_spectrum <- function(wavelength,
 
   df_list <- break_spectrum(df_full, break_at, min_pix_segment)
 
-  sure_tf <- mclapply(
+  tf_obj <- mclapply(
     1:(3 * length(df_list)),
     parallel_sure_tf,
     df_list = df_list,
@@ -130,12 +141,69 @@ denoise_polarized_spectrum <- function(wavelength,
     mc.cores = mc_cores
   )
 
-  boot_tf <- mclapply(
-    1:length(sure_tf),
-    parallel_bootstrap_tf,
-    sure_tf = sure_tf,
-    bootstrap_args = bootstrap_args,
-    mc.cores = mc_cores
+  if (compute_uncertainties) {
+    tf_obj <- mclapply(
+      1:length(tf_obj),
+      parallel_bootstrap_tf,
+      sure_tf = sure_tf,
+      bootstrap_args = bootstrap_args,
+      mc.cores = mc_cores
+    )
+  }
+
+  stokes_I_denoised <- lapply(
+    X = 1:length(df_list),
+    FUN = function(X) tf_obj[[X]][["tf_estimate"]]
+  ) %>%
+    unlist()
+
+  stokes_Q_denoised <- lapply(
+    X = (length(df_list) + 1):(2 * length(df_list)),
+    FUN = function(X) tf_obj[[X]][["tf_estimate"]]
+  ) %>%
+    unlist()
+
+  stokes_U_denoised <- lapply(
+    X = (2 * length(df_list) + 1):(3 * length(df_list)),
+    FUN = function(X) tf_obj[[X]][["tf_estimate"]]
+  ) %>%
+    unlist()
+
+  if (compute_uncertainties) {
+    stokes_I_ensemble <- lapply(
+      X = 1:length(df_list),
+      FUN = function(X) tf_obj[[X]][["tf_bootstrap_ensemble"]]
+    ) %>%
+      bind_rows()
+
+    stokes_Q_ensemble <- lapply(
+      X = (length(df_list) + 1):(2 * length(df_list)),
+      FUN = function(X) tf_obj[[X]][["tf_bootstrap_ensemble"]]
+    ) %>%
+      bind_rows()
+
+    stokes_U_ensemble <- lapply(
+      X = (2 * length(df_list) + 1):(3 * length(df_list)),
+      FUN = function(X) tf_obj[[X]][["tf_bootstrap_ensemble"]]
+    ) %>%
+      bind_rows()
+  }
+
+  structure(list(
+    wavelength_eval = tf_obj$x_eval,
+    stokes_I_denoised = stokes_I_denoised,
+    stokes_Q_denoised = stokes_Q_denoised,
+    stokes_U_denoised = stokes_U_denoised,
+    Q_norm_denoised = stokes_Q_denoised / stokes_I_denoised,
+    U_norm_denoised = stokes_U_denoised / stokes_U_denoised,
+    stokes_I_ensemble = stokes_I_ensemble,
+    stokes_Q_ensemble = stokes_Q_ensemble,
+    stokes_U_ensemble = stokes_U_ensemble,
+    Q_norm_ensemble = stokes_Q_ensemble / stokes_I_ensemble,
+    U_norm_ensemble = stokes_Q_ensemble / stokes_U_ensemble,
+    tf_obj
+  ),
+  class = c("polarized_spectrum_denoised", "list")
   )
 }
 
