@@ -413,7 +413,7 @@ parallel_bootstrap_tf <- function(X, sure_tf, bootstrap_args) {
 #' @examples
 #' data(polarized_spectrum_WR_star)
 #'
-#' suppressMessages(library(dplyr))
+#' library(dplyr)
 #'
 #' wavelength <- seq(
 #'   from = sci$axDat$crval[1],

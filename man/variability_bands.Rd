@@ -28,7 +28,7 @@ See the parametric bootstrap algorithm in \href{https://academic.oup.com/mnras/a
 \examples{
 data(polarized_spectrum_WR_star)
 
-suppressMessages(library(dplyr))
+library(dplyr)
 
 wavelength <- seq(
   from = sci$axDat$crval[1],
