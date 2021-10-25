@@ -133,7 +133,7 @@ specifying a new value for \code{B} within the \code{bootstrap_args} list.
 
 \dontrun{
 install.packages("FITSio")
-path_to_FITS_file <- <your_local_path_to_the_FITS_file>
+path_to_FITS_file <- "<your_local_path_to_the_FITS_file>"
 file.name <- "WR006_c1_12345678_stokes.fits"
 sci <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 1)
 var <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 2)
@@ -152,6 +152,7 @@ wavelength <- seq(
 flux <- as_tibble(sci$imDat)
 variances <- as_tibble(var$imDat) \%>\% select(1:3)
 masks <- as_tibble(bpm$imDat)
+
 
 # Not running the rest to save time during development commits
 \dontrun{

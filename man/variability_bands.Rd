@@ -23,8 +23,7 @@ tibble with column set
 \code{c("wavelength","bootstrap_lower_band","bootstrap_upper_band")}.
 }
 \description{
-Quantify the statistical uncertainty in a denoised spectrum by
-computing bootstrap variability bands
+See the parametric bootstrap algorithm in \href{https://academic.oup.com/mnras/article/492/3/4005/5704413}{Politsch et al. (2020a)} for details.
 }
 \examples{
 data(polarized_spectrum_WR_star)
@@ -40,6 +39,7 @@ wavelength <- seq(
 flux <- as_tibble(sci$imDat)
 variances <- as_tibble(var$imDat) \%>\% select(1:3)
 masks <- as_tibble(bpm$imDat)
+
 
 # Not running the rest to save time during development commits
 \dontrun{

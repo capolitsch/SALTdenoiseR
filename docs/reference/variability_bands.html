@@ -49,8 +49,7 @@ computing bootstrap variability bands — variability_bands • SALTdenoiseR</ti
 
 <meta property="og:title" content="Quantify the statistical uncertainty in a denoised spectrum by
 computing bootstrap variability bands — variability_bands" />
-<meta property="og:description" content="Quantify the statistical uncertainty in a denoised spectrum by
-computing bootstrap variability bands" />
+<meta property="og:description" content="See the parametric bootstrap algorithm in Politsch et al. (2020a) for details." />
 <meta property="og:image" content="https://capolitsch.github.io/SALTdenoiseR/logo.png" />
 
 
@@ -129,8 +128,7 @@ computing bootstrap variability bands</h1>
     </div>
 
     <div class="ref-description">
-    <p>Quantify the statistical uncertainty in a denoised spectrum by
-computing bootstrap variability bands</p>
+    <p>See the parametric bootstrap algorithm in <a href='https://academic.oup.com/mnras/article/492/3/4005/5704413'>Politsch et al. (2020a)</a> for details.</p>
     </div>
 
     <pre class="usage"><span class='fu'>variability_bands</span><span class='op'>(</span><span class='va'>obj</span>, <span class='va'>param</span>, level <span class='op'>=</span> <span class='fl'>0.95</span><span class='op'>)</span></pre>
@@ -175,6 +173,7 @@ tibble with column set
 <span class='va'>flux</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>sci</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
 <span class='va'>variances</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>var</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
 <span class='va'>masks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>bpm</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
+
 
 <span class='co'># Not running the rest to save time during development commits</span>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>

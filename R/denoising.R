@@ -119,7 +119,7 @@
 #'
 #' \dontrun{
 #' install.packages("FITSio")
-#' path_to_FITS_file <- <your_local_path_to_the_FITS_file>
+#' path_to_FITS_file <- "<your_local_path_to_the_FITS_file>"
 #' file.name <- "WR006_c1_12345678_stokes.fits"
 #' sci <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 1)
 #' var <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 2)
@@ -138,6 +138,7 @@
 #' flux <- as_tibble(sci$imDat)
 #' variances <- as_tibble(var$imDat) %>% select(1:3)
 #' masks <- as_tibble(bpm$imDat)
+#'
 #'
 #' # Not running the rest to save time during development commits
 #' \dontrun{
@@ -186,7 +187,7 @@ denoise_spectrum <- function(wavelength,
     bootstrap_args <- list()
   } else {
     stopifnot(all(names(bootstrap_args) %in%
-                    names(formals(bootstrap_trendfilter))))
+      names(formals(bootstrap_trendfilter))))
   }
   if (missing(sure_args)) {
     sure_args <- list()
@@ -383,6 +384,9 @@ parallel_bootstrap_tf <- function(X, sure_tf, bootstrap_args) {
 #' Quantify the statistical uncertainty in a denoised spectrum by
 #' computing bootstrap variability bands
 #'
+#' See the parametric bootstrap algorithm in [Politsch et al. (2020a)](
+#' https://academic.oup.com/mnras/article/492/3/4005/5704413) for details.
+#'
 #' @param obj An object of class `"polarized_spectrum"` produced by
 #' [`denoise_spectrum()`].
 #' @param param A string specifying which spectrum to compute variability bands
@@ -410,6 +414,7 @@ parallel_bootstrap_tf <- function(X, sure_tf, bootstrap_args) {
 #' flux <- as_tibble(sci$imDat)
 #' variances <- as_tibble(var$imDat) %>% select(1:3)
 #' masks <- as_tibble(bpm$imDat)
+#'
 #'
 #' # Not running the rest to save time during development commits
 #' \dontrun{
