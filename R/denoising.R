@@ -1,12 +1,22 @@
-#' Denoise a spectrum via quadratic trend filtering
+#' Denoise a polarized spectrum via quadratic trend filtering
 #'
-#' Denoise a spectrum via quadratic trend filtering (currently only polarized
-#' spectra).
+#' \loadmathjax The `denoise_spectrum()` function uses quadratic trend
+#' filtering, tuned by Stein's unbiased risk estimate, to optimally denoise a
+#' polarized spectrum in each of the \mjseqn{I}, \mjseqn{Q}, \mjseqn{U} Stokes
+#' parameters (sometimes alternately denoted \mjseqn{S_0}, \mjseqn{S_1},
+#' \mjseqn{S_2}), which then also leads to estimates for the normalized
+#' (unit-less) Stokes parameters \mjseqn{Q/I} and \mjseqn{U/I}. Setting
+#' `compute_uncertainties = TRUE` generates a bootstrap ensemble of denoised
+#' spectra for each Stokes parameter, which allows variability bands to be
+#' computed for each denoised Stokes spectrum by then calling
+#' [variability_bands()] on the `denoise_spectrum()` output. The default number
+#' of bootstrap samples in each ensemble, `B = 100`, can be increased by
+#' specifying a new value for `B` in the `bootstrap_args` list.
 #'
 #' @param wavelength Vector of wavelength measurements.
 #' @param flux Spectropolarimetric measurements, passed as a 3-column tibble,
-#' data frame, or matrix, with the columns corresponding to the Stokes
-#' parameters I, Q, and U, respectively.
+#' data frame, or matrix, with the columns corresponding to the \mjseqn{I},
+#' \mjseqn{Q}, \mjseqn{U} Stokes parameters, respectively.
 #' @param variances Measurement variances, in a tibble, data frame, or matrix
 #' with dimensions matching those of `flux`.
 #' @param masks Pixel masks, in a tibble, data frame, or matrix
@@ -22,14 +32,14 @@
 #' `min_pix_segment = 10`.
 #' @param compute_uncertainties (Boolean) If `TRUE`, then bootstrap ensembles
 #' are created for each denoised spectrum via
-#' [bootstrap_trendfilter()][trendfiltering::bootstrap_trendfilter()], which
+#' [`bootstrap_trendfilter()`][trendfiltering::bootstrap_trendfilter()], which
 #' allows variability bands of any level to quickly be computed by calling
 #' [variability_bands()] on the returned object (see examples).
 #' @param mc_cores Multi-core computing using the
 #' [`parallel`][`parallel::parallel-package`] package: The number of cores to
 #' utilize. Defaults to the number of cores detected.
 #' @param sure_args (Optional) A named list of arguments to be passed to
-#' [sure_trendfilter()][trendfiltering::sure_trendfilter()]. The evaluation
+#' [`sure_trendfilter()`][trendfiltering::sure_trendfilter()]. The evaluation
 #' grid defaults to the observed wavelength grid.
 #' @param bootstrap_args (Optional) A named list of arguments to be passed to
 #' [`bootstrap_trendfilter()`][trendfiltering::bootstrap_trendfilter()]. The
@@ -43,8 +53,8 @@
 #' for details on why this particular bootstrap algorithm is appropriate for
 #' SALT spectra.
 #'
-#' @return \loadmathjax An object of class `'polarized_spectrum'`. This is a
-#' list with the following elements:
+#' @return An object of class `'polarized_spectrum'`. This is a list with the
+#' following elements:
 #' \item{n_segments}{The number of segments the spectrum was broken into.}
 #' \item{denoised_spectra}{A list of tibbles containing the denoised spectra.
 #' The number of tibbles is equal to `n_segments` and each tibble has the
@@ -79,11 +89,10 @@
 #' smoothness}. \emph{MNRAS}, 492(3), p. 4019-4032.}}
 #'
 #' @examples
-#' data(polarized_spectrum_WR_star)
-#'
-#' # Any SALT Observatory spectrum can be read into R from its FITS file in
-#' # the same format as the example data attached above using the "FITSio"
-#' # R package, as below.
+#' # Any SALT Observatory spectrum can be read into R from its FITS file
+#' # using the "FITSio" R package, as below. Here, we've stored the `sci`,
+#' # `var`, and `bpm` objects in an R data file within the package so we can
+#' # simply source them using `data()`, as below.
 #' \dontrun{
 #' file.name <- "WR006_c1_12345678_stokes.fits"
 #' sci <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 1)
@@ -91,7 +100,9 @@
 #' bpm <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 4)
 #' }
 #'
-#' suppressMessages(library(dplyr))
+#' data(polarized_spectrum_WR_star)
+#'
+#' library(dplyr)
 #'
 #' wavelength <- seq(
 #'   from = sci$axDat$crval[1],
@@ -103,6 +114,7 @@
 #' variances <- as_tibble(var$imDat) %>% select(1:3)
 #' masks <- as_tibble(bpm$imDat)
 #'
+#' \dontrun{
 #' spec_denoised <- denoise_spectrum(
 #'   wavelength,
 #'   flux,
@@ -112,6 +124,7 @@
 #' )
 #'
 #' bands <- variability_bands(spec_denoised, param = "Q_norm", level = 0.95)
+#' }
 #' @importFrom trendfiltering sure_trendfilter bootstrap_trendfilter
 #' @importFrom glmgen trendfilter trendfilter.control.list
 #' @importFrom tidyr drop_na tibble as_tibble
@@ -334,7 +347,7 @@ parallel_bootstrap_tf <- function(X, sure_tf, bootstrap_args) {
 
 ############################################
 
-#' Quantify statistical uncertainty in a denoised spectrum via bootstrap 
+#' Quantify statistical uncertainty in a denoised spectrum via bootstrap
 #' variability bands
 #'
 #' @param obj An object of class `"polarized_spectrum"` produced by
@@ -364,7 +377,6 @@ parallel_bootstrap_tf <- function(X, sure_tf, bootstrap_args) {
 #' flux <- as_tibble(sci$imDat)
 #' variances <- as_tibble(var$imDat) %>% select(1:3)
 #' masks <- as_tibble(bpm$imDat)
-#'
 #' \dontrun{
 #' spec_denoised <- denoise_spectrum(
 #'   wavelength,

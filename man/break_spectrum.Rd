@@ -7,11 +7,10 @@
 break_spectrum(df_full, break_at = 10, min_pix_segment = 10)
 }
 \arguments{
-\item{df_full}{A tibble that includes a column titled
-\code{"wavelength"} and one or more columns with names ending in \code{"mask"}, e.g.
-\code{c("I_mask", "Q_mask", "U_mask")}. The values of the mask
-columns are 0 (or FALSE) for unmasked pixels and 1 (or TRUE) for masked
-pixels.}
+\item{df_full}{A tibble that includes a column titled \code{"wavelength"} and one
+or more columns with names ending in \code{"mask"}, e.g.
+\code{c("I_mask", "Q_mask", "U_mask")}. The values of the mask columns are 0 (or
+FALSE) for unmasked pixels and 1 (or TRUE) for masked pixels.}
 
 \item{break_at}{The minimum number of consecutively-masked spectral pixels
 that will trigger a break in the spectrum. Defaults to \code{break_at = 10}.}
@@ -23,9 +22,9 @@ that has less than \code{min_pix_segment} unmasked spectral pixels is discarded.
 Defaults to \code{min_pix_segment = 10}.}
 }
 \value{
-A list of tibbles that define the segmented spectrum. Each
-tibble in the list has the same format as the input tibble \code{df_full}, minus
-the mask columns.
+A list of tibbles that define the segmented spectrum. Each tibble in
+the list has the same format as the input tibble \code{df_full}, minus the mask
+columns.
 }
 \description{
 Break a spectrum into segments when one or more wide masks (i.e.
@@ -33,10 +32,9 @@ sequences of many consecutively-masked pixels) exist. The spectrum can be
 polarized or unpolarized (see examples). When the spectrum is polarized, the
 set of masked spectral pixels used to define the spectrum's segmentation is
 taken to be the set of pixels that are masked for \emph{any} of the I, Q, or U
-Stokes parameters. Note that
-\code{\link[=denoise_spectrum]{denoise_spectrum()}} calls \code{break_spectrum()} internally. So
-while \code{break_spectrum()} is an exported function, it typically does not need
-to be called directly.
+Stokes parameters. Note that \code{\link[=denoise_spectrum]{denoise_spectrum()}} calls \code{break_spectrum()}
+internally. So while \code{break_spectrum()} is an exported function, it typically
+does not need to be called directly.
 }
 \examples{
 # Example 1: Polarized Wolf-Rayet stellar spectrum
@@ -69,4 +67,11 @@ df_full <- bind_cols(
 )
 
 df_list <- break_spectrum(df_full)
+
+# Example 2: Quasar Lyman-alpha forest (not finished)
+
+data(quasar_spectrum_Lyalpha)
+head(spec)
+\dontrun{
+sure_tf <- sure_trendfilter(spec$log10_wavelength, spec$flux, spec$weights)}
 }
