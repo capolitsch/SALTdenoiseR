@@ -2,8 +2,8 @@
 % Please edit documentation in R/denoising.R
 \name{variability_bands}
 \alias{variability_bands}
-\title{Quantify statistical uncertainty in a denoised spectrum via bootstrap
-variability bands}
+\title{Quantify the statistical uncertainty in a denoised spectrum by
+computing bootstrap variability bands}
 \usage{
 variability_bands(obj, param, level = 0.95)
 }
@@ -11,8 +11,8 @@ variability_bands(obj, param, level = 0.95)
 \item{obj}{An object of class \code{"polarized_spectrum"} produced by
 \code{\link[=denoise_spectrum]{denoise_spectrum()}}.}
 
-\item{param}{The denoised spectrum to compute variability bands for. One of
-\code{c("I","Q","U","Q_norm","U_norm")}.}
+\item{param}{A string specifying which spectrum to compute variability bands
+for. One of \code{c("I","Q","U","Q_norm","U_norm")}.}
 
 \item{level}{The level of the pointwise variability bands. Defaults to
 \code{level = 0.95}.}
@@ -23,8 +23,8 @@ tibble with column set
 \code{c("wavelength","bootstrap_lower_band","bootstrap_upper_band")}.
 }
 \description{
-Quantify statistical uncertainty in a denoised spectrum via bootstrap
-variability bands
+Quantify the statistical uncertainty in a denoised spectrum by
+computing bootstrap variability bands
 }
 \examples{
 data(polarized_spectrum_WR_star)
@@ -40,6 +40,8 @@ wavelength <- seq(
 flux <- as_tibble(sci$imDat)
 variances <- as_tibble(var$imDat) \%>\% select(1:3)
 masks <- as_tibble(bpm$imDat)
+
+# Not running the rest to save time during development commits
 \dontrun{
 spec_denoised <- denoise_spectrum(
   wavelength,
@@ -49,6 +51,5 @@ spec_denoised <- denoise_spectrum(
   compute_uncertainties = TRUE
 )
 
-bands <- variability_bands(spec_denoised, param = "Q_norm", level = 0.95)
-}
+bands <- variability_bands(spec_denoised, param = "Q_norm", level = 0.95)}
 }

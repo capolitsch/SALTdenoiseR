@@ -33,7 +33,9 @@ with dimensions matching those of \code{flux}. Nonzero elements flag bad pixels.
 \item{break_at}{A free parameter that controls the segmentation of a
 spectrum. More precisely, \code{break_at} is the minimum number of
 consecutively-masked spectral pixels that will trigger a break in the
-spectrum. Defaults to \code{break_at = 10}.}
+spectrum. The set of masked spectral pixels used to define the segmentation
+is taken to be the set of pixels that are masked for \emph{any} of the \mjseqn{I},
+\mjseqn{Q}, \mjseqn{U} Stokes parameters. Defaults to \code{break_at = 10}.}
 
 \item{min_pix_segment}{After the segmentation procedure is complete, the
 resulting segments are examined to ensure that each is sufficiently long for
@@ -49,7 +51,7 @@ allows variability bands of any level to quickly be computed by calling
 
 \item{mc_cores}{Multi-core computing using the
 \code{\link[parallel:parallel-package]{parallel}} package: The number of cores to
-utilize. Defaults to the number of cores detected.}
+utilize. Defaults to the number of cores detected on the machine.}
 
 \item{sure_args}{(Optional) A named list of arguments to be passed to
 \code{\link[trendfiltering:sure_trendfilter]{sure_trendfilter()}}. The evaluation
@@ -61,33 +63,52 @@ argument \code{bootstrap_algorithm = "parametric"} is fixed due to the
 statistical design of SALT spectra, and we don't allow this argument to be
 manually overridden. See the
 \code{\link[trendfiltering:bootstrap_trendfilter]{bootstrap_trendfilter()}}
-documentation and
-\href{https://academic.oup.com/mnras/article/492/3/4005/5704413}{Politsch et al. (2020a)}
+documentation and \href{https://academic.oup.com/mnras/article/492/3/4005/5704413}{Politsch et al. (2020a)}
 for details on why this particular bootstrap algorithm is appropriate for
 SALT spectra.}
 }
 \value{
 An object of class \code{'polarized_spectrum'}. This is a list with the
 following elements:
-\item{n_segments}{The number of segments the spectrum was broken into.}
-\item{denoised_spectra}{A list of tibbles containing the denoised spectra.
-The number of tibbles is equal to \code{n_segments} and each tibble has the
-column set \code{c("wavelength","I","Q","U","Q_norm","U_norm")}, where
-\code{Q_norm = Q/I} and \code{U_norm = U/I}.}
+\item{n_segments}{The number of segments the spectrum was broken into
+by \code{\link[=break_spectrum]{break_spectrum()}}.}
+\item{point_estimates}{A list of tibbles containing the observed wavelengths
+(minus the superset of masked values), the Stokes \mjseqn{I}, \mjseqn{Q},
+\mjseqn{U} flux measurements, the Stokes \mjseqn{I}, \mjseqn{Q},
+\mjseqn{U} flux measurement variances, and the denoised estimates for
+\mjseqn{I}, \mjseqn{Q}, \mjseqn{U}, \mjseqn{Q/I}, and \mjseqn{U/I}.
+The number of tibbles is equal to \code{n_segments} and the column names of each
+tibble are\if{html}{\out{<div class="sourceCode r">}}\preformatted{c("wavelength",
+  "I","Q","U",
+  "I_vars","Q_vars","U_vars",
+  "I_denoised","Q_denoised","U_denoised","Q_norm_denoised","U_norm_denoised")
+}\if{html}{\out{</div>}}
+
+where \code{Q_norm_denoised = Q_denoised / I_denoised} and
+\code{U_norm_denoised = U_denoised / I_denoised}.}
 \item{I_ensemble}{If \code{compute_uncertainties = TRUE}, then this will
 be the full bootstrap ensemble of denoised \mjseqn{I} spectra,
 returned as an \mjseqn{n \times B} matrix, less any columns from post-hoc
 pruning
-(see \code{\link[trendfiltering:bootstrap_trendfilter]{bootstrap_trendfilter()}}),
-which is then used by \code{\link[=variability_bands]{variability_bands()}} to compute
-variability bands for the denoised \mjseqn{I} spectrum.
-If \code{compute_uncertainties = FALSE}, this will return \code{NULL}.}
+(see \code{\link[trendfiltering:bootstrap_trendfilter]{bootstrap_trendfilter()}}).
+This bootstrap ensemble, and those below, are then used by the
+\code{\link[=variability_bands]{variability_bands()}} function to compute variability bands for the denoised
+spectra. If \code{compute_uncertainties = FALSE}, this will return \code{NULL}.}
 \item{Q_ensemble}{Same as above, but for the \mjseqn{Q} Stokes
 parameter.}
 \item{U_ensemble}{Same as above, but for the \mjseqn{U} Stokes
 parameter.}
 \item{Q_norm_ensemble}{Same as above, but for \mjseqn{Q/I}.}
 \item{U_norm_ensemble}{Same as above, but for \mjseqn{U/I}.}
+\item{tf_obj}{Technical summary of the full analysis. A list of length
+\code{3 * n_segments}, where the first \code{n_segments} elements correspond to the
+segmented analysis of the \mjseqn{I} Stokes spectrum, the next \code{n_segments}
+elements correspond to the same for the \mjseqn{Q} Stokes spectrum, and the
+last \code{n_segments} elements correspond to the same for the \mjseqn{U} Stokes
+spectrum. If \code{compute_uncertainties = FALSE}, then each element is an object
+of class \code{\link[trendfiltering:sure_trendfilter]{sure_tf}}. If
+\code{compute_uncertainties = TRUE}, then each element is an object of class
+\code{\link[trendfiltering:bootstrap_trendfilter]{bootstrap_tf}}.}
 }
 \description{
 \loadmathjax The \code{denoise_spectrum()} function uses quadratic trend
@@ -101,19 +122,22 @@ spectra for each Stokes parameter, which allows variability bands to be
 computed for each denoised Stokes spectrum by then calling
 \code{\link[=variability_bands]{variability_bands()}} on the \code{denoise_spectrum()} output. The default number
 of bootstrap samples in each ensemble, \code{B = 100}, can be increased by
-specifying a new value for \code{B} in the \code{bootstrap_args} list.
+specifying a new value for \code{B} within the \code{bootstrap_args} list.
 }
 \examples{
 # Any SALT Observatory spectrum can be read into R from its FITS file
-# using the "FITSio" R package, as below. Here, we've stored the `sci`,
-# `var`, and `bpm` objects in an R data file within the package so we can
-# simply source them using `data()`, as below.
+# using the "FITSio" R package, as below. For convenience, here we've stored
+# the `sci`, `var`, and `bpm` data structures for a Wolf-Rayet stellar
+# spectrum in an R data file within this package, so we can source them using
+# a simple call to `data()`, as below.
+
 \dontrun{
+install.packages("FITSio")
+path_to_FITS_file <- <your_local_path_to_the_FITS_file>
 file.name <- "WR006_c1_12345678_stokes.fits"
 sci <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 1)
 var <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 2)
-bpm <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 4)
-}
+bpm <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 4)}
 
 data(polarized_spectrum_WR_star)
 
@@ -129,6 +153,7 @@ flux <- as_tibble(sci$imDat)
 variances <- as_tibble(var$imDat) \%>\% select(1:3)
 masks <- as_tibble(bpm$imDat)
 
+# Not running the rest to save time during development commits
 \dontrun{
 spec_denoised <- denoise_spectrum(
   wavelength,
@@ -138,8 +163,7 @@ spec_denoised <- denoise_spectrum(
   compute_uncertainties = TRUE
 )
 
-bands <- variability_bands(spec_denoised, param = "Q_norm", level = 0.95)
-}
+bands <- variability_bands(spec_denoised, param = "Q_norm", level = 0.95)}
 }
 \references{
 \enumerate{

@@ -59,7 +59,7 @@ spectra for each Stokes parameter, which allows variability bands to be
 computed for each denoised Stokes spectrum by then calling
 variability_bands() on the denoise_spectrum() output. The default number
 of bootstrap samples in each ensemble, B = 100, can be increased by
-specifying a new value for B in the bootstrap_args list." />
+specifying a new value for B within the bootstrap_args list." />
 <meta property="og:image" content="https://capolitsch.github.io/SALTdenoiseR/logo.png" />
 
 
@@ -149,7 +149,7 @@ spectra for each Stokes parameter, which allows variability bands to be
 computed for each denoised Stokes spectrum by then calling
 <code><a href='variability_bands.html'>variability_bands()</a></code> on the <code>denoise_spectrum()</code> output. The default number
 of bootstrap samples in each ensemble, <code>B = 100</code>, can be increased by
-specifying a new value for <code>B</code> in the <code>bootstrap_args</code> list.</p>
+specifying a new value for <code>B</code> within the <code>bootstrap_args</code> list.</p>
     </div>
 
     <pre class="usage"><span class='fu'>denoise_spectrum</span><span class='op'>(</span>
@@ -193,7 +193,9 @@ with dimensions matching those of <code>flux</code>. Nonzero elements flag bad p
       <td><p>A free parameter that controls the segmentation of a
 spectrum. More precisely, <code>break_at</code> is the minimum number of
 consecutively-masked spectral pixels that will trigger a break in the
-spectrum. Defaults to <code>break_at = 10</code>.</p></td>
+spectrum. The set of masked spectral pixels used to define the segmentation
+is taken to be the set of pixels that are masked for <em>any</em> of the \(I\),
+\(Q\), \(U\) Stokes parameters. Defaults to <code>break_at = 10</code>.</p></td>
     </tr>
     <tr>
       <th>min_pix_segment</th>
@@ -215,7 +217,7 @@ allows variability bands of any level to quickly be computed by calling
       <th>mc_cores</th>
       <td><p>Multi-core computing using the
 <code><a href='https://rdrr.io/r/parallel/parallel-package.html'>parallel</a></code> package: The number of cores to
-utilize. Defaults to the number of cores detected.</p></td>
+utilize. Defaults to the number of cores detected on the machine.</p></td>
     </tr>
     <tr>
       <th>sure_args</th>
@@ -231,8 +233,7 @@ argument <code>bootstrap_algorithm = "parametric"</code> is fixed due to the
 statistical design of SALT spectra, and we don't allow this argument to be
 manually overridden. See the
 <code><a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>bootstrap_trendfilter()</a></code>
-documentation and
-<a href='https://academic.oup.com/mnras/article/492/3/4005/5704413'>Politsch et al. (2020a)</a>
+documentation and <a href='https://academic.oup.com/mnras/article/492/3/4005/5704413'>Politsch et al. (2020a)</a>
 for details on why this particular bootstrap algorithm is appropriate for
 SALT spectra.</p></td>
     </tr>
@@ -242,25 +243,43 @@ SALT spectra.</p></td>
 
     <p>An object of class <code>'polarized_spectrum'</code>. This is a list with the
 following elements:</p>
-<dt>n_segments</dt><dd><p>The number of segments the spectrum was broken into.</p></dd>
-<dt>denoised_spectra</dt><dd><p>A list of tibbles containing the denoised spectra.
-The number of tibbles is equal to <code>n_segments</code> and each tibble has the
-column set <code><a href='https://rdrr.io/r/base/c.html'>c("wavelength","I","Q","U","Q_norm","U_norm")</a></code>, where
-<code>Q_norm = Q/I</code> and <code>U_norm = U/I</code>.</p></dd>
+<dt>n_segments</dt><dd><p>The number of segments the spectrum was broken into
+by <code><a href='break_spectrum.html'>break_spectrum()</a></code>.</p></dd>
+<dt>point_estimates</dt><dd><p>A list of tibbles containing the observed wavelengths
+(minus the superset of masked values), the Stokes \(I\), \(Q\),
+\(U\) flux measurements, the Stokes \(I\), \(Q\),
+\(U\) flux measurement variances, and the denoised estimates for
+\(I\), \(Q\), \(U\), \(Q/I\), and \(U/I\).
+The number of tibbles is equal to <code>n_segments</code> and the column names of each
+tibble are<div class="sourceCode r"><pre><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"wavelength"</span>,
+  <span class='st'>"I"</span>,<span class='st'>"Q"</span>,<span class='st'>"U"</span>,
+  <span class='st'>"I_vars"</span>,<span class='st'>"Q_vars"</span>,<span class='st'>"U_vars"</span>,
+  <span class='st'>"I_denoised"</span>,<span class='st'>"Q_denoised"</span>,<span class='st'>"U_denoised"</span>,<span class='st'>"Q_norm_denoised"</span>,<span class='st'>"U_norm_denoised"</span><span class='op'>)</span>
+</pre></div>where <code>Q_norm_denoised = Q_denoised / I_denoised</code> and
+<code>U_norm_denoised = U_denoised / I_denoised</code>.</p></dd>
 <dt>I_ensemble</dt><dd><p>If <code>compute_uncertainties = TRUE</code>, then this will
 be the full bootstrap ensemble of denoised \(I\) spectra,
 returned as an \(n \times B\) matrix, less any columns from post-hoc
 pruning
-(see <code><a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>bootstrap_trendfilter()</a></code>),
-which is then used by <code><a href='variability_bands.html'>variability_bands()</a></code> to compute
-variability bands for the denoised \(I\) spectrum.
-If <code>compute_uncertainties = FALSE</code>, this will return <code>NULL</code>.</p></dd>
+(see <code><a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>bootstrap_trendfilter()</a></code>).
+This bootstrap ensemble, and those below, are then used by the
+<code><a href='variability_bands.html'>variability_bands()</a></code> function to compute variability bands for the denoised
+spectra. If <code>compute_uncertainties = FALSE</code>, this will return <code>NULL</code>.</p></dd>
 <dt>Q_ensemble</dt><dd><p>Same as above, but for the \(Q\) Stokes
 parameter.</p></dd>
 <dt>U_ensemble</dt><dd><p>Same as above, but for the \(U\) Stokes
 parameter.</p></dd>
 <dt>Q_norm_ensemble</dt><dd><p>Same as above, but for \(Q/I\).</p></dd>
 <dt>U_norm_ensemble</dt><dd><p>Same as above, but for \(U/I\).</p></dd>
+<dt>tf_obj</dt><dd><p>Technical summary of the full analysis. A list of length
+<code>3 * n_segments</code>, where the first <code>n_segments</code> elements correspond to the
+segmented analysis of the \(I\) Stokes spectrum, the next <code>n_segments</code>
+elements correspond to the same for the \(Q\) Stokes spectrum, and the
+last <code>n_segments</code> elements correspond to the same for the \(U\) Stokes
+spectrum. If <code>compute_uncertainties = FALSE</code>, then each element is an object
+of class <code><a href='https://capolitsch.github.io/trendfiltering/reference/sure_trendfilter.html'>sure_tf</a></code>. If
+<code>compute_uncertainties = TRUE</code>, then each element is an object of class
+<code><a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>bootstrap_tf</a></code>.</p></dd>
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -278,43 +297,7 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Any SALT Observatory spectrum can be read into R from its FITS file</span>
-<span class='co'># using the "FITSio" R package, as below. Here, we've stored the `sci`,</span>
-<span class='co'># `var`, and `bpm` objects in an R data file within the package so we can</span>
-<span class='co'># simply source them using `data()`, as below.</span>
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>file.name</span> <span class='op'>&lt;-</span> <span class='st'>"WR006_c1_12345678_stokes.fits"</span>
-<span class='va'>sci</span> <span class='op'>&lt;-</span> <span class='fu'>FITSio</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/FITSio/man/readFITS.html'>readFITS</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>path_to_FITS_file</span>, <span class='va'>file.name</span><span class='op'>)</span>, hdu <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
-<span class='va'>var</span> <span class='op'>&lt;-</span> <span class='fu'>FITSio</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/FITSio/man/readFITS.html'>readFITS</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>path_to_FITS_file</span>, <span class='va'>file.name</span><span class='op'>)</span>, hdu <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
-<span class='va'>bpm</span> <span class='op'>&lt;-</span> <span class='fu'>FITSio</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/FITSio/man/readFITS.html'>readFITS</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>path_to_FITS_file</span>, <span class='va'>file.name</span><span class='op'>)</span>, hdu <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span>
-<span class='op'>}</span>
-
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>polarized_spectrum_WR_star</span><span class='op'>)</span>
-
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
-
-<span class='va'>wavelength</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span>
-  from <span class='op'>=</span> <span class='va'>sci</span><span class='op'>$</span><span class='va'>axDat</span><span class='op'>$</span><span class='va'>crval</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>,
-  by <span class='op'>=</span> <span class='va'>sci</span><span class='op'>$</span><span class='va'>axDat</span><span class='op'>$</span><span class='va'>cdelt</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>,
-  length <span class='op'>=</span> <span class='va'>sci</span><span class='op'>$</span><span class='va'>axDat</span><span class='op'>$</span><span class='va'>len</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>
-<span class='op'>)</span>
-
-<span class='va'>flux</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>sci</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
-<span class='va'>variances</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>var</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
-<span class='va'>masks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>bpm</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
-
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>spec_denoised</span> <span class='op'>&lt;-</span> <span class='fu'>denoise_spectrum</span><span class='op'>(</span>
-  <span class='va'>wavelength</span>,
-  <span class='va'>flux</span>,
-  <span class='va'>variances</span>,
-  <span class='va'>masks</span>,
-  compute_uncertainties <span class='op'>=</span> <span class='cn'>TRUE</span>
-<span class='op'>)</span>
-
-<span class='va'>bands</span> <span class='op'>&lt;-</span> <span class='fu'><a href='variability_bands.html'>variability_bands</a></span><span class='op'>(</span><span class='va'>spec_denoised</span>, param <span class='op'>=</span> <span class='st'>"Q_norm"</span>, level <span class='op'>=</span> <span class='fl'>0.95</span><span class='op'>)</span>
-<span class='op'>}</span>
-</div></pre>
+    <pre class="examples"></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

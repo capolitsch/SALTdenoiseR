@@ -4,10 +4,10 @@
 #' sequences of many consecutively-masked pixels) exist. The spectrum can be
 #' polarized or unpolarized (see examples). When the spectrum is polarized, the
 #' set of masked spectral pixels used to define the spectrum's segmentation is
-#' taken to be the set of pixels that are masked for *any* of the I, Q, or U
-#' Stokes parameters. Note that [`denoise_spectrum()`] calls `break_spectrum()`
-#' internally. So while `break_spectrum()` is an exported function, it typically
-#' does not need to be called directly.
+#' taken to be the set of pixels that are masked for *any* of the \mjseqn{I},
+#' \mjseqn{Q}, \mjseqn{U} Stokes parameters. Note that [`denoise_spectrum()`]
+#' calls `break_spectrum()` internally. So while `break_spectrum()` is an
+#' exported function, it typically does not need to be called directly.
 #'
 #' @param df_full A tibble that includes a column titled `"wavelength"` and one
 #' or more columns with names ending in `"mask"`, e.g.
@@ -25,7 +25,6 @@
 #' columns.
 #' @export break_spectrum
 #' @examples
-#' # Example 1: Polarized Wolf-Rayet stellar spectrum
 #' data(polarized_spectrum_WR_star)
 #'
 #' suppressMessages(library(dplyr))
@@ -55,13 +54,6 @@
 #' )
 #'
 #' df_list <- break_spectrum(df_full)
-#'
-#' # Example 2: Quasar Lyman-alpha forest (not finished)
-#'
-#' data(quasar_spectrum_Lyalpha)
-#' head(spec)
-#' \dontrun{
-#' sure_tf <- sure_trendfilter(spec$log10_wavelength, spec$flux, spec$weights)}
 #' @importFrom dplyr %>% filter pull
 #' @importFrom matrixStats rowMaxs
 #' @importFrom dplyr %>% arrange filter select
