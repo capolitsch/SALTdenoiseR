@@ -334,7 +334,9 @@ parallel_bootstrap_tf <- function(X, sure_tf, bootstrap_args) {
 
 ############################################
 
-#' Compute bootstrap variability bands for a denoised spectrum
+#' Quantify statistical uncertainty in a denoised spectrum via bootstrap 
+#' variability bands
+#'
 #' @param obj An object of class `"polarized_spectrum"` produced by
 #' [`denoise_spectrum()`].
 #' @param param The denoised spectrum to compute variability bands for. One of
