@@ -309,7 +309,8 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
 <span class='va'>file.name</span> <span class='op'>&lt;-</span> <span class='st'>"WR006_c1_12345678_stokes.fits"</span>
 <span class='va'>sci</span> <span class='op'>&lt;-</span> <span class='fu'>FITSio</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/FITSio/man/readFITS.html'>readFITS</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>path_to_FITS_file</span>, <span class='va'>file.name</span><span class='op'>)</span>, hdu <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 <span class='va'>var</span> <span class='op'>&lt;-</span> <span class='fu'>FITSio</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/FITSio/man/readFITS.html'>readFITS</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>path_to_FITS_file</span>, <span class='va'>file.name</span><span class='op'>)</span>, hdu <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
-<span class='va'>bpm</span> <span class='op'>&lt;-</span> <span class='fu'>FITSio</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/FITSio/man/readFITS.html'>readFITS</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>path_to_FITS_file</span>, <span class='va'>file.name</span><span class='op'>)</span>, hdu <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span><span class='op'>}</span>
+<span class='va'>bpm</span> <span class='op'>&lt;-</span> <span class='fu'>FITSio</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/FITSio/man/readFITS.html'>readFITS</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>path_to_FITS_file</span>, <span class='va'>file.name</span><span class='op'>)</span>, hdu <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span>
+<span class='op'>}</span>
 
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>polarized_spectrum_WR_star</span><span class='op'>)</span>
 
@@ -337,8 +338,8 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
 <span class='op'>)</span>
 
 <span class='va'>bands</span> <span class='op'>&lt;-</span> <span class='fu'><a href='variability_bands.html'>variability_bands</a></span><span class='op'>(</span><span class='va'>spec_denoised</span>, param <span class='op'>=</span> <span class='st'>"Q_norm"</span>, level <span class='op'>=</span> <span class='fl'>0.95</span><span class='op'>)</span>
-
 <span class='op'>}</span>
+
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
