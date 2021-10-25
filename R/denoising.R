@@ -277,7 +277,7 @@ denoise_spectrum <- function(wavelength,
     U_norm_ensemble = U_norm_ensemble,
     sure_args = sure_args,
     bootstrap_args = bootstrap_args,
-    tf_obj
+    tf_obj = tf_obj
   ),
   class = c("polarized_spectrum", "list")
   )
