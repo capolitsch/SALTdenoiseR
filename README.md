@@ -12,6 +12,8 @@ remotes::install_github("capolitsch/SALTdenoiseR")
 
 Please use the [SALTdenoiseR issues page](https://github.com/capolitsch/SALTdenoiseR/issues) to report bugs or ask general questions. This page may also be used to make requests for new features to be added to the package.
 
+When using the SALTdenoiseR package, please incude [these citations](https://capolitsch.github.io/SALTdenoiseR/authors.html) in your publications.
+
 
 ## Key references:
 
