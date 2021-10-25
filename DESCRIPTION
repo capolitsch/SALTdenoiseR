@@ -7,7 +7,7 @@ Authors@R: c(person(given = "Collin A.",
              role = c("aut","cre"),
              email = "collinpolitsch@gmail.com",
              comment = c(ORCID = "0000-0003-3727-9167")))
-Description: This is a highly specialized statistical package that is developed 
+Description: This is a specialized statistical package that is developed 
   and maintained to optimally assist astronomers in the South African Large 
   Telescope (SALT) consortium in their scientific analyses of past, present, and 
   future SALT observations.
