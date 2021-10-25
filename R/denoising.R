@@ -224,13 +224,23 @@ denoise_spectrum <- function(wavelength,
   )
 
   if (compute_uncertainties) {
-    tf_obj <- mclapply(
+    bootstrap_args$mc_cores <- mc_cores
+
+    tf_obj2 <- mclapply(
       1:(3 * length(df_list)),
       parallel_bootstrap_tf,
       sure_tf = tf_obj,
       bootstrap_args = bootstrap_args,
-      mc.cores = mc_cores
+      mc.cores = 1
     )
+
+    rm(tf_obj)
+    gc()
+
+    tf_obj <- tf_obj2
+
+    rm(tf_obj2)
+    gc()
   }
 
   wavelength_eval <- lapply(
