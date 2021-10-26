@@ -84,15 +84,12 @@ less any columns from post-hoc pruning
 \code{\link[trendfiltering:bootstrap_trendfilter]{bootstrap_trendfilter()}}
 documentation).
 If \code{compute_uncertainties = FALSE}, this will return \code{NULL}.}
-\item{tf_obj}{Technical summary of the full analysis. A list of length
-\code{3 * n_segments}, where the first \code{n_segments} elements correspond to the
-segmented analysis of the \mjseqn{I} Stokes spectrum, the next \code{n_segments}
-elements correspond to the same for the \mjseqn{Q} Stokes spectrum, and the
-last \code{n_segments} elements correspond to the same for the \mjseqn{U} Stokes
-spectrum. If \code{compute_uncertainties = FALSE}, then each element is an object
-of class \code{\link[trendfiltering:sure_trendfilter]{sure_tf}}. If
-\code{compute_uncertainties = TRUE}, then each element is an object of class
-\code{\link[trendfiltering:bootstrap_trendfilter]{bootstrap_tf}}.}
+\item{I_summary}{Technical summary of the denoising analysis of the
+\mjseqn{I} Stokes parameter. If \code{compute_uncertainties = TRUE}, then this is
+an object of class \code{\link[trendfiltering:bootstrap_trendfilter]{bootstrap_tf}}.
+Else, an object of class \code{\link[trendfiltering:sure_trendfilter]{sure_tf}}.}
+\item{Q_summary}{Same as above, but for the \mjseqn{Q} Stokes parameter.}
+\item{U_summary}{Same as above, but for the \mjseqn{U} Stokes parameter.}
 }
 \description{
 \loadmathjax The \code{denoise_spectrum()} function uses quadratic trend

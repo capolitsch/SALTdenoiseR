@@ -68,15 +68,12 @@
 #' [`bootstrap_trendfilter()`][trendfiltering::bootstrap_trendfilter()]
 #' documentation).
 #' If `compute_uncertainties = FALSE`, this will return `NULL`.}
-#' \item{tf_obj}{Technical summary of the full analysis. A list of length
-#' `3 * n_segments`, where the first `n_segments` elements correspond to the
-#' segmented analysis of the \mjseqn{I} Stokes spectrum, the next `n_segments`
-#' elements correspond to the same for the \mjseqn{Q} Stokes spectrum, and the
-#' last `n_segments` elements correspond to the same for the \mjseqn{U} Stokes
-#' spectrum. If `compute_uncertainties = FALSE`, then each element is an object
-#' of class [`sure_tf`][trendfiltering::sure_trendfilter()]. If
-#' `compute_uncertainties = TRUE`, then each element is an object of class
-#' [`bootstrap_tf`][trendfiltering::bootstrap_trendfilter()].}
+#' \item{I_summary}{Technical summary of the denoising analysis of the
+#' \mjseqn{I} Stokes parameter. If `compute_uncertainties = TRUE`, then this is
+#' an object of class [`bootstrap_tf`][trendfiltering::bootstrap_trendfilter()].
+#' Else, an object of class [`sure_tf`][trendfiltering::sure_trendfilter()].}
+#' \item{Q_summary}{Same as above, but for the \mjseqn{Q} Stokes parameter.}
+#' \item{U_summary}{Same as above, but for the \mjseqn{U} Stokes parameter.}
 #'
 #' @export denoise_spectrum
 #'
@@ -311,55 +308,63 @@ denoise_spectrum <- function(wavelength,
     lambdas = tf_obj[[1]]$lambdas,
     edfs = tf_obj[[1]]$edfs,
     generalization_errors = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[X]]$generalization_errors
     ),
     lambda_min = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[X]]$lambda_min
     ) %>% unlist(),
     i_min = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[X]]$i_min
     ) %>% unlist(),
     edf_min = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[X]]$edf_min
     ) %>% unlist(),
     n_iter = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[X]]$n_iter
     ),
     training_errors = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[X]]$training_errors
     ),
     optimisms = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[X]]$optimisms
     ),
     admm_params = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[X]]$admm_params
     ),
-    edf_boots = lapply(
-      1:length(df_list),
-      tf_obj[[X]]$edf_boots
-    ),
-    n_iter_boots = lapply(
-      1:length(df_list),
-      tf_obj[[X]]$n_iter_boots
-    ),
+    edf_boots = if (compute_uncertainties) {
+      return(lapply(
+        X = 1:length(df_list),
+        tf_obj[[X]]$edf_boots
+      ))
+    } else {
+      return(NULL)
+    },
+    n_iter_boots = if (compute_uncertainties) {
+      return(lapply(
+        X = 1:length(df_list),
+        tf_obj[[X]]$n_iter_boots
+      ))
+    } else {
+      return(NULL)
+    },
     x_scale = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[X]]$x_scale
     ) %>% unlist(),
     y_scale = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[X]]$y_scale
     ) %>% unlist(),
     data_scaled = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[X]]$data_scaled
     )
   ),
@@ -370,55 +375,63 @@ denoise_spectrum <- function(wavelength,
     lambdas = tf_obj[[length(df_list) + 1]]$lambdas,
     edfs = tf_obj[[length(df_list) + 1]]$edfs,
     generalization_errors = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[length(df_list) + X]]$generalization_errors
     ),
     lambda_min = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[length(df_list) + X]]$lambda_min
     ) %>% unlist(),
     i_min = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[length(df_list) + X]]$i_min
     ) %>% unlist(),
     edf_min = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[length(df_list) + X]]$edf_min
     ) %>% unlist(),
     n_iter = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[length(df_list) + X]]$n_iter
     ),
     training_errors = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[length(df_list) + X]]$training_errors
     ),
     optimisms = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[length(df_list) + X]]$optimisms
     ),
     admm_params = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[length(df_list) + X]]$admm_params
     ),
-    edf_boots = lapply(
-      1:length(df_list),
-      tf_obj[[length(df_list) + X]]$edf_boots
-    ),
-    n_iter_boots = lapply(
-      1:length(df_list),
-      tf_obj[[length(df_list) + X]]$n_iter_boots
-    ),
+    edf_boots = if (compute_uncertainties) {
+      return(lapply(
+        X = 1:length(df_list),
+        tf_obj[[length(df_list) + X]]$edf_boots
+      ))
+    } else {
+      return(NULL)
+    },
+    n_iter_boots = if (compute_uncertainties) {
+      return(lapply(
+        X = 1:length(df_list),
+        tf_obj[[length(df_list) + X]]$n_iter_boots
+      ))
+    } else {
+      return(NULL)
+    },
     x_scale = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[length(df_list) + X]]$x_scale
     ) %>% unlist(),
     y_scale = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[length(df_list) + X]]$y_scale
     ) %>% unlist(),
     data_scaled = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[length(df_list) + X]]$data_scaled
     )
   ),
@@ -429,55 +442,63 @@ denoise_spectrum <- function(wavelength,
     lambdas = tf_obj[[length(df_list) + 1]]$lambdas,
     edfs = tf_obj[[length(df_list) + 1]]$edfs,
     generalization_errors = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[2 * length(df_list) + X]]$generalization_errors
     ),
     lambda_min = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[2 * length(df_list) + X]]$lambda_min
     ) %>% unlist(),
     i_min = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[2 * length(df_list) + X]]$i_min
     ) %>% unlist(),
     edf_min = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[2 * length(df_list) + X]]$edf_min
     ) %>% unlist(),
     n_iter = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[2 * length(df_list) + X]]$n_iter
     ),
     training_errors = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[2 * length(df_list) + X]]$training_errors
     ),
     optimisms = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[2 * length(df_list) + X]]$optimisms
     ),
     admm_params = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[2 * length(df_list) + X]]$admm_params
     ),
-    edf_boots = lapply(
-      1:length(df_list),
-      tf_obj[[2 * length(df_list) + X]]$edf_boots
-    ),
-    n_iter_boots = lapply(
-      1:length(df_list),
-      tf_obj[[2 * length(df_list) + X]]$n_iter_boots
-    ),
+    edf_boots = if (compute_uncertainties) {
+      return(lapply(
+        X = 1:length(df_list),
+        tf_obj[[2 * length(df_list) + X]]$edf_boots
+      ))
+    } else {
+      return(NULL)
+    },
+    n_iter_boots = if (compute_uncertainties) {
+      return(lapply(
+        X = 1:length(df_list),
+        tf_obj[[2 * length(df_list) + X]]$n_iter_boots
+      ))
+    } else {
+      return(NULL)
+    },
     x_scale = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[2 * length(df_list) + X]]$x_scale
     ) %>% unlist(),
     y_scale = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[2 * length(df_list) + X]]$y_scale
     ) %>% unlist(),
     data_scaled = lapply(
-      1:length(df_list),
+      X = 1:length(df_list),
       tf_obj[[2 * length(df_list) + X]]$data_scaled
     )
   ),
