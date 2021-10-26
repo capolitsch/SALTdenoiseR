@@ -10,7 +10,7 @@
 #' spectra for each Stokes parameter, which allows variability bands to be
 #' computed for each denoised spectrum by then calling
 #' [variability_bands()] on the `denoise_spectrum()` output. The default number
-#' of bootstrap samples in each ensemble --- `B = 100` --- can be increased by
+#' of bootstrap samples in each ensemble (`B = 100`) can be increased by
 #' specifying a new value for `B` within the `bootstrap_args` list.
 #'
 #' @param wavelength Vector of wavelength measurements.
