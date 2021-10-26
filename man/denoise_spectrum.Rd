@@ -104,9 +104,7 @@ parameters (sometimes alternately denoted \mjseqn{S_0}, \mjseqn{S_1},
 \code{compute_uncertainties = TRUE} generates a bootstrap ensemble of denoised
 spectra for each Stokes parameter, which allows variability bands to be
 computed for each denoised spectrum by then calling
-\code{\link[=variability_bands]{variability_bands()}} on the \code{denoise_spectrum()} output. The default number
-of bootstrap samples in each ensemble (\code{B = 100}) can be increased by
-specifying a new value for \code{B} within the \code{bootstrap_args} list.
+\code{\link[=variability_bands]{variability_bands()}} on the \code{denoise_spectrum()} output.
 }
 \examples{
 # Any SALT Observatory spectrum can be read into R from its FITS file

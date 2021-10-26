@@ -9,9 +9,7 @@
 #' `compute_uncertainties = TRUE` generates a bootstrap ensemble of denoised
 #' spectra for each Stokes parameter, which allows variability bands to be
 #' computed for each denoised spectrum by then calling
-#' [variability_bands()] on the `denoise_spectrum()` output. The default number
-#' of bootstrap samples in each ensemble (`B = 100`) can be increased by
-#' specifying a new value for `B` within the `bootstrap_args` list.
+#' [variability_bands()] on the `denoise_spectrum()` output.
 #'
 #' @param wavelength Vector of wavelength measurements.
 #' @param flux Spectropolarimetric measurements, passed as a 3-column tibble,
