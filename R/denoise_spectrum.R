@@ -69,9 +69,7 @@
 #' documentation).
 #' If `compute_uncertainties = FALSE`, this will return `NULL`.}
 #' \item{I_analysis_summary}{Technical summary of the denoising analysis of the
-#' \mjseqn{I} Stokes parameter. If `compute_uncertainties = TRUE`, then this is
-#' an object of class [`bootstrap_tf`][trendfiltering::bootstrap_trendfilter()].
-#' Else, an object of class [`sure_tf`][trendfiltering::sure_trendfilter()].}
+#' \mjseqn{I} Stokes parameter.}
 #' \item{Q_analysis_summary}{Same as above, but for the \mjseqn{Q}
 #' Stokes parameter.}
 #' \item{U_analysis_summary}{Same as above, but for the \mjseqn{U}
@@ -504,10 +502,11 @@ denoise_spectrum <- function(wavelength,
       FUN = function(X) tf_obj[[2 * length(df_list) + X]]$data_scaled
     )
   ),
-  class = c(ifelse(compute_uncertainties, "bootstrap_tf", "sure_tf"), "list")
+  class = c("stokes_spectrum", "list")
   )
 
   structure(list(
+    n_segments = length(df_list),
     data = data,
     point_estimates = point_estimates,
     ensembles = ensembles,

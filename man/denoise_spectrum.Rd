@@ -85,9 +85,7 @@ less any columns from post-hoc pruning
 documentation).
 If \code{compute_uncertainties = FALSE}, this will return \code{NULL}.}
 \item{I_analysis_summary}{Technical summary of the denoising analysis of the
-\mjseqn{I} Stokes parameter. If \code{compute_uncertainties = TRUE}, then this is
-an object of class \code{\link[trendfiltering:bootstrap_trendfilter]{bootstrap_tf}}.
-Else, an object of class \code{\link[trendfiltering:sure_trendfilter]{sure_tf}}.}
+\mjseqn{I} Stokes parameter.}
 \item{Q_analysis_summary}{Same as above, but for the \mjseqn{Q}
 Stokes parameter.}
 \item{U_analysis_summary}{Same as above, but for the \mjseqn{U}

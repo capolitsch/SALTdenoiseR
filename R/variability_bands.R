@@ -73,14 +73,14 @@ variability_bands <- function(obj, param, level = 0.95) {
   } else {
     if (param == "Q_norm") {
       ensemble <- lapply(
-        X = 1:length(df_list),
+        X = 1:obj$n_segments,
         FUN = function(X) obj$ensembles$Q[[X]] / obj$ensembles$I[[X]]
       )
     }
 
     if (param == "U_norm") {
       ensemble <- lapply(
-        X = 1:length(df_list),
+        X = 1:obj$n_segments,
         FUN = function(X) obj$ensembles$U[[X]] / obj$ensembles$I[[X]]
       )
     }
