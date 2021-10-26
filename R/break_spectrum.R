@@ -24,6 +24,9 @@
 #' the list has the same format as the input tibble `df_full`, minus the mask
 #' columns.
 #' @export break_spectrum
+#'
+#' @seealso [`denoise_spectrum()`]
+#'
 #' @examples
 #' data(polarized_spectrum_WR_star)
 #'

@@ -112,6 +112,7 @@ computed for each denoised spectrum by then calling
 # the `sci`, `var`, and `bpm` data structures for a Wolf-Rayet stellar
 # spectrum in an R data file within this package, so we can source them using
 # a simple call to `data()`, as below.
+
 \dontrun{
 install.packages("FITSio")
 path_to_FITS_file <- "<your_local_path_to_the_FITS_file>"
@@ -159,4 +160,7 @@ astronomical spectroscopy}. \emph{MNRAS}, 492(3), p. 4005-4018.} \cr
 \href{https://academic.oup.com/mnras/article/492/3/4019/5704414}{
 Trend Filtering – II. Denoising astronomical signals with varying degrees of
 smoothness}. \emph{MNRAS}, 492(3), p. 4019-4032.}}
+}
+\seealso{
+\code{\link[=variability_bands]{variability_bands()}}, \code{\link[=break_spectrum]{break_spectrum()}}
 }

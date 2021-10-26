@@ -17,6 +17,8 @@
 #'
 #' @export variability_bands
 #'
+#' @seealso [`denoise_spectrum()`]
+#'
 #' @references
 #' \enumerate{
 #' \item{Politsch et al. (2020a).

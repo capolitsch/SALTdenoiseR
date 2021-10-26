@@ -67,3 +67,6 @@ df_full <- bind_cols(
 
 df_list <- break_spectrum(df_full)
 }
+\seealso{
+\code{\link[=denoise_spectrum]{denoise_spectrum()}}
+}

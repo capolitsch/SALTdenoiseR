@@ -65,3 +65,6 @@ astronomical spectroscopy}. \emph{MNRAS}, 492(3), p. 4005-4018.} \cr
 Trend Filtering – II. Denoising astronomical signals with varying degrees of
 smoothness}. \emph{MNRAS}, 492(3), p. 4019-4032.}}
 }
+\seealso{
+\code{\link[=denoise_spectrum]{denoise_spectrum()}}
+}

@@ -91,6 +91,8 @@
 #' Trend Filtering – II. Denoising astronomical signals with varying degrees of
 #' smoothness}. \emph{MNRAS}, 492(3), p. 4019-4032.}}
 #'
+#' @seealso [`variability_bands()`], [`break_spectrum()`]
+#'
 #' @examples
 #' # Any SALT Observatory spectrum can be read into R from its FITS file
 #' # using the "FITSio" R package, as below. For convenience, here we've stored
