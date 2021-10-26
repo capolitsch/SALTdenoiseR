@@ -61,21 +61,16 @@ grid \code{x_eval} defaults to the observed wavelength grid. The arguments \code
 \value{
 An object of class \code{'polarized_spectrum'}. This is a list with the
 following elements:
-\item{point_estimates}{A list of tibbles containing the observed wavelengths
-(minus the superset of masked values), the Stokes \mjseqn{I}, \mjseqn{Q},
-\mjseqn{U} flux measurements, the Stokes \mjseqn{I}, \mjseqn{Q},
-\mjseqn{U} flux measurement variances, and the denoised estimates for
-\mjseqn{I}, \mjseqn{Q}, \mjseqn{U}, \mjseqn{Q/I}, and \mjseqn{U/I}.
-The number of tibbles is equal to number of segments the spectrum was broken
-into by \code{\link[=break_spectrum]{break_spectrum()}} and the column names of each
-tibble are\if{html}{\out{<div class="sourceCode r">}}\preformatted{c("wavelength",
-  "I","Q","U",
-  "I_vars","Q_vars","U_vars",
-  "I_denoised","Q_denoised","U_denoised","Q_norm_denoised","U_norm_denoised")
-}\if{html}{\out{</div>}}
-
-where \code{Q_norm_denoised = Q_denoised / I_denoised} and
-\code{U_norm_denoised = U_denoised / I_denoised}.}
+\item{n_segments}{The number of segments the spectrum was broken into by
+\code{\link[=break_spectrum]{break_spectrum()}}.}
+\item{data}{The original data set, as a list of \code{n_segments} tibbles. Each
+tibble contains the observed wavelengths (with the superset of masked
+wavelengths removed), the Stokes \mjseqn{I}, \mjseqn{Q}, \mjseqn{U} flux
+measurements, and the Stokes \mjseqn{I}, \mjseqn{Q}, \mjseqn{U} flux
+measurement variances.}
+\item{denoised_signals}{A list of \code{n_segments} tibbles, with each tibble
+containing the wavelength evaluation grid for the respective spectrum segment
+and all of the denoised signals: \code{I},\code{Q},\code{U},\code{Q_norm},\code{U_norm}.}
 \item{ensembles}{If \code{compute_uncertainties = TRUE}, a list of bootstrap
 ensembles for the denoised \mjseqn{I}, \mjseqn{Q}, and \mjseqn{U} ensembles,
 respectively. Each ensemble is returned as an \mjseqn{n \times B} matrix,

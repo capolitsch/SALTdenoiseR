@@ -44,22 +44,16 @@
 #'
 #' @return An object of class `'polarized_spectrum'`. This is a list with the
 #' following elements:
-#' \item{point_estimates}{A list of tibbles containing the observed wavelengths
-#' (minus the superset of masked values), the Stokes \mjseqn{I}, \mjseqn{Q},
-#' \mjseqn{U} flux measurements, the Stokes \mjseqn{I}, \mjseqn{Q},
-#' \mjseqn{U} flux measurement variances, and the denoised estimates for
-#' \mjseqn{I}, \mjseqn{Q}, \mjseqn{U}, \mjseqn{Q/I}, and \mjseqn{U/I}.
-#' The number of tibbles is equal to number of segments the spectrum was broken
-#' into by [`break_spectrum()`] and the column names of each
-#' tibble are
-#' ```{r, eval = FALSE}
-#' c("wavelength",
-#'   "I","Q","U",
-#'   "I_vars","Q_vars","U_vars",
-#'   "I_denoised","Q_denoised","U_denoised","Q_norm_denoised","U_norm_denoised")
-#' ```
-#' where `Q_norm_denoised = Q_denoised / I_denoised` and
-#' `U_norm_denoised = U_denoised / I_denoised`.}
+#' \item{n_segments}{The number of segments the spectrum was broken into by
+#' [`break_spectrum()`].}
+#' \item{data}{The original data set, as a list of `n_segments` tibbles. Each
+#' tibble contains the observed wavelengths (with the superset of masked
+#' wavelengths removed), the Stokes \mjseqn{I}, \mjseqn{Q}, \mjseqn{U} flux
+#' measurements, and the Stokes \mjseqn{I}, \mjseqn{Q}, \mjseqn{U} flux
+#' measurement variances.}
+#' \item{denoised_signals}{A list of `n_segments` tibbles, with each tibble
+#' containing the wavelength evaluation grid for the respective spectrum segment
+#' and all of the denoised signals: `I`,`Q`,`U`,`Q_norm`,`U_norm`.}
 #' \item{ensembles}{If `compute_uncertainties = TRUE`, a list of bootstrap
 #' ensembles for the denoised \mjseqn{I}, \mjseqn{Q}, and \mjseqn{U} ensembles,
 #' respectively. Each ensemble is returned as an \mjseqn{n \times B} matrix,
@@ -263,16 +257,16 @@ denoise_spectrum <- function(wavelength,
     }
   )
 
-  point_estimates <- lapply(
+  denoised_signals <- lapply(
     X = 1:length(df_list),
     FUN = function(X) {
       tibble(
         wavelength = wavelength_eval[[X]],
-        I_denoised = I_denoised[[X]],
-        Q_denoised = Q_denoised[[X]],
-        U_denoised = U_denoised[[X]],
-        Q_norm_denoised = Q_norm_denoised[[X]],
-        U_norm_denoised = U_norm_denoised[[X]]
+        I = I_denoised[[X]],
+        Q = Q_denoised[[X]],
+        U = U_denoised[[X]],
+        Q_norm = Q_norm_denoised[[X]],
+        U_norm = U_norm_denoised[[X]]
       )
     }
   )
@@ -508,7 +502,7 @@ denoise_spectrum <- function(wavelength,
   structure(list(
     n_segments = length(df_list),
     data = data,
-    point_estimates = point_estimates,
+    denoised_signals = denoised_signals,
     ensembles = ensembles,
     I_analysis_summary = I_summary,
     Q_analysis_summary = Q_summary,
