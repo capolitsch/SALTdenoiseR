@@ -251,12 +251,14 @@ less any columns from post-hoc pruning
 <code><a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>bootstrap_trendfilter()</a></code>
 documentation).
 If <code>compute_uncertainties = FALSE</code>, this will return <code>NULL</code>.</p></dd>
-<dt>I_summary</dt><dd><p>Technical summary of the denoising analysis of the
+<dt>I_analysis_summary</dt><dd><p>Technical summary of the denoising analysis of the
 \(I\) Stokes parameter. If <code>compute_uncertainties = TRUE</code>, then this is
 an object of class <code><a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>bootstrap_tf</a></code>.
 Else, an object of class <code><a href='https://capolitsch.github.io/trendfiltering/reference/sure_trendfilter.html'>sure_tf</a></code>.</p></dd>
-<dt>Q_summary</dt><dd><p>Same as above, but for the \(Q\) Stokes parameter.</p></dd>
-<dt>U_summary</dt><dd><p>Same as above, but for the \(U\) Stokes parameter.</p></dd>
+<dt>Q_analysis_summary</dt><dd><p>Same as above, but for the \(Q\)
+Stokes parameter.</p></dd>
+<dt>U_analysis_summary</dt><dd><p>Same as above, but for the \(U\)
+Stokes parameter.</p></dd>
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -282,6 +284,7 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
 <span class='co'># the `sci`, `var`, and `bpm` data structures for a Wolf-Rayet stellar</span>
 <span class='co'># spectrum in an R data file within this package, so we can source them using</span>
 <span class='co'># a simple call to `data()`, as below.</span>
+
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span><span class='op'>(</span><span class='st'>"FITSio"</span><span class='op'>)</span>
 <span class='va'>path_to_FITS_file</span> <span class='op'>&lt;-</span> <span class='st'>"&lt;your_local_path_to_the_FITS_file&gt;"</span>

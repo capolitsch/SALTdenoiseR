@@ -42,6 +42,7 @@ masks <- as_tibble(bpm$imDat)
 
 
 # Not running the rest to save time during development commits
+
 \dontrun{
 spec_denoised <- denoise_spectrum(
   wavelength,

@@ -84,12 +84,14 @@ less any columns from post-hoc pruning
 \code{\link[trendfiltering:bootstrap_trendfilter]{bootstrap_trendfilter()}}
 documentation).
 If \code{compute_uncertainties = FALSE}, this will return \code{NULL}.}
-\item{I_summary}{Technical summary of the denoising analysis of the
+\item{I_analysis_summary}{Technical summary of the denoising analysis of the
 \mjseqn{I} Stokes parameter. If \code{compute_uncertainties = TRUE}, then this is
 an object of class \code{\link[trendfiltering:bootstrap_trendfilter]{bootstrap_tf}}.
 Else, an object of class \code{\link[trendfiltering:sure_trendfilter]{sure_tf}}.}
-\item{Q_summary}{Same as above, but for the \mjseqn{Q} Stokes parameter.}
-\item{U_summary}{Same as above, but for the \mjseqn{U} Stokes parameter.}
+\item{Q_analysis_summary}{Same as above, but for the \mjseqn{Q}
+Stokes parameter.}
+\item{U_analysis_summary}{Same as above, but for the \mjseqn{U}
+Stokes parameter.}
 }
 \description{
 \loadmathjax The \code{denoise_spectrum()} function uses quadratic trend
@@ -109,6 +111,7 @@ computed for each denoised spectrum by then calling
 # the `sci`, `var`, and `bpm` data structures for a Wolf-Rayet stellar
 # spectrum in an R data file within this package, so we can source them using
 # a simple call to `data()`, as below.
+
 \dontrun{
 install.packages("FITSio")
 path_to_FITS_file <- "<your_local_path_to_the_FITS_file>"
