@@ -112,7 +112,6 @@ computed for each denoised spectrum by then calling
 # the `sci`, `var`, and `bpm` data structures for a Wolf-Rayet stellar
 # spectrum in an R data file within this package, so we can source them using
 # a simple call to `data()`, as below.
-
 \dontrun{
 install.packages("FITSio")
 path_to_FITS_file <- "<your_local_path_to_the_FITS_file>"

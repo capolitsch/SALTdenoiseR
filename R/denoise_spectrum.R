@@ -215,6 +215,11 @@ denoise_spectrum <- function(wavelength,
     )
   }
 
+  wavelength_eval <- lapply(
+    X = 1:length(df_list),
+    FUN = function(X) tf_obj[[X]][["x_eval"]]
+  )
+
   I_denoised <- lapply(
     X = 1:length(df_list),
     FUN = function(X) tf_obj[[X]][["tf_estimate"]]
@@ -240,7 +245,7 @@ denoise_spectrum <- function(wavelength,
     FUN = function(X) U_denoised[[X]] / I_denoised[[X]]
   )
 
-  point_estimates <- lapply(
+  data <- lapply(
     X = 1:length(df_list),
     FUN = function(X) {
       tibble(
@@ -251,6 +256,21 @@ denoise_spectrum <- function(wavelength,
         I_vars = df_list[[X]]$I_vars,
         Q_vars = df_list[[X]]$Q_vars,
         U_vars = df_list[[X]]$U_vars,
+        I_fitted_values = tf_obj[[X]]$fitted_values,
+        Q_fitted_values = tf_obj[[length(df_list) + X]]$fitted_values,
+        U_fitted_values = tf_obj[[2 * length(df_list) + X]]$fitted_values,
+        I_residuals = tf_obj[[X]]$residuals,
+        Q_residuals = tf_obj[[length(df_list) + X]]$residuals,
+        U_residuals = tf_obj[[2 * length(df_list) + X]]$residuals
+      )
+    }
+  )
+
+  point_estimates <- lapply(
+    X = 1:length(df_list),
+    FUN = function(X) {
+      tibble(
+        wavelength = wavelength_eval[[X]],
         I_denoised = I_denoised[[X]],
         Q_denoised = Q_denoised[[X]],
         U_denoised = U_denoised[[X]],
@@ -287,10 +307,190 @@ denoise_spectrum <- function(wavelength,
     U = U_ensemble
   )
 
+  I_summary <- structure(list(
+    lambdas = tf_obj[[1]]$lambdas,
+    edfs = tf_obj[[1]]$edfs,
+    generalization_errors = lapply(
+      1:length(df_list),
+      tf_obj[[X]]$generalization_errors
+    ),
+    lambda_min = lapply(
+      1:length(df_list),
+      tf_obj[[X]]$lambda_min
+    ) %>% unlist(),
+    i_min = lapply(
+      1:length(df_list),
+      tf_obj[[X]]$i_min
+    ) %>% unlist(),
+    edf_min = lapply(
+      1:length(df_list),
+      tf_obj[[X]]$edf_min
+    ) %>% unlist(),
+    n_iter = lapply(
+      1:length(df_list),
+      tf_obj[[X]]$n_iter
+    ),
+    training_errors = lapply(
+      1:length(df_list),
+      tf_obj[[X]]$training_errors
+    ),
+    optimisms = lapply(
+      1:length(df_list),
+      tf_obj[[X]]$optimisms
+    ),
+    admm_params = lapply(
+      1:length(df_list),
+      tf_obj[[X]]$admm_params
+    ),
+    edf_boots = lapply(
+      1:length(df_list),
+      tf_obj[[X]]$edf_boots
+    ),
+    n_iter_boots = lapply(
+      1:length(df_list),
+      tf_obj[[X]]$n_iter_boots
+    ),
+    x_scale = lapply(
+      1:length(df_list),
+      tf_obj[[X]]$x_scale
+    ) %>% unlist(),
+    y_scale = lapply(
+      1:length(df_list),
+      tf_obj[[X]]$y_scale
+    ) %>% unlist(),
+    data_scaled = lapply(
+      1:length(df_list),
+      tf_obj[[X]]$data_scaled
+    )
+  ),
+  class = c(ifelse(compute_uncertainties, "bootstrap_tf", "sure_tf"), "list")
+  )
+
+  Q_summary <- structure(list(
+    lambdas = tf_obj[[length(df_list) + 1]]$lambdas,
+    edfs = tf_obj[[length(df_list) + 1]]$edfs,
+    generalization_errors = lapply(
+      1:length(df_list),
+      tf_obj[[length(df_list) + X]]$generalization_errors
+    ),
+    lambda_min = lapply(
+      1:length(df_list),
+      tf_obj[[length(df_list) + X]]$lambda_min
+    ) %>% unlist(),
+    i_min = lapply(
+      1:length(df_list),
+      tf_obj[[length(df_list) + X]]$i_min
+    ) %>% unlist(),
+    edf_min = lapply(
+      1:length(df_list),
+      tf_obj[[length(df_list) + X]]$edf_min
+    ) %>% unlist(),
+    n_iter = lapply(
+      1:length(df_list),
+      tf_obj[[length(df_list) + X]]$n_iter
+    ),
+    training_errors = lapply(
+      1:length(df_list),
+      tf_obj[[length(df_list) + X]]$training_errors
+    ),
+    optimisms = lapply(
+      1:length(df_list),
+      tf_obj[[length(df_list) + X]]$optimisms
+    ),
+    admm_params = lapply(
+      1:length(df_list),
+      tf_obj[[length(df_list) + X]]$admm_params
+    ),
+    edf_boots = lapply(
+      1:length(df_list),
+      tf_obj[[length(df_list) + X]]$edf_boots
+    ),
+    n_iter_boots = lapply(
+      1:length(df_list),
+      tf_obj[[length(df_list) + X]]$n_iter_boots
+    ),
+    x_scale = lapply(
+      1:length(df_list),
+      tf_obj[[length(df_list) + X]]$x_scale
+    ) %>% unlist(),
+    y_scale = lapply(
+      1:length(df_list),
+      tf_obj[[length(df_list) + X]]$y_scale
+    ) %>% unlist(),
+    data_scaled = lapply(
+      1:length(df_list),
+      tf_obj[[length(df_list) + X]]$data_scaled
+    )
+  ),
+  class = c(ifelse(compute_uncertainties, "bootstrap_tf", "sure_tf"), "list")
+  )
+
+  U_summary <- structure(list(
+    lambdas = tf_obj[[length(df_list) + 1]]$lambdas,
+    edfs = tf_obj[[length(df_list) + 1]]$edfs,
+    generalization_errors = lapply(
+      1:length(df_list),
+      tf_obj[[2 * length(df_list) + X]]$generalization_errors
+    ),
+    lambda_min = lapply(
+      1:length(df_list),
+      tf_obj[[2 * length(df_list) + X]]$lambda_min
+    ) %>% unlist(),
+    i_min = lapply(
+      1:length(df_list),
+      tf_obj[[2 * length(df_list) + X]]$i_min
+    ) %>% unlist(),
+    edf_min = lapply(
+      1:length(df_list),
+      tf_obj[[2 * length(df_list) + X]]$edf_min
+    ) %>% unlist(),
+    n_iter = lapply(
+      1:length(df_list),
+      tf_obj[[2 * length(df_list) + X]]$n_iter
+    ),
+    training_errors = lapply(
+      1:length(df_list),
+      tf_obj[[2 * length(df_list) + X]]$training_errors
+    ),
+    optimisms = lapply(
+      1:length(df_list),
+      tf_obj[[2 * length(df_list) + X]]$optimisms
+    ),
+    admm_params = lapply(
+      1:length(df_list),
+      tf_obj[[2 * length(df_list) + X]]$admm_params
+    ),
+    edf_boots = lapply(
+      1:length(df_list),
+      tf_obj[[2 * length(df_list) + X]]$edf_boots
+    ),
+    n_iter_boots = lapply(
+      1:length(df_list),
+      tf_obj[[2 * length(df_list) + X]]$n_iter_boots
+    ),
+    x_scale = lapply(
+      1:length(df_list),
+      tf_obj[[2 * length(df_list) + X]]$x_scale
+    ) %>% unlist(),
+    y_scale = lapply(
+      1:length(df_list),
+      tf_obj[[2 * length(df_list) + X]]$y_scale
+    ) %>% unlist(),
+    data_scaled = lapply(
+      1:length(df_list),
+      tf_obj[[2 * length(df_list) + X]]$data_scaled
+    )
+  ),
+  class = c(ifelse(compute_uncertainties, "bootstrap_tf", "sure_tf"), "list")
+  )
+
   structure(list(
+    data = data,
     point_estimates = point_estimates,
     ensembles = ensembles,
-    tf_obj = tf_obj
+    I_summary = I_summary,
+    Q_summary = Q_summary,
+    U_summary = U_summary
   ),
   class = c("polarized_spectrum", "list")
   )
