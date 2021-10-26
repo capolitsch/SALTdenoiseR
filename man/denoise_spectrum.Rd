@@ -105,7 +105,7 @@ parameters (sometimes alternately denoted \mjseqn{S_0}, \mjseqn{S_1},
 spectra for each Stokes parameter, which allows variability bands to be
 computed for each denoised spectrum by then calling
 \code{\link[=variability_bands]{variability_bands()}} on the \code{denoise_spectrum()} output. The default number
-of bootstrap samples in each ensemble --- \code{B = 100} --- can be increased by
+of bootstrap samples in each ensemble (\code{B = 100}) can be increased by
 specifying a new value for \code{B} within the \code{bootstrap_args} list.
 }
 \examples{
