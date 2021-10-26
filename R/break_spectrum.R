@@ -11,8 +11,8 @@
 #'
 #' @param df_full A tibble that includes a column titled `"wavelength"` and one
 #' or more columns with names ending in `"mask"`, e.g.
-#' `c("I_mask", "Q_mask", "U_mask")`. The values of the mask columns are 0 (or
-#' FALSE) for unmasked pixels and 1 (or TRUE) for masked pixels.
+#' `c("I_mask", "Q_mask", "U_mask")`. The values of the mask columns are equal
+#' to 0 (or FALSE) for unmasked pixels and nonzero (or TRUE) for masked pixels.
 #' @param break_at The minimum number of consecutively-masked spectral pixels
 #' that will trigger a break in the spectrum. Defaults to `break_at = 10`.
 #' @param min_pix_segment After the segmentation procedure is complete, the
@@ -67,6 +67,7 @@ break_spectrum <- function(df_full, break_at = 10, min_pix_segment = 10) {
   df <- df_full %>%
     mutate(mask = df_full %>% select(ends_with("mask")) %>%
       as.matrix() %>%
+      abs() %>%
       rowMaxs()) %>%
     arrange(wavelength)
 

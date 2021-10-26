@@ -8,9 +8,9 @@
 #' (unit-less) Stokes parameters \mjseqn{Q/I} and \mjseqn{U/I}. Setting
 #' `compute_uncertainties = TRUE` generates a bootstrap ensemble of denoised
 #' spectra for each Stokes parameter, which allows variability bands to be
-#' computed for each denoised Stokes spectrum by then calling
+#' computed for each denoised spectrum by then calling
 #' [variability_bands()] on the `denoise_spectrum()` output. The default number
-#' of bootstrap samples in each ensemble, `B = 100`, can be increased by
+#' of bootstrap samples in each ensemble --- `B = 100` --- can be increased by
 #' specifying a new value for `B` within the `bootstrap_args` list.
 #'
 #' @param wavelength Vector of wavelength measurements.
@@ -21,49 +21,38 @@
 #' with dimensions matching those of `flux`.
 #' @param masks Pixel masks, in a tibble, data frame, or matrix
 #' with dimensions matching those of `flux`. Nonzero elements flag bad pixels.
-#' @param break_at A free parameter that controls the segmentation of a
-#' spectrum. More precisely, `break_at` is the minimum number of
-#' consecutively-masked spectral pixels that will trigger a break in the
-#' spectrum. The set of masked spectral pixels used to define the segmentation
-#' is taken to be the set of pixels that are masked for *any* of the \mjseqn{I},
-#' \mjseqn{Q}, \mjseqn{U} Stokes parameters. Defaults to `break_at = 10`.
+#' @param break_at The minimum number of consecutively-masked spectral pixels
+#' that will trigger a break in the spectrum. Defaults to `break_at = 10`.
 #' @param min_pix_segment After the segmentation procedure is complete, the
 #' resulting segments are examined to ensure that each is sufficiently long for
-#' an independent denoising analysis. In particular, any segment that has less
-#' than `min_pix_segment` unmasked spectral pixels is discarded. Defaults to
-#' `min_pix_segment = 10`.
+#' a non-trivial/well-defined denoising analysis. In particular, any segment
+#' that has less than `min_pix_segment` unmasked spectral pixels is discarded.
+#' Defaults to `min_pix_segment = 10`.
 #' @param compute_uncertainties (Boolean) If `TRUE`, then bootstrap ensembles
 #' are created for each denoised spectrum via
-#' [`bootstrap_trendfilter()`][trendfiltering::bootstrap_trendfilter()], which
-#' allows variability bands of any level to quickly be computed by calling
-#' [variability_bands()] on the returned object (see examples).
+#' [`bootstrap_trendfilter()`][trendfiltering::bootstrap_trendfilter()].
+#' Variability bands of any level can then quickly be computed by repeated calls
+#' to [variability_bands()] (see examples). Defaults to
+#' `compute_uncertainties = FALSE`.
+#' @param B If `compute_uncertainties = TRUE`, the number of bootstrap samples
+#' used to estimate the pointwise variability bands. Defaults to `B = 100`.
 #' @param mc_cores Multi-core computing using the
 #' [`parallel`][`parallel::parallel-package`] package: The number of cores to
-#' utilize. Defaults to the number of cores detected on the machine.
+#' utilize. Defaults to the number of cores detected on the machine, minus 4.
 #' @param sure_args (Optional) A named list of arguments to be passed to
 #' [`sure_trendfilter()`][trendfiltering::sure_trendfilter()]. The evaluation
-#' grid defaults to the observed wavelength grid.
-#' @param bootstrap_args (Optional) A named list of arguments to be passed to
-#' [`bootstrap_trendfilter()`][trendfiltering::bootstrap_trendfilter()]. The
-#' argument `bootstrap_algorithm = "parametric"` is fixed due to the
-#' statistical design of SALT spectra, and we don't allow this argument to be
-#' manually overridden. See the
-#' [`bootstrap_trendfilter()`][trendfiltering::bootstrap_trendfilter()]
-#' documentation and [Politsch et al. (2020a)](
-#' https://academic.oup.com/mnras/article/492/3/4005/5704413)
-#' for details on why this particular bootstrap algorithm is appropriate for
-#' SALT spectra.
+#' grid `x_eval` defaults to the observed wavelength grid. The arguments `x`,
+#' `y`, `weights`, and `k` cannot be overridden.
 #'
 #' @return An object of class `'polarized_spectrum'`. This is a list with the
 #' following elements:
-#' \item{n_segments}{The number of segments the spectrum was broken into
-#' by [`break_spectrum()`].}
 #' \item{point_estimates}{A list of tibbles containing the observed wavelengths
 #' (minus the superset of masked values), the Stokes \mjseqn{I}, \mjseqn{Q},
 #' \mjseqn{U} flux measurements, the Stokes \mjseqn{I}, \mjseqn{Q},
 #' \mjseqn{U} flux measurement variances, and the denoised estimates for
 #' \mjseqn{I}, \mjseqn{Q}, \mjseqn{U}, \mjseqn{Q/I}, and \mjseqn{U/I}.
-#' The number of tibbles is equal to `n_segments` and the column names of each
+#' The number of tibbles is equal to number of segments the spectrum was broken
+#' into by [`break_spectrum()`] and the column names of each
 #' tibble are
 #' ```{r, eval = FALSE}
 #' c("wavelength",
@@ -73,20 +62,14 @@
 #' ```
 #' where `Q_norm_denoised = Q_denoised / I_denoised` and
 #' `U_norm_denoised = U_denoised / I_denoised`.}
-#' \item{I_ensemble}{If `compute_uncertainties = TRUE`, then this will
-#' be the full bootstrap ensemble of denoised \mjseqn{I} spectra,
-#' returned as an \mjseqn{n \times B} matrix, less any columns from post-hoc
-#' pruning
-#' (see [`bootstrap_trendfilter()`][trendfiltering::bootstrap_trendfilter()]).
-#' This bootstrap ensemble, and those below, are then used by the
-#' [variability_bands()] function to compute variability bands for the denoised
-#' spectra. If `compute_uncertainties = FALSE`, this will return `NULL`.}
-#' \item{Q_ensemble}{Same as above, but for the \mjseqn{Q} Stokes
-#' parameter.}
-#' \item{U_ensemble}{Same as above, but for the \mjseqn{U} Stokes
-#' parameter.}
-#' \item{Q_norm_ensemble}{Same as above, but for \mjseqn{Q/I}.}
-#' \item{U_norm_ensemble}{Same as above, but for \mjseqn{U/I}.}
+#' \item{ensembles}{If `compute_uncertainties = TRUE`, a list of bootstrap
+#' ensembles for the denoised \mjseqn{I}, \mjseqn{Q}, and \mjseqn{U} ensembles,
+#' respectively. Each ensemble is returned as an \mjseqn{n \times B} matrix,
+#' less any columns from post-hoc pruning
+#' (see the
+#' [`bootstrap_trendfilter()`][trendfiltering::bootstrap_trendfilter()]
+#' documentation).
+#' If `compute_uncertainties = FALSE`, this will return `NULL`.}
 #' \item{tf_obj}{Technical summary of the full analysis. A list of length
 #' `3 * n_segments`, where the first `n_segments` elements correspond to the
 #' segmented analysis of the \mjseqn{I} Stokes spectrum, the next `n_segments`
@@ -116,14 +99,14 @@
 #' # the `sci`, `var`, and `bpm` data structures for a Wolf-Rayet stellar
 #' # spectrum in an R data file within this package, so we can source them using
 #' # a simple call to `data()`, as below.
-#'
 #' \dontrun{
 #' install.packages("FITSio")
 #' path_to_FITS_file <- "<your_local_path_to_the_FITS_file>"
 #' file.name <- "WR006_c1_12345678_stokes.fits"
 #' sci <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 1)
 #' var <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 2)
-#' bpm <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 4)}
+#' bpm <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 4)
+#' }
 #'
 #' data(polarized_spectrum_WR_star)
 #'
@@ -150,7 +133,8 @@
 #'   compute_uncertainties = TRUE
 #' )
 #'
-#' bands <- variability_bands(spec_denoised, param = "Q_norm", level = 0.95)}
+#' bands <- variability_bands(spec_denoised, param = "Q_norm", level = 0.95)
+#' }
 #' @importFrom trendfiltering sure_trendfilter bootstrap_trendfilter
 #' @importFrom glmgen trendfilter trendfilter.control.list
 #' @importFrom tidyr drop_na tibble as_tibble
@@ -162,12 +146,12 @@ denoise_spectrum <- function(wavelength,
                              flux,
                              variances,
                              masks,
-                             break_at = 10,
-                             min_pix_segment = 10,
+                             break_at = 10L,
+                             min_pix_segment = 10L,
                              compute_uncertainties = FALSE,
-                             mc_cores = parallel::detectCores(),
-                             sure_args,
-                             bootstrap_args) {
+                             B = 100L,
+                             mc_cores = parallel::detectCores() - 4,
+                             sure_args) {
   stopifnot(ncol(flux) == 3)
   stopifnot(length(wavelength) == nrow(flux))
 
@@ -183,20 +167,11 @@ denoise_spectrum <- function(wavelength,
     stopifnot(ncol(masks) == 3 & nrow(masks) == nrow(flux))
   }
 
-  if (missing(bootstrap_args)) {
-    bootstrap_args <- list()
-  } else {
-    stopifnot(all(names(bootstrap_args) %in%
-      names(formals(bootstrap_trendfilter))))
-  }
   if (missing(sure_args)) {
     sure_args <- list()
   } else {
     stopifnot(all(names(sure_args) %in% names(formals(sure_trendfilter))))
   }
-
-  bootstrap_args$bootstrap_algorithm <- "parametric"
-  if (compute_uncertainties) bootstrap_args$return_ensemble <- TRUE
 
   wavelength <- wavelength %>% as_tibble_col(column_name = "wavelength")
   flux <- as_tibble(flux) %>%
@@ -224,29 +199,21 @@ denoise_spectrum <- function(wavelength,
   )
 
   if (compute_uncertainties) {
-    bootstrap_args$mc_cores <- mc_cores
+    bootstrap_args <- list(
+      bootstrap_algorithm = "parametric",
+      B = B,
+      mc_cores = mc_cores,
+      return_ensemble = ifelse(compute_uncertainties, TRUE, FALSE)
+    )
 
-    tf_obj2 <- mclapply(
+    tf_obj <- mclapply(
       1:(3 * length(df_list)),
       parallel_bootstrap_tf,
       sure_tf = tf_obj,
       bootstrap_args = bootstrap_args,
       mc.cores = 1
     )
-
-    rm(tf_obj)
-    gc()
-
-    tf_obj <- tf_obj2
-
-    rm(tf_obj2)
-    gc()
   }
-
-  wavelength_eval <- lapply(
-    X = 1:length(df_list),
-    FUN = function(X) tf_obj[[X]][["x_eval"]]
-  )
 
   I_denoised <- lapply(
     X = 1:length(df_list),
@@ -277,7 +244,7 @@ denoise_spectrum <- function(wavelength,
     X = 1:length(df_list),
     FUN = function(X) {
       tibble(
-        wavelength = wavelength_eval[[X]],
+        wavelength = df_list[[X]]$wavelength,
         I = df_list[[X]]$I,
         Q = df_list[[X]]$Q,
         U = df_list[[X]]$U,
@@ -308,32 +275,21 @@ denoise_spectrum <- function(wavelength,
       X = (2 * length(df_list) + 1):(3 * length(df_list)),
       FUN = function(X) tf_obj[[X]][["tf_bootstrap_ensemble"]]
     )
-
-    Q_norm_ensemble <- lapply(
-      X = 1:length(df_list),
-      FUN = function(X) Q_ensemble[[X]] / I_ensemble[[X]]
-    )
-
-    U_norm_ensemble <- lapply(
-      X = 1:length(df_list),
-      FUN = function(X) U_ensemble[[X]] / I_ensemble[[X]]
-    )
   } else {
     I_ensemble <- NULL
     Q_ensemble <- NULL
     U_ensemble <- NULL
-    Q_norm_ensemble <- NULL
-    U_norm_ensemble <- NULL
   }
 
+  ensembles <- list(
+    I = I_ensemble,
+    Q = Q_ensemble,
+    U = U_ensemble
+  )
+
   structure(list(
-    n_segments = length(df_list),
     point_estimates = point_estimates,
-    I_ensemble = I_ensemble,
-    Q_ensemble = Q_ensemble,
-    U_ensemble = U_ensemble,
-    Q_norm_ensemble = Q_norm_ensemble,
-    U_norm_ensemble = U_norm_ensemble,
+    ensembles = ensembles,
     tf_obj = tf_obj
   ),
   class = c("polarized_spectrum", "list")
@@ -387,100 +343,4 @@ parallel_sure_tf <- function(X, df_list, sure_args) {
 parallel_bootstrap_tf <- function(X, sure_tf, bootstrap_args) {
   args <- c(list(obj = sure_tf[[X]]), bootstrap_args)
   do.call(bootstrap_trendfilter, args)
-}
-
-############################################
-
-#' Quantify the statistical uncertainty in a denoised spectrum by
-#' computing bootstrap variability bands
-#'
-#' See the parametric bootstrap algorithm in [Politsch et al. (2020a)](
-#' https://academic.oup.com/mnras/article/492/3/4005/5704413) for details.
-#'
-#' @param obj An object of class `"polarized_spectrum"` produced by
-#' [`denoise_spectrum()`].
-#' @param param A string specifying which spectrum to compute variability bands
-#' for. One of `c("I","Q","U","Q_norm","U_norm")`.
-#' @param level The level of the pointwise variability bands. Defaults to
-#' `level = 0.95`.
-#'
-#' @return A list of tibbles, with length equal to `obj$n_segments` and each
-#' tibble with column set
-#' `c("wavelength","bootstrap_lower_band","bootstrap_upper_band")`.
-#'
-#' @export variability_bands
-#'
-#' @examples
-#' data(polarized_spectrum_WR_star)
-#'
-#' library(dplyr)
-#'
-#' wavelength <- seq(
-#'   from = sci$axDat$crval[1],
-#'   by = sci$axDat$cdelt[1],
-#'   length = sci$axDat$len[1]
-#' )
-#'
-#' flux <- as_tibble(sci$imDat)
-#' variances <- as_tibble(var$imDat) %>% select(1:3)
-#' masks <- as_tibble(bpm$imDat)
-#'
-#'
-#' # Not running the rest to save time during development commits
-#' \dontrun{
-#' spec_denoised <- denoise_spectrum(
-#'   wavelength,
-#'   flux,
-#'   variances,
-#'   masks,
-#'   compute_uncertainties = TRUE
-#' )
-#'
-#' bands <- variability_bands(spec_denoised, param = "Q_norm", level = 0.95)}
-#' @importFrom dplyr case_when tibble
-variability_bands <- function(obj, param, level = 0.95) {
-  stopifnot(any(class(obj) == "polarized_spectrum"))
-  stopifnot(param %in% c("I", "Q", "U", "Q_norm", "U_norm"))
-  stopifnot(level > 0 & level < 1)
-
-  ensemble <- case_when(
-    param == "I" ~ obj$I_ensemble,
-    param == "Q" ~ obj$Q_ensemble,
-    param == "U" ~ obj$U_ensemble,
-    param == "Q_norm" ~ obj$Q_norm_ensemble,
-    param == "U_norm" ~ obj$U_norm_ensemble,
-  )
-
-  bootstrap_lower_band <- lapply(
-    X = 1:length(ensemble),
-    FUN = function(X) {
-      apply(
-        ensemble[[X]], 1,
-        quantile,
-        probs = (1 - level) / 2
-      )
-    }
-  )
-
-  bootstrap_upper_band <- lapply(
-    X = 1:length(ensemble),
-    FUN = function(X) {
-      apply(
-        ensemble[[X]], 1,
-        quantile,
-        probs = 1 - (1 - level) / 2
-      )
-    }
-  )
-
-  lapply(
-    X = 1:length(ensemble),
-    FUN = function(X) {
-      tibble(
-        wavelength = obj$denoised_spectra[[X]]$wavelength,
-        bootstrap_lower_band = bootstrap_lower_band[[X]],
-        bootstrap_upper_band = bootstrap_upper_band[[X]]
-      )
-    }
-  )
 }

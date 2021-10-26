@@ -91,7 +91,7 @@ computing bootstrap variability bands — variability_bands" />
         <li>
   <a href="../index.html">
     <span class="fas fa-home fa-lg"></span>
-
+     
   </a>
 </li>
 <li>
@@ -105,16 +105,16 @@ computing bootstrap variability bands — variability_bands" />
         <li>
   <a href="https://github.com/capolitsch/SALTdenoiseR">
     <span class="fab fa-github fa-lg"></span>
-
+     
   </a>
 </li>
       </ul>
-
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-
+      
 
       </header>
 
@@ -123,7 +123,7 @@ computing bootstrap variability bands — variability_bands" />
     <div class="page-header">
     <h1>Quantify the statistical uncertainty in a denoised spectrum by
 computing bootstrap variability bands</h1>
-    <small class="dont-index">Source: <a href='https://github.com/capolitsch/SALTdenoiseR/blob/main/R/denoising.R'><code>R/denoising.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/capolitsch/SALTdenoiseR/blob/main/R/variability_bands.R'><code>R/variability_bands.R</code></a></small>
     <div class="hidden name"><code>variability_bands.Rd</code></div>
     </div>
 
@@ -138,7 +138,7 @@ computing bootstrap variability bands</h1>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>obj</th>
-      <td><p>An object of class <code>"polarized_spectrum"</code> produced by
+      <td><p>An object of class <code>"polarized_spectrum"</code>, produced by
 <code><a href='denoise_spectrum.html'>denoise_spectrum()</a></code>.</p></td>
     </tr>
     <tr>
@@ -155,9 +155,23 @@ for. One of <code><a href='https://rdrr.io/r/base/c.html'>c("I","Q","U","Q_norm"
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list of tibbles, with length equal to <code>obj$n_segments</code> and each
-tibble with column set
+    <p>A list of tibbles, with length equal to the number of segments
+the spectrum was broken into. Each tibble in the list has column set
 <code><a href='https://rdrr.io/r/base/c.html'>c("wavelength","bootstrap_lower_band","bootstrap_upper_band")</a></code>.</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    
+<ol>
+<li><p>Politsch et al. (2020a).
+<a href='https://academic.oup.com/mnras/article/492/3/4005/5704413'>
+Trend filtering – I. A modern statistical tool for time-domain astronomy and
+astronomical spectroscopy</a>. <em>MNRAS</em>, 492(3), p. 4005-4018. <br /></p></li>
+<li><p>Politsch et al. (2020b).
+<a href='https://academic.oup.com/mnras/article/492/3/4019/5704414'>
+Trend Filtering – II. Denoising astronomical signals with varying degrees of
+smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
+</ol>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>polarized_spectrum_WR_star</span><span class='op'>)</span>
@@ -209,7 +223,7 @@ tibble with column set
       </footer>
    </div>
 
-
+  
 
 
   </body>
