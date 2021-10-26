@@ -14,7 +14,7 @@ denoise_spectrum(
   compute_uncertainties = FALSE,
   B = 100L,
   mc_cores = parallel::detectCores() - 4,
-  sure_args
+  validation_args
 )
 }
 \arguments{
@@ -53,7 +53,7 @@ used to estimate the pointwise variability bands. Defaults to \code{B = 100}.}
 \code{\link[parallel:parallel-package]{parallel}} package: The number of cores to
 utilize. Defaults to the number of cores detected on the machine, minus 4.}
 
-\item{sure_args}{(Optional) A named list of arguments to be passed to
+\item{validation_args}{(Optional) A named list of arguments to be passed to
 \code{\link[trendfiltering:sure_trendfilter]{sure_trendfilter()}}. The evaluation
 grid \code{x_eval} defaults to the observed wavelength grid. The arguments \code{x},
 \code{y}, \code{weights}, and \code{k} cannot be overridden.}
@@ -103,7 +103,7 @@ computed for each denoised spectrum by then calling
 # using the "FITSio" R package, as below. For convenience, here we've stored
 # the `sci`, `var`, and `bpm` data structures for a Wolf-Rayet stellar
 # spectrum in an R data file within this package, so we can source them using
-# a simple call to `data()`, as below.
+# a simple call to `data()`.
 \dontrun{
 install.packages("FITSio")
 path_to_FITS_file <- "<your_local_path_to_the_FITS_file>"
@@ -113,8 +113,9 @@ var <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 2)
 bpm <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 4)
 }
 
-data(polarized_spectrum_WR_star)
+####
 
+data(polarized_spectrum_WR_star)
 library(dplyr)
 
 wavelength <- seq(
@@ -127,9 +128,6 @@ flux <- as_tibble(sci$imDat)
 variances <- as_tibble(var$imDat) \%>\% select(1:3)
 masks <- as_tibble(bpm$imDat)
 
-
-# Not running the rest to save time during development commits
-\dontrun{
 spec_denoised <- denoise_spectrum(
   wavelength,
   flux,
@@ -137,9 +135,6 @@ spec_denoised <- denoise_spectrum(
   masks,
   compute_uncertainties = TRUE
 )
-
-bands <- variability_bands(spec_denoised, param = "Q_norm", level = 0.95)
-}
 }
 \references{
 \enumerate{

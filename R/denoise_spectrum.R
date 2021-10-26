@@ -37,7 +37,7 @@
 #' @param mc_cores Multi-core computing using the
 #' [`parallel`][`parallel::parallel-package`] package: The number of cores to
 #' utilize. Defaults to the number of cores detected on the machine, minus 4.
-#' @param sure_args (Optional) A named list of arguments to be passed to
+#' @param validation_args (Optional) A named list of arguments to be passed to
 #' [`sure_trendfilter()`][trendfiltering::sure_trendfilter()]. The evaluation
 #' grid `x_eval` defaults to the observed wavelength grid. The arguments `x`,
 #' `y`, `weights`, and `k` cannot be overridden.
@@ -89,7 +89,7 @@
 #' # using the "FITSio" R package, as below. For convenience, here we've stored
 #' # the `sci`, `var`, and `bpm` data structures for a Wolf-Rayet stellar
 #' # spectrum in an R data file within this package, so we can source them using
-#' # a simple call to `data()`, as below.
+#' # a simple call to `data()`.
 #' \dontrun{
 #' install.packages("FITSio")
 #' path_to_FITS_file <- "<your_local_path_to_the_FITS_file>"
@@ -99,8 +99,9 @@
 #' bpm <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 4)
 #' }
 #'
-#' data(polarized_spectrum_WR_star)
+#' ####
 #'
+#' data(polarized_spectrum_WR_star)
 #' library(dplyr)
 #'
 #' wavelength <- seq(
@@ -113,9 +114,6 @@
 #' variances <- as_tibble(var$imDat) %>% select(1:3)
 #' masks <- as_tibble(bpm$imDat)
 #'
-#'
-#' # Not running the rest to save time during development commits
-#' \dontrun{
 #' spec_denoised <- denoise_spectrum(
 #'   wavelength,
 #'   flux,
@@ -123,9 +121,6 @@
 #'   masks,
 #'   compute_uncertainties = TRUE
 #' )
-#'
-#' bands <- variability_bands(spec_denoised, param = "Q_norm", level = 0.95)
-#' }
 #' @importFrom trendfiltering sure_trendfilter bootstrap_trendfilter
 #' @importFrom glmgen trendfilter trendfilter.control.list
 #' @importFrom tidyr drop_na tibble as_tibble
@@ -142,7 +137,7 @@ denoise_spectrum <- function(wavelength,
                              compute_uncertainties = FALSE,
                              B = 100L,
                              mc_cores = parallel::detectCores() - 4,
-                             sure_args) {
+                             validation_args) {
   stopifnot(ncol(flux) == 3)
   stopifnot(length(wavelength) == nrow(flux))
 
@@ -158,10 +153,10 @@ denoise_spectrum <- function(wavelength,
     stopifnot(ncol(masks) == 3 & nrow(masks) == nrow(flux))
   }
 
-  if (missing(sure_args)) {
-    sure_args <- list()
+  if (missing(validation_args)) {
+    validation_args <- list()
   } else {
-    stopifnot(all(names(sure_args) %in% names(formals(sure_trendfilter))))
+    stopifnot(all(names(validation_args) %in% names(formals(sure_trendfilter))))
   }
 
   wavelength <- wavelength %>% as_tibble_col(column_name = "wavelength")
@@ -185,7 +180,7 @@ denoise_spectrum <- function(wavelength,
     X = 1:(3 * length(df_list)),
     parallel_sure_tf,
     df_list = df_list,
-    sure_args = sure_args,
+    validation_args = validation_args,
     mc.cores = mc_cores
   )
 
@@ -514,7 +509,7 @@ denoise_spectrum <- function(wavelength,
 
 
 #' @noRd
-parallel_sure_tf <- function(X, df_list, sure_args) {
+parallel_sure_tf <- function(X, df_list, validation_args) {
   if (X %in% 1:length(df_list)) {
     args <- c(
       list(
@@ -523,7 +518,7 @@ parallel_sure_tf <- function(X, df_list, sure_args) {
         weights = 1 / df_list[[X]]$I_vars,
         x_eval = df_list[[X]]$wavelength
       ),
-      sure_args
+      validation_args
     )
   }
 
@@ -535,7 +530,7 @@ parallel_sure_tf <- function(X, df_list, sure_args) {
         weights = 1 / df_list[[X - 3]]$Q_vars,
         x_eval = df_list[[X - 3]]$wavelength
       ),
-      sure_args
+      validation_args
     )
   }
 
@@ -547,7 +542,7 @@ parallel_sure_tf <- function(X, df_list, sure_args) {
         weights = 1 / df_list[[X - 6]]$U_vars,
         x_eval = df_list[[X - 6]]$wavelength
       ),
-      sure_args
+      validation_args
     )
   }
 

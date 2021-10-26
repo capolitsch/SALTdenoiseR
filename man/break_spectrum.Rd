@@ -38,7 +38,6 @@ exported function, it typically does not need to be called directly.
 }
 \examples{
 data(polarized_spectrum_WR_star)
-
 library(dplyr)
 
 wavelength <- seq(

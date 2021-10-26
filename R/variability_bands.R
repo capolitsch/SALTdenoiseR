@@ -32,7 +32,6 @@
 #'
 #' @examples
 #' data(polarized_spectrum_WR_star)
-#'
 #' library(dplyr)
 #'
 #' wavelength <- seq(
@@ -45,9 +44,6 @@
 #' variances <- as_tibble(var$imDat) %>% select(1:3)
 #' masks <- as_tibble(bpm$imDat)
 #'
-#'
-#' # Not running the rest to save time during development commits
-#' \dontrun{
 #' spec_denoised <- denoise_spectrum(
 #'   wavelength,
 #'   flux,
@@ -57,7 +53,6 @@
 #' )
 #'
 #' bands <- variability_bands(spec_denoised, param = "Q_norm", level = 0.95)
-#' }
 #' @importFrom dplyr case_when tibble
 variability_bands <- function(obj, param, level = 0.95) {
   stopifnot(any(class(obj) == "polarized_spectrum"))

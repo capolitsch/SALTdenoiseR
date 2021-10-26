@@ -27,7 +27,6 @@ See the parametric bootstrap algorithm in \href{https://academic.oup.com/mnras/a
 }
 \examples{
 data(polarized_spectrum_WR_star)
-
 library(dplyr)
 
 wavelength <- seq(
@@ -40,9 +39,6 @@ flux <- as_tibble(sci$imDat)
 variances <- as_tibble(var$imDat) \%>\% select(1:3)
 masks <- as_tibble(bpm$imDat)
 
-
-# Not running the rest to save time during development commits
-\dontrun{
 spec_denoised <- denoise_spectrum(
   wavelength,
   flux,
@@ -52,7 +48,6 @@ spec_denoised <- denoise_spectrum(
 )
 
 bands <- variability_bands(spec_denoised, param = "Q_norm", level = 0.95)
-}
 }
 \references{
 \enumerate{

@@ -29,7 +29,6 @@
 #'
 #' @examples
 #' data(polarized_spectrum_WR_star)
-#'
 #' library(dplyr)
 #'
 #' wavelength <- seq(
