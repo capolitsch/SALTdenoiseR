@@ -98,7 +98,6 @@
 #' # the `sci`, `var`, and `bpm` data structures for a Wolf-Rayet stellar
 #' # spectrum in an R data file within this package, so we can source them using
 #' # a simple call to `data()`, as below.
-#'
 #' \dontrun{
 #' install.packages("FITSio")
 #' path_to_FITS_file <- "<your_local_path_to_the_FITS_file>"
@@ -203,7 +202,7 @@ denoise_spectrum <- function(wavelength,
       bootstrap_algorithm = "parametric",
       B = B,
       mc_cores = mc_cores,
-      return_ensemble = ifelse(compute_uncertainties, TRUE, FALSE)
+      return_ensemble = compute_uncertainties
     )
 
     tf_obj <- mclapply(
@@ -343,20 +342,20 @@ denoise_spectrum <- function(wavelength,
       FUN = function(X) tf_obj[[X]]$admm_params
     ),
     edf_boots = if (compute_uncertainties) {
-      return(lapply(
+      lapply(
         X = 1:length(df_list),
         FUN = function(X) tf_obj[[X]]$edf_boots
-      ))
+      )
     } else {
-      return(NULL)
+      NULL
     },
     n_iter_boots = if (compute_uncertainties) {
-      return(lapply(
+      lapply(
         X = 1:length(df_list),
         FUN = function(X) tf_obj[[X]]$n_iter_boots
-      ))
+      )
     } else {
-      return(NULL)
+      NULL
     },
     x_scale = lapply(
       X = 1:length(df_list),
@@ -410,20 +409,20 @@ denoise_spectrum <- function(wavelength,
       FUN = function(X) tf_obj[[length(df_list) + X]]$admm_params
     ),
     edf_boots = if (compute_uncertainties) {
-      return(lapply(
+      lapply(
         X = 1:length(df_list),
         FUN = function(X) tf_obj[[length(df_list) + X]]$edf_boots
-      ))
+      )
     } else {
-      return(NULL)
+      NULL
     },
     n_iter_boots = if (compute_uncertainties) {
-      return(lapply(
+      lapply(
         X = 1:length(df_list),
         FUN = function(X) tf_obj[[length(df_list) + X]]$n_iter_boots
-      ))
+      )
     } else {
-      return(NULL)
+      NULL
     },
     x_scale = lapply(
       X = 1:length(df_list),
@@ -477,20 +476,20 @@ denoise_spectrum <- function(wavelength,
       FUN = function(X) tf_obj[[2 * length(df_list) + X]]$admm_params
     ),
     edf_boots = if (compute_uncertainties) {
-      return(lapply(
+      lapply(
         X = 1:length(df_list),
         FUN = function(X) tf_obj[[2 * length(df_list) + X]]$edf_boots
-      ))
+      )
     } else {
-      return(NULL)
+      NULL
     },
     n_iter_boots = if (compute_uncertainties) {
-      return(lapply(
+      lapply(
         X = 1:length(df_list),
         FUN = function(X) tf_obj[[2 * length(df_list) + X]]$n_iter_boots
-      ))
+      )
     } else {
-      return(NULL)
+      NULL
     },
     x_scale = lapply(
       X = 1:length(df_list),
