@@ -114,7 +114,7 @@ variability_bands <- function(obj, param, level = 0.95) {
     X = 1:length(ensemble),
     FUN = function(X) {
       tibble(
-        wavelength = obj$point_estimates[[X]]$wavelength,
+        wavelength = obj$denoised_signals[[X]]$wavelength,
         bootstrap_lower_band = bootstrap_lower_band[[X]],
         bootstrap_upper_band = bootstrap_upper_band[[X]]
       )
