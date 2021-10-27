@@ -8,7 +8,7 @@
 #' \mjseqn{Q/I} and \mjseqn{U/I}. Setting `compute_uncertainties = TRUE`
 #' generates a bootstrap ensemble of denoised spectra for each Stokes parameter,
 #' which allows variability bands to be computed for each denoised spectrum by
-#' then calling [variability_bands()] on the `'polarized_spectrum'` object
+#' then calling [`variability_bands()`] on the `'polarized_spectrum'` object
 #' produced by the `denoise_spectrum()` function call.
 #'
 #' @param wavelength Vector of wavelength measurements.
@@ -30,14 +30,14 @@
 #' are created for each denoised spectrum via
 #' [`bootstrap_trendfilter()`][trendfiltering::bootstrap_trendfilter()].
 #' The ensembles are stored in the function output so that variability bands
-#' of any level can quickly be computed by calls to [variability_bands()]
+#' of any level can quickly be computed by calls to [`variability_bands()`]
 #' without redundant overhead (see examples). Defaults to
 #' `compute_uncertainties = FALSE`.
 #' @param B If `compute_uncertainties = TRUE`, `B` is the number of bootstrap
 #' samples in the ensembles used to estimate the uncertainty in the denoiser.
 #' Defaults to `B = 100`.
 #' @param mc_cores Multi-core computing using the
-#' [`parallel`][`parallel::parallel-package`] package: The number of cores to
+#' [`parallel`][parallel::parallel-package] package: The number of cores to
 #' use. Defaults to the number of cores detected on the machine, minus 4.
 #' @param validation_args (Optional) A named list of arguments to be passed to
 #' [`sure_trendfilter()`][trendfiltering::sure_trendfilter()]. The evaluation
@@ -363,7 +363,7 @@ denoise_spectrum <- function(wavelength,
       FUN = function(X) tf_obj[[X]]$data_scaled
     )
   ),
-  class = c("stokes_spectrum", "list")
+  class = c("stokes_spectrum", "sure_tf", "list")
   )
 
   Q_summary <- structure(list(
@@ -430,7 +430,7 @@ denoise_spectrum <- function(wavelength,
       FUN = function(X) tf_obj[[length(df_list) + X]]$data_scaled
     )
   ),
-  class = c("stokes_spectrum", "list")
+  class = c("stokes_spectrum", "sure_tf", "list")
   )
 
   U_summary <- structure(list(
@@ -497,7 +497,7 @@ denoise_spectrum <- function(wavelength,
       FUN = function(X) tf_obj[[2 * length(df_list) + X]]$data_scaled
     )
   ),
-  class = c("stokes_spectrum", "list")
+  class = c("stokes_spectrum", "sure_tf", "list")
   )
 
   structure(list(
