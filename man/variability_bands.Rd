@@ -2,8 +2,8 @@
 % Please edit documentation in R/variability_bands.R
 \name{variability_bands}
 \alias{variability_bands}
-\title{Quantify the statistical uncertainty in a denoised spectrum by
-computing bootstrap variability bands}
+\title{Quantify the statistical uncertainty in a denoised spectrum by computing
+bootstrap variability bands}
 \usage{
 variability_bands(obj, param, level = 0.95)
 }
@@ -18,8 +18,7 @@ for. One of \code{c("I","Q","U","Q_norm","U_norm")}.}
 \code{level = 0.95}.}
 }
 \value{
-A list of tibbles, with length equal to the number of segments
-the spectrum was broken into. Each tibble in the list has column set
+A list of \code{obj$n_segments} tibbles, each with the column set
 \code{c("wavelength","bootstrap_lower_band","bootstrap_upper_band")}.
 }
 \description{

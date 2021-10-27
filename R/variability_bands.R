@@ -1,5 +1,5 @@
-#' Quantify the statistical uncertainty in a denoised spectrum by
-#' computing bootstrap variability bands
+#' Quantify the statistical uncertainty in a denoised spectrum by computing
+#' bootstrap variability bands
 #'
 #' See the parametric bootstrap algorithm in [Politsch et al. (2020a)](
 #' https://academic.oup.com/mnras/article/492/3/4005/5704413) for details.
@@ -11,8 +11,7 @@
 #' @param level The level of the pointwise variability bands. Defaults to
 #' `level = 0.95`.
 #'
-#' @return A list of tibbles, with length equal to the number of segments
-#' the spectrum was broken into. Each tibble in the list has column set
+#' @return A list of `obj$n_segments` tibbles, each with the column set
 #' `c("wavelength","bootstrap_lower_band","bootstrap_upper_band")`.
 #'
 #' @export variability_bands
@@ -58,6 +57,12 @@ variability_bands <- function(obj, param, level = 0.95) {
   stopifnot(any(class(obj) == "polarized_spectrum"))
   stopifnot(param %in% c("I", "Q", "U", "Q_norm", "U_norm"))
   stopifnot(level > 0 & level < 1)
+
+  if (is.null(obj$ensembles)) {
+    stop(paste("obj does not have the bootstrap ensembles necessary to\n",
+               "compute variability bands. Re-run denoise_spectrum() with\n",
+               "compute_uncertainties = TRUE."))
+  }
 
   if (param %in% c("I", "Q", "U")) {
     ensemble <- case_when(

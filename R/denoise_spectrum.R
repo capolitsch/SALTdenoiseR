@@ -3,13 +3,13 @@
 #' \loadmathjax The `denoise_spectrum()` function uses quadratic trend
 #' filtering, tuned by Stein's unbiased risk estimate, to optimally denoise a
 #' polarized spectrum in each of the \mjseqn{I}, \mjseqn{Q}, \mjseqn{U} Stokes
-#' parameters (sometimes alternately denoted \mjseqn{S_0}, \mjseqn{S_1},
-#' \mjseqn{S_2}), which then also leads to estimates for the normalized
-#' (unit-less) Stokes parameters \mjseqn{Q/I} and \mjseqn{U/I}. Setting
-#' `compute_uncertainties = TRUE` generates a bootstrap ensemble of denoised
-#' spectra for each Stokes parameter, which allows variability bands to be
-#' computed for each denoised spectrum by then calling
-#' [variability_bands()] on the `denoise_spectrum()` output.
+#' parameters (sometimes denoted \mjseqn{S_0}, \mjseqn{S_1}, \mjseqn{S_2}),
+#' which then also leads to estimates for the normalized Stokes parameters
+#' \mjseqn{Q/I} and \mjseqn{U/I}. Setting `compute_uncertainties = TRUE`
+#' generates a bootstrap ensemble of denoised spectra for each Stokes parameter,
+#' which allows variability bands to be computed for each denoised spectrum by
+#' then calling [variability_bands()] on the `'polarized_spectrum'` object
+#' produced by the `denoise_spectrum()` function call.
 #'
 #' @param wavelength Vector of wavelength measurements.
 #' @param flux Spectropolarimetric measurements, passed as a 3-column tibble,
@@ -29,21 +29,26 @@
 #' @param compute_uncertainties (Boolean) If `TRUE`, then bootstrap ensembles
 #' are created for each denoised spectrum via
 #' [`bootstrap_trendfilter()`][trendfiltering::bootstrap_trendfilter()].
-#' Variability bands of any level can then quickly be computed by repeated calls
-#' to [variability_bands()] (see examples). Defaults to
+#' The ensembles are stored in the function output so that variability bands
+#' of any level can quickly be computed by calls to [variability_bands()]
+#' without redundant overhead (see examples). Defaults to
 #' `compute_uncertainties = FALSE`.
-#' @param B If `compute_uncertainties = TRUE`, the number of bootstrap samples
-#' used to estimate the pointwise variability bands. Defaults to `B = 100`.
+#' @param B If `compute_uncertainties = TRUE`, `B` is the number of bootstrap
+#' samples in the ensembles used to estimate the uncertainty in the denoiser.
+#' Defaults to `B = 100`.
 #' @param mc_cores Multi-core computing using the
 #' [`parallel`][`parallel::parallel-package`] package: The number of cores to
-#' utilize. Defaults to the number of cores detected on the machine, minus 4.
+#' use. Defaults to the number of cores detected on the machine, minus 4.
 #' @param validation_args (Optional) A named list of arguments to be passed to
 #' [`sure_trendfilter()`][trendfiltering::sure_trendfilter()]. The evaluation
-#' grid `x_eval` defaults to the observed wavelength grid. The arguments `x`,
-#' `y`, `weights`, and `k` cannot be overridden.
+#' grid argument `x_eval` of
+#' [`sure_trendfilter()`][trendfiltering::sure_trendfilter()] defaults to the
+#' observed wavelength grid. The arguments `x`, `y`, `weights`, and `k` cannot
+#' be overridden.
 #'
 #' @return An object of class `'polarized_spectrum'`. This is a list with the
 #' following elements:
+#' \describe{
 #' \item{n_segments}{The number of segments the spectrum was broken into by
 #' [`break_spectrum()`].}
 #' \item{data}{The original data set, as a list of `n_segments` tibbles. Each
@@ -51,9 +56,10 @@
 #' wavelengths removed), the Stokes \mjseqn{I}, \mjseqn{Q}, \mjseqn{U} flux
 #' measurements, and the Stokes \mjseqn{I}, \mjseqn{Q}, \mjseqn{U} flux
 #' measurement variances.}
-#' \item{denoised_signals}{A list of `n_segments` tibbles, with each tibble
-#' containing the wavelength evaluation grid for the respective spectrum segment
-#' and all of the denoised signals: `I`,`Q`,`U`,`Q_norm`,`U_norm`.}
+#' \item{denoised_signals}{The set of denoised spectra, as a list of
+#' `n_segments` tibbles. Each tibble contains the wavelength evaluation grid for
+#' its respective spectrum segment and all of the denoised signal estimates:
+#' \mjseqn{I}, \mjseqn{Q}, \mjseqn{U}, \mjseqn{Q/I}, \mjseqn{U/I}.}
 #' \item{ensembles}{If `compute_uncertainties = TRUE`, a list of bootstrap
 #' ensembles for the denoised \mjseqn{I}, \mjseqn{Q}, and \mjseqn{U} ensembles,
 #' respectively. Each ensemble is returned as an \mjseqn{n \times B} matrix,
@@ -68,6 +74,7 @@
 #' Stokes parameter.}
 #' \item{U_analysis_summary}{Same as above, but for the \mjseqn{U}
 #' Stokes parameter.}
+#' }
 #'
 #' @export denoise_spectrum
 #'
@@ -90,6 +97,7 @@
 #' # the `sci`, `var`, and `bpm` data structures for a Wolf-Rayet stellar
 #' # spectrum in an R data file within this package, so we can source them using
 #' # a simple call to `data()`.
+#'
 #' \dontrun{
 #' install.packages("FITSio")
 #' path_to_FITS_file <- "<your_local_path_to_the_FITS_file>"
@@ -281,17 +289,15 @@ denoise_spectrum <- function(wavelength,
       X = (2 * length(df_list) + 1):(3 * length(df_list)),
       FUN = function(X) tf_obj[[X]][["tf_bootstrap_ensemble"]]
     )
-  } else {
-    I_ensemble <- NULL
-    Q_ensemble <- NULL
-    U_ensemble <- NULL
-  }
 
-  ensembles <- list(
-    I = I_ensemble,
-    Q = Q_ensemble,
-    U = U_ensemble
-  )
+    ensembles <- list(
+      I = I_ensemble,
+      Q = Q_ensemble,
+      U = U_ensemble
+    )
+  } else {
+    ensembles <- NULL
+  }
 
   I_summary <- structure(list(
     lambdas = tf_obj[[1]]$lambdas,
@@ -357,7 +363,7 @@ denoise_spectrum <- function(wavelength,
       FUN = function(X) tf_obj[[X]]$data_scaled
     )
   ),
-  class = c(ifelse(compute_uncertainties, "bootstrap_tf", "sure_tf"), "list")
+  class = c("stokes_spectrum", "list")
   )
 
   Q_summary <- structure(list(
@@ -424,7 +430,7 @@ denoise_spectrum <- function(wavelength,
       FUN = function(X) tf_obj[[length(df_list) + X]]$data_scaled
     )
   ),
-  class = c(ifelse(compute_uncertainties, "bootstrap_tf", "sure_tf"), "list")
+  class = c("stokes_spectrum", "list")
   )
 
   U_summary <- structure(list(

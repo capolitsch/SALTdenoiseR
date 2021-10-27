@@ -51,13 +51,13 @@
  The denoise_spectrum() function uses quadratic trend
 filtering, tuned by Stein's unbiased risk estimate, to optimally denoise a
 polarized spectrum in each of the \(I\), \(Q\), \(U\) Stokes
-parameters (sometimes alternately denoted \(S_0\), \(S_1\),
-\(S_2\)), which then also leads to estimates for the normalized
-(unit-less) Stokes parameters \(Q/I\) and \(U/I\). Setting
-compute_uncertainties = TRUE generates a bootstrap ensemble of denoised
-spectra for each Stokes parameter, which allows variability bands to be
-computed for each denoised spectrum by then calling
-variability_bands() on the denoise_spectrum() output." />
+parameters (sometimes denoted \(S_0\), \(S_1\), \(S_2\)),
+which then also leads to estimates for the normalized Stokes parameters
+\(Q/I\) and \(U/I\). Setting compute_uncertainties = TRUE
+generates a bootstrap ensemble of denoised spectra for each Stokes parameter,
+which allows variability bands to be computed for each denoised spectrum by
+then calling variability_bands() on the 'polarized_spectrum' object
+produced by the denoise_spectrum() function call." />
 <meta property="og:image" content="https://capolitsch.github.io/SALTdenoiseR/logo.png" />
 
 
@@ -99,7 +99,7 @@ variability_bands() on the denoise_spectrum() output." />
         <li>
   <a href="../index.html">
     <span class="fas fa-home fa-lg"></span>
-
+     
   </a>
 </li>
 <li>
@@ -113,16 +113,16 @@ variability_bands() on the denoise_spectrum() output." />
         <li>
   <a href="https://github.com/capolitsch/SALTdenoiseR">
     <span class="fab fa-github fa-lg"></span>
-
+     
   </a>
 </li>
       </ul>
-
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-
+      
 
       </header>
 
@@ -139,13 +139,13 @@ variability_bands() on the denoise_spectrum() output." />
  The <code>denoise_spectrum()</code> function uses quadratic trend
 filtering, tuned by Stein's unbiased risk estimate, to optimally denoise a
 polarized spectrum in each of the \(I\), \(Q\), \(U\) Stokes
-parameters (sometimes alternately denoted \(S_0\), \(S_1\),
-\(S_2\)), which then also leads to estimates for the normalized
-(unit-less) Stokes parameters \(Q/I\) and \(U/I\). Setting
-<code>compute_uncertainties = TRUE</code> generates a bootstrap ensemble of denoised
-spectra for each Stokes parameter, which allows variability bands to be
-computed for each denoised spectrum by then calling
-<code><a href='variability_bands.html'>variability_bands()</a></code> on the <code>denoise_spectrum()</code> output.</p>
+parameters (sometimes denoted \(S_0\), \(S_1\), \(S_2\)),
+which then also leads to estimates for the normalized Stokes parameters
+\(Q/I\) and \(U/I\). Setting <code>compute_uncertainties = TRUE</code>
+generates a bootstrap ensemble of denoised spectra for each Stokes parameter,
+which allows variability bands to be computed for each denoised spectrum by
+then calling <code><a href='variability_bands.html'>variability_bands()</a></code> on the <code>'polarized_spectrum'</code> object
+produced by the <code>denoise_spectrum()</code> function call.</p>
     </div>
 
     <pre class="usage"><span class='fu'>denoise_spectrum</span><span class='op'>(</span>
@@ -202,34 +202,38 @@ Defaults to <code>min_pix_segment = 10</code>.</p></td>
       <td><p>(Boolean) If <code>TRUE</code>, then bootstrap ensembles
 are created for each denoised spectrum via
 <code><a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>bootstrap_trendfilter()</a></code>.
-Variability bands of any level can then quickly be computed by repeated calls
-to <code><a href='variability_bands.html'>variability_bands()</a></code> (see examples). Defaults to
+The ensembles are stored in the function output so that variability bands
+of any level can quickly be computed by calls to <code><a href='variability_bands.html'>variability_bands()</a></code>
+without redundant overhead (see examples). Defaults to
 <code>compute_uncertainties = FALSE</code>.</p></td>
     </tr>
     <tr>
       <th>B</th>
-      <td><p>If <code>compute_uncertainties = TRUE</code>, the number of bootstrap samples
-used to estimate the pointwise variability bands. Defaults to <code>B = 100</code>.</p></td>
+      <td><p>If <code>compute_uncertainties = TRUE</code>, <code>B</code> is the number of bootstrap
+samples in the ensembles used to estimate the uncertainty in the denoiser.
+Defaults to <code>B = 100</code>.</p></td>
     </tr>
     <tr>
       <th>mc_cores</th>
       <td><p>Multi-core computing using the
 <code><a href='https://rdrr.io/r/parallel/parallel-package.html'>parallel</a></code> package: The number of cores to
-utilize. Defaults to the number of cores detected on the machine, minus 4.</p></td>
+use. Defaults to the number of cores detected on the machine, minus 4.</p></td>
     </tr>
     <tr>
       <th>validation_args</th>
       <td><p>(Optional) A named list of arguments to be passed to
 <code><a href='https://capolitsch.github.io/trendfiltering/reference/sure_trendfilter.html'>sure_trendfilter()</a></code>. The evaluation
-grid <code>x_eval</code> defaults to the observed wavelength grid. The arguments <code>x</code>,
-<code>y</code>, <code>weights</code>, and <code>k</code> cannot be overridden.</p></td>
+grid argument <code>x_eval</code> of
+<code><a href='https://capolitsch.github.io/trendfiltering/reference/sure_trendfilter.html'>sure_trendfilter()</a></code> defaults to the
+observed wavelength grid. The arguments <code>x</code>, <code>y</code>, <code>weights</code>, and <code>k</code> cannot
+be overridden.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>An object of class <code>'polarized_spectrum'</code>. This is a list with the
-following elements:</p>
+following elements:</p><dl>
 <dt>n_segments</dt><dd><p>The number of segments the spectrum was broken into by
 <code><a href='break_spectrum.html'>break_spectrum()</a></code>.</p></dd>
 <dt>data</dt><dd><p>The original data set, as a list of <code>n_segments</code> tibbles. Each
@@ -237,9 +241,10 @@ tibble contains the observed wavelengths (with the superset of masked
 wavelengths removed), the Stokes \(I\), \(Q\), \(U\) flux
 measurements, and the Stokes \(I\), \(Q\), \(U\) flux
 measurement variances.</p></dd>
-<dt>denoised_signals</dt><dd><p>A list of <code>n_segments</code> tibbles, with each tibble
-containing the wavelength evaluation grid for the respective spectrum segment
-and all of the denoised signals: <code>I</code>,<code>Q</code>,<code>U</code>,<code>Q_norm</code>,<code>U_norm</code>.</p></dd>
+<dt>denoised_signals</dt><dd><p>The set of denoised spectra, as a list of
+<code>n_segments</code> tibbles. Each tibble contains the wavelength evaluation grid for
+its respective spectrum segment and all of the denoised signal estimates:
+\(I\), \(Q\), \(U\), \(Q/I\), \(U/I\).</p></dd>
 <dt>ensembles</dt><dd><p>If <code>compute_uncertainties = TRUE</code>, a list of bootstrap
 ensembles for the denoised \(I\), \(Q\), and \(U\) ensembles,
 respectively. Each ensemble is returned as an \(n \times B\) matrix,
@@ -255,9 +260,11 @@ Stokes parameter.</p></dd>
 <dt>U_analysis_summary</dt><dd><p>Same as above, but for the \(U\)
 Stokes parameter.</p></dd>
 
+</dl>
+
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-
+    
 <ol>
 <li><p>Politsch et al. (2020a).
 <a href='https://academic.oup.com/mnras/article/492/3/4005/5704413'>
@@ -333,7 +340,7 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
       </footer>
    </div>
 
-
+  
 
 
   </body>
