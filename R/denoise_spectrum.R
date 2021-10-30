@@ -164,7 +164,12 @@ denoise_spectrum <- function(wavelength,
   if (missing(validation_args)) {
     validation_args <- list()
   } else {
-    stopifnot(all(names(validation_args) %in% names(formals(sure_trendfilter))))
+    stopifnot(
+      all(
+        names(validation_args) %in%
+          names(formals(sure_trendfilter))
+        )
+      )
   }
 
   wavelength <- wavelength %>% as_tibble_col(column_name = "wavelength")
