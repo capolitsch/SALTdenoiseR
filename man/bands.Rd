@@ -35,14 +35,14 @@ wavelength <- seq(
 )
 
 flux <- as_tibble(sci$imDat)
-variances <- as_tibble(var$imDat) \%>\% select(1:3)
-masks <- as_tibble(bpm$imDat)
+variance <- as_tibble(var$imDat) \%>\% select(1:3)
+mask <- as_tibble(bpm$imDat)
 
 spec_denoised <- denoise_spectrum(
   wavelength,
   flux,
-  variances,
-  masks,
+  variance,
+  mask,
   compute_uncertainties = TRUE
 )
 

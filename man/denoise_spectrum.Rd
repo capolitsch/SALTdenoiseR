@@ -13,6 +13,7 @@ denoise_spectrum(
   compute_uncertainties = FALSE,
   break_at = 10L,
   min_pix_segment = 10L,
+  B = 100L,
   mc_cores = parallel::detectCores() - 4,
   ...
 )

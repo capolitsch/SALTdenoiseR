@@ -131,6 +131,7 @@ denoise_spectrum <- function(wavelength,
                              compute_uncertainties = FALSE,
                              break_at = 10L,
                              min_pix_segment = 10L,
+                             B = 100L,
                              mc_cores = parallel::detectCores() - 4,
                              ...) {
   stopifnot(ncol(flux) == 3 & nrow(flux) == length(wavelength))
@@ -147,8 +148,8 @@ denoise_spectrum <- function(wavelength,
   wavelength <- wavelength %>% as_tibble_col(column_name = "wavelength")
   flux <- as_tibble(flux) %>%
     rename_with(function(.cols) c("I", "Q", "U"))
-  variances <- as_tibble(variances) %>%
-    rename_with(function(.cols) c("I_vars", "Q_vars", "U_vars"))
+  variance <- as_tibble(variance) %>%
+    rename_with(function(.cols) c("I_var", "Q_var", "U_var"))
   mask <- as_tibble(mask) %>%
     rename_with(function(.cols) c("I_mask", "Q_mask", "U_mask"))
 

@@ -42,14 +42,14 @@
 #' stokes <- as_tibble(sci$imDat) %>%
 #'   rename_with(function(.cols) c("I", "Q", "U"))
 #'
-#' variances <- as_tibble(var$imDat) %>%
+#' variance <- as_tibble(var$imDat) %>%
 #'   select(1:3) %>%
-#'   rename_with(function(.cols) c("I_vars", "Q_vars", "U_vars"))
+#'   rename_with(function(.cols) c("I_var", "Q_var", "U_var"))
 #'
 #' masks <- as_tibble(bpm$imDat) %>%
 #'   rename_with(function(.cols) c("I_mask", "Q_mask", "U_mask"))
 #'
-#' df <- bind_cols(wavelength, flux, variances, masks)
+#' df <- bind_cols(wavelength, flux, variance, masks)
 #'
 #' df_list <- break_spectrum(df)
 #' @importFrom dplyr filter pull arrange select ends_with first last slice
