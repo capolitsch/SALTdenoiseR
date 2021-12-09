@@ -6,15 +6,15 @@
 #'
 #' @param obj An object of class `"polarized_spectrum"`, produced by
 #' [`denoise_spectrum()`].
-#' @param param A string specifying which spectrum to compute variability bands
-#' for. One of `c("I","Q","U","Q_norm","U_norm")`.
+#' @param param A string specifying which spectrum
+#' to compute variability bands for. One of `c("I","Q","U","Q_norm","U_norm")`.
 #' @param level The level of the pointwise variability bands. Defaults to
 #' `level = 0.95`.
 #'
 #' @return A list of `obj$n_segments` tibbles, each with the column set
 #' `c("wavelength","bootstrap_lower_band","bootstrap_upper_band")`.
 #'
-#' @export variability_bands
+#' @export bands
 #'
 #' @seealso [`denoise_spectrum()`]
 #'
@@ -30,8 +30,8 @@
 #' smoothness}. \emph{MNRAS}, 492(3), p. 4019-4032.}}
 #'
 #' @examples
-#' data(polarized_spectrum_WR_star)
 #' library(dplyr)
+#' data(polarized_spectrum_WR_star)
 #'
 #' wavelength <- seq(
 #'   from = sci$axDat$crval[1],
@@ -51,17 +51,19 @@
 #'   compute_uncertainties = TRUE
 #' )
 #'
-#' bands <- variability_bands(spec_denoised, param = "Q_norm", level = 0.95)
+#' spec_bands <- bands(spec_denoised, param = "Q_norm")
 #' @importFrom dplyr case_when tibble
-variability_bands <- function(obj, param, level = 0.95) {
+bands <- function(obj, param, level = 0.95) {
   stopifnot(any(class(obj) == "polarized_spectrum"))
   stopifnot(param %in% c("I", "Q", "U", "Q_norm", "U_norm"))
   stopifnot(level > 0 & level < 1)
 
   if (is.null(obj$ensembles)) {
-    stop(paste("obj does not have the bootstrap ensembles necessary to\n",
-               "compute variability bands. Re-run denoise_spectrum() with\n",
-               "compute_uncertainties = TRUE."))
+    stop(paste(
+      "obj does not have the bootstrap ensembles necessary to compute\n",
+      "variability bands. Re-run denoise_spectrum() with\n",
+      "`compute_uncertainties = TRUE`."
+    ))
   }
 
   if (param %in% c("I", "Q", "U")) {

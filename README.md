@@ -1,4 +1,4 @@
-# SALTdenoiseR package <img src="man/figures/logo.png" align="right" width="140px"/>
+# SALTdenoiseR package <a href="https://capolitsch.github.io/SALTdenoiseR/"><img src="man/figures/logo.png" align="right" width="140px"/></a>
 
 This is a highly specialized statistical package that is developed and maintained to optimally assist astronomers in the [South African Large Telescope (SALT)](https://www.salt.ac.za/) consortium in their scientific analyses of past, present, and future SALT observations.
 
