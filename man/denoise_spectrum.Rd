@@ -9,11 +9,10 @@ denoise_spectrum(
   flux,
   variance,
   mask,
-  wavelength_eval = wavelength,
+  lambda = c("lambda_min", "lambda_1se"),
   compute_uncertainties = FALSE,
   break_at = 10L,
   min_pix_segment = 10L,
-  B = 100L,
   mc_cores = parallel::detectCores() - 4,
   ...
 )
@@ -85,9 +84,9 @@ Stokes parameter.}
 }
 \description{
 \loadmathjax The \code{denoise_spectrum()} function uses quadratic trend
-filtering, tuned by Stein's unbiased risk estimate, to optimally denoise each
-of the \mjseqn{IQU} Stokes parameters of a polarized spectrum, in turn also
-leading to denoised estimates for the normalized Stokes parameters
+filtering to optimally denoise each of the \mjseqn{IQU} Stokes parameters of
+a polarized spectrum, in turn also leading to denoised estimates for the
+normalized Stokes parameters
 \mjseqn{Q/I} and \mjseqn{U/I}. Setting \code{compute_uncertainties = TRUE}
 generates a bootstrap ensemble of denoised spectra for each Stokes parameter,
 which allows variability bands to be computed for each denoised spectrum by
