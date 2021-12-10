@@ -2,33 +2,39 @@
 % Please edit documentation in R/denoise_spectrum.R
 \name{denoise_spectrum}
 \alias{denoise_spectrum}
-\title{Denoise a polarized spectrum via quadratic trend filtering}
+\title{Denoise a polarized spectrum via trend filtering}
 \usage{
 denoise_spectrum(
   wavelength,
   flux,
-  variances,
-  masks,
+  variance,
+  mask,
+  wavelength_eval = wavelength,
+  compute_uncertainties = FALSE,
   break_at = 10L,
   min_pix_segment = 10L,
-  compute_uncertainties = FALSE,
   B = 100L,
   mc_cores = parallel::detectCores() - 4,
-  validation_args
+  ...
 )
 }
 \arguments{
 \item{wavelength}{Vector of wavelength measurements.}
 
 \item{flux}{Spectropolarimetric measurements, passed as a 3-column tibble,
-data frame, or matrix, with the columns corresponding to the \mjseqn{I},
-\mjseqn{Q}, \mjseqn{U} Stokes parameters, respectively.}
+data frame, or matrix, with the columns corresponding to the \mjseqn{IQU}
+Stokes parameters, respectively.}
 
-\item{variances}{Measurement variances, in a tibble, data frame, or matrix
-with dimensions matching those of \code{flux}.}
+\item{mask}{Pixel masks, in a tibble, data frame, or matrix with dimensions
+matching those of \code{flux}. Nonzero elements flag bad pixels.}
 
-\item{masks}{Pixel masks, in a tibble, data frame, or matrix
-with dimensions matching those of \code{flux}. Nonzero elements flag bad pixels.}
+\item{compute_uncertainties}{(Boolean) If \code{TRUE}, then bootstrap ensembles
+are created for each denoised spectrum via
+\code{\link[trendfiltering:bootstrap_trendfilter]{trendfiltering::bootstrap_trendfilter()}}.
+The ensembles are stored in the function output so that variability bands
+of any level can quickly be computed by calls to \code{\link[=bands]{bands()}} without
+redundant overhead calculations (see examples). Defaults to
+\code{compute_uncertainties = FALSE}.}
 
 \item{break_at}{The minimum number of consecutively-masked spectral pixels
 that will trigger a break in the spectrum. Defaults to \code{break_at = 10}.}
@@ -36,54 +42,38 @@ that will trigger a break in the spectrum. Defaults to \code{break_at = 10}.}
 \item{min_pix_segment}{After the segmentation procedure is complete, the
 resulting segments are examined to ensure that each is sufficiently long for
 a non-trivial/well-defined denoising analysis. In particular, any segment
-that has less than \code{min_pix_segment} unmasked spectral pixels is discarded.
+that has fewer than \code{min_pix_segment} unmasked spectral pixels is discarded.
 Defaults to \code{min_pix_segment = 10}.}
-
-\item{compute_uncertainties}{(Boolean) If \code{TRUE}, then bootstrap ensembles
-are created for each denoised spectrum via
-\code{\link[trendfiltering:bootstrap_trendfilter]{bootstrap_trendfilter()}}.
-The ensembles are stored in the function output so that variability bands
-of any level can quickly be computed by calls to \code{\link[=variability_bands]{variability_bands()}}
-without redundant overhead (see examples). Defaults to
-\code{compute_uncertainties = FALSE}.}
-
-\item{B}{If \code{compute_uncertainties = TRUE}, \code{B} is the number of bootstrap
-samples in the ensembles used to estimate the uncertainty in the denoiser.
-Defaults to \code{B = 100}.}
 
 \item{mc_cores}{Multi-core computing using the
 \code{\link[parallel:parallel-package]{parallel}} package: The number of cores to
 use. Defaults to the number of cores detected on the machine, minus 4.}
 
-\item{validation_args}{(Optional) A named list of arguments to be passed to
-\code{\link[trendfiltering:sure_trendfilter]{sure_trendfilter()}}. The evaluation
-grid argument \code{x_eval} of
-\code{\link[trendfiltering:sure_trendfilter]{sure_trendfilter()}} defaults to the
-observed wavelength grid. The arguments \code{x}, \code{y}, \code{weights}, and \code{k} cannot
-be overridden.}
+\item{...}{(Optional) Named arguments to be passed to
+\code{\link[trendfiltering:sure_trendfilter]{trendfiltering::sure_trendfilter()}} or
+\code{\link[trendfiltering:bootstrap_trendfilter]{trendfiltering::bootstrap_trendfilter()}}. The
+arguments \code{x}, \code{y}, \code{weights}, \code{k}, and \code{algorithm} cannot be overridden.}
+
+\item{variances}{Measurement variances, in a tibble, data frame, or matrix
+with dimensions matching those of \code{flux}.}
 }
 \value{
 An object of class \code{'polarized_spectrum'}. This is a list with the
 following elements:
 \describe{
-\item{n_segments}{The number of segments the spectrum was broken into by
+\item{n_segments}{Number of segments the spectrum was broken into by
 \code{\link[=break_spectrum]{break_spectrum()}}.}
 \item{data}{The original data set, as a list of \code{n_segments} tibbles. Each
-tibble contains the observed wavelengths (with the superset of masked
-wavelengths removed), the Stokes \mjseqn{I}, \mjseqn{Q}, \mjseqn{U} flux
-measurements, and the Stokes \mjseqn{I}, \mjseqn{Q}, \mjseqn{U} flux
+tibble contains the observed wavelengths (with the union set of masked
+wavelengths removed), the Stokes \mjseqn{IQU} flux measurements, and the
 measurement variances.}
 \item{denoised_signals}{The set of denoised spectra, as a list of
 \code{n_segments} tibbles. Each tibble contains the wavelength evaluation grid for
-its respective spectrum segment and all of the denoised signal estimates:
+its respective segment and all of the denoised signal estimates:
 \mjseqn{I}, \mjseqn{Q}, \mjseqn{U}, \mjseqn{Q/I}, \mjseqn{U/I}.}
 \item{ensembles}{If \code{compute_uncertainties = TRUE}, a list of bootstrap
-ensembles for the denoised \mjseqn{I}, \mjseqn{Q}, and \mjseqn{U} ensembles,
-respectively. Each ensemble is returned as an \mjseqn{n \times B} matrix,
-less any columns from post-hoc pruning
-(see the
-\code{\link[trendfiltering:bootstrap_trendfilter]{bootstrap_trendfilter()}}
-documentation).
+ensembles for the denoised \mjseqn{I}, \mjseqn{Q}, \mjseqn{U} parameters,
+respectively. Each ensemble is returned as an \mjseqn{n \times B} matrix.
 If \code{compute_uncertainties = FALSE}, this will return \code{NULL}.}
 \item{I_analysis_summary}{Technical summary of the denoising analysis of the
 \mjseqn{I} Stokes parameter.}
@@ -95,36 +85,34 @@ Stokes parameter.}
 }
 \description{
 \loadmathjax The \code{denoise_spectrum()} function uses quadratic trend
-filtering, tuned by Stein's unbiased risk estimate, to optimally denoise a
-polarized spectrum in each of the \mjseqn{I}, \mjseqn{Q}, \mjseqn{U} Stokes
-parameters (sometimes denoted \mjseqn{S_0}, \mjseqn{S_1}, \mjseqn{S_2}),
-which then also leads to estimates for the normalized Stokes parameters
+filtering, tuned by Stein's unbiased risk estimate, to optimally denoise each
+of the \mjseqn{IQU} Stokes parameters of a polarized spectrum, in turn also
+leading to denoised estimates for the normalized Stokes parameters
 \mjseqn{Q/I} and \mjseqn{U/I}. Setting \code{compute_uncertainties = TRUE}
 generates a bootstrap ensemble of denoised spectra for each Stokes parameter,
 which allows variability bands to be computed for each denoised spectrum by
-then calling \code{\link[=variability_bands]{variability_bands()}} on the \code{'polarized_spectrum'} object
-produced by the \code{denoise_spectrum()} function call.
+then calling \code{\link[=bands]{bands()}} on the \code{denoise_spectrum()} output.
 }
 \examples{
 # Any SALT Observatory spectrum can be read into R from its FITS file
-# using the "FITSio" R package, as below. For convenience, here we've stored
-# the `sci`, `var`, and `bpm` data structures for a Wolf-Rayet stellar
-# spectrum in an R data file within this package, so we can source them using
-# a simple call to `data()`.
+# using the "FITSio" R package, as below. In the example below, we will
+# analyze the polarized spectrum of a SALT Wolf-Rayet star. For convenience,
+# here we've stored the header and data units (HDU) from the FITS file into
+# three variables (`sci`, `var`, and `bpm`) that are stored in an R data file
+# within this package, so we can source them using a simple call to `data()`.
 
 \dontrun{
 install.packages("FITSio")
-path_to_FITS_file <- "<your_local_path_to_the_FITS_file>"
+path_to_FITS_file <- "<your_local_path_to_FITS_file>"
 file.name <- "WR006_c1_12345678_stokes.fits"
 sci <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 1)
 var <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 2)
-bpm <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 4)
-}
+bpm <- FITSio::readFITS(paste0(path_to_FITS_file, file.name), hdu = 4)}
 
 ####
 
-data(polarized_spectrum_WR_star)
 library(dplyr)
+data(polarized_spectrum_WR_star)
 
 wavelength <- seq(
   from = sci$axDat$crval[1],
@@ -133,14 +121,14 @@ wavelength <- seq(
 )
 
 flux <- as_tibble(sci$imDat)
-variances <- as_tibble(var$imDat) \%>\% select(1:3)
-masks <- as_tibble(bpm$imDat)
+variance <- as_tibble(var$imDat) \%>\% select(1:3)
+mask <- as_tibble(bpm$imDat)
 
 spec_denoised <- denoise_spectrum(
   wavelength,
   flux,
-  variances,
-  masks,
+  variance,
+  mask,
   compute_uncertainties = TRUE
 )
 }
@@ -156,5 +144,5 @@ Trend Filtering – II. Denoising astronomical signals with varying degrees of
 smoothness}. \emph{MNRAS}, 492(3), p. 4019-4032.}}
 }
 \seealso{
-\code{\link[=variability_bands]{variability_bands()}}, \code{\link[=break_spectrum]{break_spectrum()}}
+\code{\link[=bands]{bands()}}, \code{\link[=break_spectrum]{break_spectrum()}}
 }

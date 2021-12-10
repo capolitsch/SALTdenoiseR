@@ -1,4 +1,4 @@
-# SALTdenoiseR package <img src="man/figures/logo.png" align="right" width="140px"/>
+# SALTdenoiseR package <a href="https://capolitsch.github.io/SALTdenoiseR/"><img src="man/figures/logo.png" align="right" width="140px"/></a>
 
 ### [Package website](https://capolitsch.github.io/SALTdenoiseR/)
 

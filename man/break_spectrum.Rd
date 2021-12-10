@@ -4,13 +4,14 @@
 \alias{break_spectrum}
 \title{Break a spectrum into segments when one or more wide masks exist}
 \usage{
-break_spectrum(df_full, break_at = 10, min_pix_segment = 10)
+break_spectrum(df, break_at = 10L, min_pix_segment = 10L)
 }
 \arguments{
-\item{df_full}{A tibble that includes a column titled \code{"wavelength"} and one
-or more columns with names ending in \code{"mask"}, e.g.
-\code{c("I_mask", "Q_mask", "U_mask")}. The values of the mask columns are equal
-to 0 (or FALSE) for unmasked pixels and nonzero (or TRUE) for masked pixels.}
+\item{df}{A tibble that includes a column titled \code{"wavelength"} and one or
+more columns with names ending in \code{"mask"}, e.g.
+\code{c("I_mask", "Q_mask", "U_mask")}. The values of the mask columns should be
+equal to 0 (or FALSE) for unmasked pixels and nonzero (or TRUE) for masked
+pixels.}
 
 \item{break_at}{The minimum number of consecutively-masked spectral pixels
 that will trigger a break in the spectrum. Defaults to \code{break_at = 10}.}
@@ -18,27 +19,27 @@ that will trigger a break in the spectrum. Defaults to \code{break_at = 10}.}
 \item{min_pix_segment}{After the segmentation procedure is complete, the
 resulting segments are examined to ensure that each is sufficiently long for
 a non-trivial/well-defined denoising analysis. In particular, any segment
-that has less than \code{min_pix_segment} unmasked spectral pixels is discarded.
+that has fewer than \code{min_pix_segment} unmasked spectral pixels is discarded.
 Defaults to \code{min_pix_segment = 10}.}
 }
 \value{
-A list of tibbles that define the segmented spectrum. Each tibble in
-the list has the same format as the input tibble \code{df_full}, minus the mask
-columns.
+A list of tibbles, with one for each segment of the segmented
+spectrum. Masked rows are now dropped and each tibble in the list has the
+same format as the input \code{df}, minus the mask columns.
 }
 \description{
 Break a spectrum into segments when one or more wide masks (i.e.
 sequences of many consecutively-masked pixels) exist. The spectrum can be
-polarized or unpolarized (see examples). When the spectrum is polarized, the
-set of masked spectral pixels used to define the spectrum's segmentation is
-taken to be the set of pixels that are masked for \emph{any} of the \mjseqn{I},
-\mjseqn{Q}, \mjseqn{U} Stokes parameters. Note that \code{\link[=denoise_spectrum]{denoise_spectrum()}}
-calls \code{break_spectrum()} internally. So while \code{break_spectrum()} is an
-exported function, it typically does not need to be called directly.
+polarized or unpolarized. When the spectrum is polarized, the set of masked
+spectral pixels used to define the spectrum's segmentation is
+taken to be the union set of pixels that are masked for \emph{any} of the
+\mjseqn{IQU} Stokes parameters. Note that \code{\link[=denoise_spectrum]{denoise_spectrum()}} calls
+\code{break_spectrum()} internally. So while \code{break_spectrum()} is an exported
+function, it typically does not need to be called directly.
 }
 \examples{
-data(polarized_spectrum_WR_star)
 library(dplyr)
+data(polarized_spectrum_WR_star)
 
 wavelength <- seq(
   from = sci$axDat$crval[1],
@@ -50,21 +51,16 @@ wavelength <- seq(
 stokes <- as_tibble(sci$imDat) \%>\%
   rename_with(function(.cols) c("I", "Q", "U"))
 
-variances <- as_tibble(var$imDat) \%>\%
+variance <- as_tibble(var$imDat) \%>\%
   select(1:3) \%>\%
-  rename_with(function(.cols) c("I_vars", "Q_vars", "U_vars"))
+  rename_with(function(.cols) c("I_var", "Q_var", "U_var"))
 
 masks <- as_tibble(bpm$imDat) \%>\%
   rename_with(function(.cols) c("I_mask", "Q_mask", "U_mask"))
 
-df_full <- bind_cols(
-  wavelength,
-  stokes,
-  variances,
-  masks
-)
+df <- bind_cols(wavelength, flux, variance, masks)
 
-df_list <- break_spectrum(df_full)
+df_list <- break_spectrum(df)
 }
 \seealso{
 \code{\link[=denoise_spectrum]{denoise_spectrum()}}
