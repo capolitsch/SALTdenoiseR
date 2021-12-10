@@ -48,17 +48,17 @@ wavelength <- seq(
 ) \%>\%
   tibble::as_tibble_col(column_name = "wavelength")
 
-stokes <- as_tibble(sci$imDat) \%>\%
+flux <- as_tibble(sci$imDat) \%>\%
   rename_with(function(.cols) c("I", "Q", "U"))
 
 variance <- as_tibble(var$imDat) \%>\%
   select(1:3) \%>\%
   rename_with(function(.cols) c("I_var", "Q_var", "U_var"))
 
-masks <- as_tibble(bpm$imDat) \%>\%
+mask <- as_tibble(bpm$imDat) \%>\%
   rename_with(function(.cols) c("I_mask", "Q_mask", "U_mask"))
 
-df <- bind_cols(wavelength, flux, variance, masks)
+df <- bind_cols(wavelength, flux, variance, mask)
 
 df_list <- break_spectrum(df)
 }

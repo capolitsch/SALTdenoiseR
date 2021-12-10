@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Denoise a polarized spectrum via quadratic trend filtering — denoise_spectrum • SALTdenoiseR</title>
+<title>Denoise a polarized spectrum via trend filtering — denoise_spectrum • SALTdenoiseR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,18 +46,16 @@
 
 
 
-<meta property="og:title" content="Denoise a polarized spectrum via quadratic trend filtering — denoise_spectrum" />
+<meta property="og:title" content="Denoise a polarized spectrum via trend filtering — denoise_spectrum" />
 <meta property="og:description" content="
  The denoise_spectrum() function uses quadratic trend
-filtering, tuned by Stein's unbiased risk estimate, to optimally denoise a
-polarized spectrum in each of the \(I\), \(Q\), \(U\) Stokes
-parameters (sometimes denoted \(S_0\), \(S_1\), \(S_2\)),
-which then also leads to estimates for the normalized Stokes parameters
+filtering to optimally denoise each of the \(IQU\) Stokes parameters of
+a polarized spectrum, in turn also leading to denoised estimates for the
+normalized Stokes parameters
 \(Q/I\) and \(U/I\). Setting compute_uncertainties = TRUE
 generates a bootstrap ensemble of denoised spectra for each Stokes parameter,
 which allows variability bands to be computed for each denoised spectrum by
-then calling variability_bands() on the 'polarized_spectrum' object
-produced by the denoise_spectrum() function call." />
+then calling bands() on the denoise_spectrum() output." />
 <meta property="og:image" content="https://capolitsch.github.io/SALTdenoiseR/logo.png" />
 
 
@@ -90,7 +88,7 @@ produced by the denoise_spectrum() function call." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SALTdenoiseR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -129,7 +127,7 @@ produced by the denoise_spectrum() function call." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Denoise a polarized spectrum via quadratic trend filtering</h1>
+    <h1>Denoise a polarized spectrum via trend filtering</h1>
     <small class="dont-index">Source: <a href='https://github.com/capolitsch/SALTdenoiseR/blob/main/R/denoise_spectrum.R'><code>R/denoise_spectrum.R</code></a></small>
     <div class="hidden name"><code>denoise_spectrum.Rd</code></div>
     </div>
@@ -137,28 +135,26 @@ produced by the denoise_spectrum() function call." />
     <div class="ref-description">
     <p><script id="MathJax-script" async src="../../mathjaxr/doc/mathjax/es5/tex-chtml-full.js"></script>
  The <code>denoise_spectrum()</code> function uses quadratic trend
-filtering, tuned by Stein's unbiased risk estimate, to optimally denoise a
-polarized spectrum in each of the \(I\), \(Q\), \(U\) Stokes
-parameters (sometimes denoted \(S_0\), \(S_1\), \(S_2\)),
-which then also leads to estimates for the normalized Stokes parameters
+filtering to optimally denoise each of the \(IQU\) Stokes parameters of
+a polarized spectrum, in turn also leading to denoised estimates for the
+normalized Stokes parameters
 \(Q/I\) and \(U/I\). Setting <code>compute_uncertainties = TRUE</code>
 generates a bootstrap ensemble of denoised spectra for each Stokes parameter,
 which allows variability bands to be computed for each denoised spectrum by
-then calling <code><a href='variability_bands.html'>variability_bands()</a></code> on the <code>'polarized_spectrum'</code> object
-produced by the <code>denoise_spectrum()</code> function call.</p>
+then calling <code><a href='bands.html'>bands()</a></code> on the <code>denoise_spectrum()</code> output.</p>
     </div>
 
     <pre class="usage"><span class='fu'>denoise_spectrum</span><span class='op'>(</span>
   <span class='va'>wavelength</span>,
   <span class='va'>flux</span>,
-  <span class='va'>variances</span>,
-  <span class='va'>masks</span>,
+  <span class='va'>variance</span>,
+  <span class='va'>mask</span>,
+  lambda <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"lambda_min"</span>, <span class='st'>"lambda_1se"</span><span class='op'>)</span>,
+  compute_uncertainties <span class='op'>=</span> <span class='cn'>FALSE</span>,
   break_at <span class='op'>=</span> <span class='fl'>10L</span>,
   min_pix_segment <span class='op'>=</span> <span class='fl'>10L</span>,
-  compute_uncertainties <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  B <span class='op'>=</span> <span class='fl'>100L</span>,
   mc_cores <span class='op'>=</span> <span class='fu'>parallel</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/r/parallel/detectCores.html'>detectCores</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>-</span> <span class='fl'>4</span>,
-  <span class='va'>validation_args</span>
+  <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -171,18 +167,23 @@ produced by the <code>denoise_spectrum()</code> function call.</p>
     <tr>
       <th>flux</th>
       <td><p>Spectropolarimetric measurements, passed as a 3-column tibble,
-data frame, or matrix, with the columns corresponding to the \(I\),
-\(Q\), \(U\) Stokes parameters, respectively.</p></td>
+data frame, or matrix, with the columns corresponding to the \(IQU\)
+Stokes parameters, respectively.</p></td>
     </tr>
     <tr>
-      <th>variances</th>
-      <td><p>Measurement variances, in a tibble, data frame, or matrix
-with dimensions matching those of <code>flux</code>.</p></td>
+      <th>mask</th>
+      <td><p>Pixel masks, in a tibble, data frame, or matrix with dimensions
+matching those of <code>flux</code>. Nonzero elements flag bad pixels.</p></td>
     </tr>
     <tr>
-      <th>masks</th>
-      <td><p>Pixel masks, in a tibble, data frame, or matrix
-with dimensions matching those of <code>flux</code>. Nonzero elements flag bad pixels.</p></td>
+      <th>compute_uncertainties</th>
+      <td><p>(Boolean) If <code>TRUE</code>, then bootstrap ensembles
+are created for each denoised spectrum via
+<code><a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>trendfiltering::bootstrap_trendfilter()</a></code>.
+The ensembles are stored in the function output so that variability bands
+of any level can quickly be computed by calls to <code><a href='bands.html'>bands()</a></code> without
+redundant overhead calculations (see examples). Defaults to
+<code>compute_uncertainties = FALSE</code>.</p></td>
     </tr>
     <tr>
       <th>break_at</th>
@@ -194,24 +195,8 @@ that will trigger a break in the spectrum. Defaults to <code>break_at = 10</code
       <td><p>After the segmentation procedure is complete, the
 resulting segments are examined to ensure that each is sufficiently long for
 a non-trivial/well-defined denoising analysis. In particular, any segment
-that has less than <code>min_pix_segment</code> unmasked spectral pixels is discarded.
+that has fewer than <code>min_pix_segment</code> unmasked spectral pixels is discarded.
 Defaults to <code>min_pix_segment = 10</code>.</p></td>
-    </tr>
-    <tr>
-      <th>compute_uncertainties</th>
-      <td><p>(Boolean) If <code>TRUE</code>, then bootstrap ensembles
-are created for each denoised spectrum via
-<code><a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>bootstrap_trendfilter()</a></code>.
-The ensembles are stored in the function output so that variability bands
-of any level can quickly be computed by calls to <code><a href='variability_bands.html'>variability_bands()</a></code>
-without redundant overhead (see examples). Defaults to
-<code>compute_uncertainties = FALSE</code>.</p></td>
-    </tr>
-    <tr>
-      <th>B</th>
-      <td><p>If <code>compute_uncertainties = TRUE</code>, <code>B</code> is the number of bootstrap
-samples in the ensembles used to estimate the uncertainty in the denoiser.
-Defaults to <code>B = 100</code>.</p></td>
     </tr>
     <tr>
       <th>mc_cores</th>
@@ -220,13 +205,16 @@ Defaults to <code>B = 100</code>.</p></td>
 use. Defaults to the number of cores detected on the machine, minus 4.</p></td>
     </tr>
     <tr>
-      <th>validation_args</th>
-      <td><p>(Optional) A named list of arguments to be passed to
-<code><a href='https://capolitsch.github.io/trendfiltering/reference/sure_trendfilter.html'>sure_trendfilter()</a></code>. The evaluation
-grid argument <code>x_eval</code> of
-<code><a href='https://capolitsch.github.io/trendfiltering/reference/sure_trendfilter.html'>sure_trendfilter()</a></code> defaults to the
-observed wavelength grid. The arguments <code>x</code>, <code>y</code>, <code>weights</code>, and <code>k</code> cannot
-be overridden.</p></td>
+      <th>...</th>
+      <td><p>(Optional) Named arguments to be passed to
+<code><a href='https://capolitsch.github.io/trendfiltering/reference/sure_trendfilter.html'>trendfiltering::sure_trendfilter()</a></code> or
+<code><a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>trendfiltering::bootstrap_trendfilter()</a></code>. The
+arguments <code>x</code>, <code>y</code>, <code>weights</code>, <code>k</code>, and <code>algorithm</code> cannot be overridden.</p></td>
+    </tr>
+    <tr>
+      <th>variances</th>
+      <td><p>Measurement variances, in a tibble, data frame, or matrix
+with dimensions matching those of <code>flux</code>.</p></td>
     </tr>
     </table>
 
@@ -234,24 +222,19 @@ be overridden.</p></td>
 
     <p>An object of class <code>'polarized_spectrum'</code>. This is a list with the
 following elements:</p><dl>
-<dt>n_segments</dt><dd><p>The number of segments the spectrum was broken into by
+<dt>n_segments</dt><dd><p>Number of segments the spectrum was broken into by
 <code><a href='break_spectrum.html'>break_spectrum()</a></code>.</p></dd>
 <dt>data</dt><dd><p>The original data set, as a list of <code>n_segments</code> tibbles. Each
-tibble contains the observed wavelengths (with the superset of masked
-wavelengths removed), the Stokes \(I\), \(Q\), \(U\) flux
-measurements, and the Stokes \(I\), \(Q\), \(U\) flux
+tibble contains the observed wavelengths (with the union set of masked
+wavelengths removed), the Stokes \(IQU\) flux measurements, and the
 measurement variances.</p></dd>
 <dt>denoised_signals</dt><dd><p>The set of denoised spectra, as a list of
 <code>n_segments</code> tibbles. Each tibble contains the wavelength evaluation grid for
-its respective spectrum segment and all of the denoised signal estimates:
+its respective segment and all of the denoised signal estimates:
 \(I\), \(Q\), \(U\), \(Q/I\), \(U/I\).</p></dd>
 <dt>ensembles</dt><dd><p>If <code>compute_uncertainties = TRUE</code>, a list of bootstrap
-ensembles for the denoised \(I\), \(Q\), and \(U\) ensembles,
-respectively. Each ensemble is returned as an \(n \times B\) matrix,
-less any columns from post-hoc pruning
-(see the
-<code><a href='https://capolitsch.github.io/trendfiltering/reference/bootstrap_trendfilter.html'>bootstrap_trendfilter()</a></code>
-documentation).
+ensembles for the denoised \(I\), \(Q\), \(U\) parameters,
+respectively. Each ensemble is returned as an \(n \times B\) matrix.
 If <code>compute_uncertainties = FALSE</code>, this will return <code>NULL</code>.</p></dd>
 <dt>I_analysis_summary</dt><dd><p>Technical summary of the denoising analysis of the
 \(I\) Stokes parameter.</p></dd>
@@ -278,18 +261,19 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='variability_bands.html'>variability_bands()</a></code>, <code><a href='break_spectrum.html'>break_spectrum()</a></code></p></div>
+    <div class='dont-index'><p><code><a href='bands.html'>bands()</a></code>, <code><a href='break_spectrum.html'>break_spectrum()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Any SALT Observatory spectrum can be read into R from its FITS file</span>
-<span class='co'># using the "FITSio" R package, as below. For convenience, here we've stored</span>
-<span class='co'># the `sci`, `var`, and `bpm` data structures for a Wolf-Rayet stellar</span>
-<span class='co'># spectrum in an R data file within this package, so we can source them using</span>
-<span class='co'># a simple call to `data()`.</span>
+<span class='co'># using the "FITSio" R package, as below. In the example below, we will</span>
+<span class='co'># analyze the polarized spectrum of a SALT Wolf-Rayet star. For convenience,</span>
+<span class='co'># here we've stored the header and data units (HDU) from the FITS file into</span>
+<span class='co'># three variables (`sci`, `var`, and `bpm`) that are stored in an R data file</span>
+<span class='co'># within this package, so we can source them using a simple call to `data()`.</span>
 
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span><span class='op'>(</span><span class='st'>"FITSio"</span><span class='op'>)</span>
-<span class='va'>path_to_FITS_file</span> <span class='op'>&lt;-</span> <span class='st'>"&lt;your_local_path_to_the_FITS_file&gt;"</span>
+<span class='va'>path_to_FITS_file</span> <span class='op'>&lt;-</span> <span class='st'>"&lt;your_local_path_to_FITS_file&gt;"</span>
 <span class='va'>file.name</span> <span class='op'>&lt;-</span> <span class='st'>"WR006_c1_12345678_stokes.fits"</span>
 <span class='va'>sci</span> <span class='op'>&lt;-</span> <span class='fu'>FITSio</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/FITSio/man/readFITS.html'>readFITS</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>path_to_FITS_file</span>, <span class='va'>file.name</span><span class='op'>)</span>, hdu <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 <span class='va'>var</span> <span class='op'>&lt;-</span> <span class='fu'>FITSio</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/FITSio/man/readFITS.html'>readFITS</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>path_to_FITS_file</span>, <span class='va'>file.name</span><span class='op'>)</span>, hdu <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
@@ -298,8 +282,8 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
 
 <span class='co'>####</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>polarized_spectrum_WR_star</span><span class='op'>)</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>polarized_spectrum_WR_star</span><span class='op'>)</span>
 
 <span class='va'>wavelength</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span>
   from <span class='op'>=</span> <span class='va'>sci</span><span class='op'>$</span><span class='va'>axDat</span><span class='op'>$</span><span class='va'>crval</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>,
@@ -308,14 +292,14 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
 <span class='op'>)</span>
 
 <span class='va'>flux</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>sci</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
-<span class='va'>variances</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>var</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
-<span class='va'>masks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>bpm</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
+<span class='va'>variance</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>var</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
+<span class='va'>mask</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>bpm</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
 
 <span class='va'>spec_denoised</span> <span class='op'>&lt;-</span> <span class='fu'>denoise_spectrum</span><span class='op'>(</span>
   <span class='va'>wavelength</span>,
   <span class='va'>flux</span>,
-  <span class='va'>variances</span>,
-  <span class='va'>masks</span>,
+  <span class='va'>variance</span>,
+  <span class='va'>mask</span>,
   compute_uncertainties <span class='op'>=</span> <span class='cn'>TRUE</span>
 <span class='op'>)</span>
 </div></pre>
@@ -330,7 +314,7 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='https://collinpolitsch.com/'>Collin A. Politsch, Ph.D.</a></p>
+  <p>Developed by <a href='https://collinpolitsch.com/'>Collin A. Politsch</a>.</p>
 </div>
 
 <div class="pkgdown">

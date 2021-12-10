@@ -49,12 +49,12 @@
 <meta property="og:title" content="Break a spectrum into segments when one or more wide masks exist — break_spectrum" />
 <meta property="og:description" content="Break a spectrum into segments when one or more wide masks (i.e.
 sequences of many consecutively-masked pixels) exist. The spectrum can be
-polarized or unpolarized (see examples). When the spectrum is polarized, the
-set of masked spectral pixels used to define the spectrum's segmentation is
-taken to be the set of pixels that are masked for any of the \(I\),
-\(Q\), \(U\) Stokes parameters. Note that denoise_spectrum()
-calls break_spectrum() internally. So while break_spectrum() is an
-exported function, it typically does not need to be called directly." />
+polarized or unpolarized. When the spectrum is polarized, the set of masked
+spectral pixels used to define the spectrum's segmentation is
+taken to be the union set of pixels that are masked for any of the
+\(IQU\) Stokes parameters. Note that denoise_spectrum() calls
+break_spectrum() internally. So while break_spectrum() is an exported
+function, it typically does not need to be called directly." />
 <meta property="og:image" content="https://capolitsch.github.io/SALTdenoiseR/logo.png" />
 
 
@@ -87,7 +87,7 @@ exported function, it typically does not need to be called directly." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SALTdenoiseR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -134,25 +134,26 @@ exported function, it typically does not need to be called directly." />
     <div class="ref-description">
     <p>Break a spectrum into segments when one or more wide masks (i.e.
 sequences of many consecutively-masked pixels) exist. The spectrum can be
-polarized or unpolarized (see examples). When the spectrum is polarized, the
-set of masked spectral pixels used to define the spectrum's segmentation is
-taken to be the set of pixels that are masked for <em>any</em> of the \(I\),
-\(Q\), \(U\) Stokes parameters. Note that <code><a href='denoise_spectrum.html'>denoise_spectrum()</a></code>
-calls <code>break_spectrum()</code> internally. So while <code>break_spectrum()</code> is an
-exported function, it typically does not need to be called directly.</p>
+polarized or unpolarized. When the spectrum is polarized, the set of masked
+spectral pixels used to define the spectrum's segmentation is
+taken to be the union set of pixels that are masked for <em>any</em> of the
+\(IQU\) Stokes parameters. Note that <code><a href='denoise_spectrum.html'>denoise_spectrum()</a></code> calls
+<code>break_spectrum()</code> internally. So while <code>break_spectrum()</code> is an exported
+function, it typically does not need to be called directly.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>break_spectrum</span><span class='op'>(</span><span class='va'>df_full</span>, break_at <span class='op'>=</span> <span class='fl'>10</span>, min_pix_segment <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>break_spectrum</span><span class='op'>(</span><span class='va'>df</span>, break_at <span class='op'>=</span> <span class='fl'>10L</span>, min_pix_segment <span class='op'>=</span> <span class='fl'>10L</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>df_full</th>
-      <td><p>A tibble that includes a column titled <code>"wavelength"</code> and one
-or more columns with names ending in <code>"mask"</code>, e.g.
-<code><a href='https://rdrr.io/r/base/c.html'>c("I_mask", "Q_mask", "U_mask")</a></code>. The values of the mask columns are equal
-to 0 (or FALSE) for unmasked pixels and nonzero (or TRUE) for masked pixels.</p></td>
+      <th>df</th>
+      <td><p>A tibble that includes a column titled <code>"wavelength"</code> and one or
+more columns with names ending in <code>"mask"</code>, e.g.
+<code><a href='https://rdrr.io/r/base/c.html'>c("I_mask", "Q_mask", "U_mask")</a></code>. The values of the mask columns should be
+equal to 0 (or FALSE) for unmasked pixels and nonzero (or TRUE) for masked
+pixels.</p></td>
     </tr>
     <tr>
       <th>break_at</th>
@@ -164,24 +165,24 @@ that will trigger a break in the spectrum. Defaults to <code>break_at = 10</code
       <td><p>After the segmentation procedure is complete, the
 resulting segments are examined to ensure that each is sufficiently long for
 a non-trivial/well-defined denoising analysis. In particular, any segment
-that has less than <code>min_pix_segment</code> unmasked spectral pixels is discarded.
+that has fewer than <code>min_pix_segment</code> unmasked spectral pixels is discarded.
 Defaults to <code>min_pix_segment = 10</code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list of tibbles that define the segmented spectrum. Each tibble in
-the list has the same format as the input tibble <code>df_full</code>, minus the mask
-columns.</p>
+    <p>A list of tibbles, with one for each segment of the segmented
+spectrum. Masked rows are now dropped and each tibble in the list has the
+same format as the input <code>df</code>, minus the mask columns.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='denoise_spectrum.html'>denoise_spectrum()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>polarized_spectrum_WR_star</span><span class='op'>)</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
-</div><div class='input'>
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>polarized_spectrum_WR_star</span><span class='op'>)</span>
+
 <span class='va'>wavelength</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span>
   from <span class='op'>=</span> <span class='va'>sci</span><span class='op'>$</span><span class='va'>axDat</span><span class='op'>$</span><span class='va'>crval</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>,
   by <span class='op'>=</span> <span class='va'>sci</span><span class='op'>$</span><span class='va'>axDat</span><span class='op'>$</span><span class='va'>cdelt</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>,
@@ -189,24 +190,19 @@ columns.</p>
 <span class='op'>)</span> <span class='op'>%&gt;%</span>
   <span class='fu'>tibble</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble_col</a></span><span class='op'>(</span>column_name <span class='op'>=</span> <span class='st'>"wavelength"</span><span class='op'>)</span>
 
-<span class='va'>stokes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>sci</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+<span class='va'>flux</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>sci</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename_with</a></span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>.cols</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"I"</span>, <span class='st'>"Q"</span>, <span class='st'>"U"</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='va'>variances</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>var</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+<span class='va'>variance</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>var</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename_with</a></span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>.cols</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"I_vars"</span>, <span class='st'>"Q_vars"</span>, <span class='st'>"U_vars"</span><span class='op'>)</span><span class='op'>)</span>
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename_with</a></span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>.cols</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"I_var"</span>, <span class='st'>"Q_var"</span>, <span class='st'>"U_var"</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='va'>masks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>bpm</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+<span class='va'>mask</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>bpm</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename_with</a></span><span class='op'>(</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>.cols</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"I_mask"</span>, <span class='st'>"Q_mask"</span>, <span class='st'>"U_mask"</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='va'>df_full</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_cols</a></span><span class='op'>(</span>
-  <span class='va'>wavelength</span>,
-  <span class='va'>stokes</span>,
-  <span class='va'>variances</span>,
-  <span class='va'>masks</span>
-<span class='op'>)</span>
+<span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_cols</a></span><span class='op'>(</span><span class='va'>wavelength</span>, <span class='va'>flux</span>, <span class='va'>variance</span>, <span class='va'>mask</span><span class='op'>)</span>
 
-<span class='va'>df_list</span> <span class='op'>&lt;-</span> <span class='fu'>break_spectrum</span><span class='op'>(</span><span class='va'>df_full</span><span class='op'>)</span>
+<span class='va'>df_list</span> <span class='op'>&lt;-</span> <span class='fu'>break_spectrum</span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -219,7 +215,7 @@ columns.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='https://collinpolitsch.com/'>Collin A. Politsch, Ph.D.</a></p>
+  <p>Developed by <a href='https://collinpolitsch.com/'>Collin A. Politsch</a>.</p>
 </div>
 
 <div class="pkgdown">

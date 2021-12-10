@@ -267,6 +267,7 @@ denoise_spectrum <- function(wavelength,
     X = 1:length(df_list),
     FUN = function(X) {
       tibble(
+        wavelength = df_list[[X]]$wavelength,
         I = I_denoised[[X]],
         Q = Q_denoised[[X]],
         U = U_denoised[[X]],

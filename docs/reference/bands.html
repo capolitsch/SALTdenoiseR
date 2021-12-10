@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Quantify the statistical uncertainty in a denoised spectrum by computing
-bootstrap variability bands — variability_bands • SALTdenoiseR</title>
+bootstrap variability bands — bands • SALTdenoiseR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -48,7 +48,7 @@ bootstrap variability bands — variability_bands • SALTdenoiseR</title>
 
 
 <meta property="og:title" content="Quantify the statistical uncertainty in a denoised spectrum by computing
-bootstrap variability bands — variability_bands" />
+bootstrap variability bands — bands" />
 <meta property="og:description" content="See the parametric bootstrap algorithm in Politsch et al. (2020a) for details." />
 <meta property="og:image" content="https://capolitsch.github.io/SALTdenoiseR/logo.png" />
 
@@ -82,7 +82,7 @@ bootstrap variability bands — variability_bands" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SALTdenoiseR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -123,15 +123,15 @@ bootstrap variability bands — variability_bands" />
     <div class="page-header">
     <h1>Quantify the statistical uncertainty in a denoised spectrum by computing
 bootstrap variability bands</h1>
-    <small class="dont-index">Source: <a href='https://github.com/capolitsch/SALTdenoiseR/blob/main/R/variability_bands.R'><code>R/variability_bands.R</code></a></small>
-    <div class="hidden name"><code>variability_bands.Rd</code></div>
+    <small class="dont-index">Source: <a href='https://github.com/capolitsch/SALTdenoiseR/blob/main/R/bands.R'><code>R/bands.R</code></a></small>
+    <div class="hidden name"><code>bands.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>See the parametric bootstrap algorithm in <a href='https://academic.oup.com/mnras/article/492/3/4005/5704413'>Politsch et al. (2020a)</a> for details.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>variability_bands</span><span class='op'>(</span><span class='va'>obj</span>, <span class='va'>param</span>, level <span class='op'>=</span> <span class='fl'>0.95</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>bands</span><span class='op'>(</span><span class='va'>obj</span>, <span class='va'>param</span>, level <span class='op'>=</span> <span class='fl'>0.95</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -143,8 +143,8 @@ bootstrap variability bands</h1>
     </tr>
     <tr>
       <th>param</th>
-      <td><p>A string specifying which spectrum to compute variability bands
-for. One of <code><a href='https://rdrr.io/r/base/c.html'>c("I","Q","U","Q_norm","U_norm")</a></code>.</p></td>
+      <td><p>A string specifying which spectrum
+to compute variability bands for. One of <code><a href='https://rdrr.io/r/base/c.html'>c("I","Q","U","Q_norm","U_norm")</a></code>.</p></td>
     </tr>
     <tr>
       <th>level</th>
@@ -176,8 +176,8 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
     <div class='dont-index'><p><code><a href='denoise_spectrum.html'>denoise_spectrum()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>polarized_spectrum_WR_star</span><span class='op'>)</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>polarized_spectrum_WR_star</span><span class='op'>)</span>
 
 <span class='va'>wavelength</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span>
   from <span class='op'>=</span> <span class='va'>sci</span><span class='op'>$</span><span class='va'>axDat</span><span class='op'>$</span><span class='va'>crval</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>,
@@ -186,18 +186,18 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
 <span class='op'>)</span>
 
 <span class='va'>flux</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>sci</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
-<span class='va'>variances</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>var</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
-<span class='va'>masks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>bpm</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
+<span class='va'>variance</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>var</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
+<span class='va'>mask</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>bpm</span><span class='op'>$</span><span class='va'>imDat</span><span class='op'>)</span>
 
 <span class='va'>spec_denoised</span> <span class='op'>&lt;-</span> <span class='fu'><a href='denoise_spectrum.html'>denoise_spectrum</a></span><span class='op'>(</span>
   <span class='va'>wavelength</span>,
   <span class='va'>flux</span>,
-  <span class='va'>variances</span>,
-  <span class='va'>masks</span>,
+  <span class='va'>variance</span>,
+  <span class='va'>mask</span>,
   compute_uncertainties <span class='op'>=</span> <span class='cn'>TRUE</span>
 <span class='op'>)</span>
 
-<span class='va'>bands</span> <span class='op'>&lt;-</span> <span class='fu'>variability_bands</span><span class='op'>(</span><span class='va'>spec_denoised</span>, param <span class='op'>=</span> <span class='st'>"Q_norm"</span>, level <span class='op'>=</span> <span class='fl'>0.95</span><span class='op'>)</span>
+<span class='va'>spec_bands</span> <span class='op'>&lt;-</span> <span class='fu'>bands</span><span class='op'>(</span><span class='va'>spec_denoised</span>, param <span class='op'>=</span> <span class='st'>"Q_norm"</span><span class='op'>)</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -210,7 +210,7 @@ smoothness</a>. <em>MNRAS</em>, 492(3), p. 4019-4032.</p></li>
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='https://collinpolitsch.com/'>Collin A. Politsch, Ph.D.</a></p>
+  <p>Developed by <a href='https://collinpolitsch.com/'>Collin A. Politsch</a>.</p>
 </div>
 
 <div class="pkgdown">
