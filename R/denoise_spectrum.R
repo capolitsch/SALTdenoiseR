@@ -321,6 +321,10 @@ denoise_spectrum <- function(wavelength,
         X = 1:length(df_list),
         FUN = function(X) obj_list[[X]]$edf_min
       ) %>% unlist(),
+      i_min = lapply(
+        X = 1:length(df_list),
+        FUN = function(X) obj_list[[X]]$i_min
+      ) %>% unlist(),
       lambda_1se = lapply(
         X = 1:length(df_list),
         FUN = function(X) obj_list[[X]]$lambda_1se
@@ -376,6 +380,10 @@ denoise_spectrum <- function(wavelength,
       edf_min = lapply(
         X = 1:length(df_list),
         FUN = function(X) obj_list[[length(df_list) + X]]$edf_min
+      ) %>% unlist(),
+      i_min = lapply(
+        X = 1:length(df_list),
+        FUN = function(X) obj_list[[X]]$i_min
       ) %>% unlist(),
       lambda_1se = lapply(
         X = 1:length(df_list),
@@ -433,6 +441,10 @@ denoise_spectrum <- function(wavelength,
         X = 1:length(df_list),
         FUN = function(X) obj_list[[2 * length(df_list) + X]]$edf_min
       ) %>% unlist(),
+      i_min = lapply(
+        X = 1:length(df_list),
+        FUN = function(X) obj_list[[X]]$i_min
+      ) %>% unlist(),
       lambda_1se = lapply(
         X = 1:length(df_list),
         FUN = function(X) obj_list[[2 * length(df_list) + X]]$lambda_1se
@@ -440,6 +452,10 @@ denoise_spectrum <- function(wavelength,
       edf_1se = lapply(
         X = 1:length(df_list),
         FUN = function(X) obj_list[[2 * length(df_list) + X]]$edf_1se
+      ) %>% unlist(),
+      i_1se = lapply(
+        X = 1:length(df_list),
+        FUN = function(X) obj_list[[X]]$i_1se
       ) %>% unlist(),
       n_iter = lapply(
         X = 1:length(df_list),
