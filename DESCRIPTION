@@ -16,7 +16,7 @@ URL: https://capolitsch.github.io/SALTdenoiseR
 BugReports: https://github.com/capolitsch/SALTdenoiseR/issues
 LazyData: true
 Remotes:
-  capolitsch/trendfiltering@main
+  capolitsch/trendfiltering@SALTdenoiseR
 Depends: 
   R (>= 3.5.0)
 Imports: 
